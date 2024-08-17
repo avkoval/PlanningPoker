@@ -21,7 +21,8 @@ development.
 ** Technical design & architecture
 *** WORKING View practically, Kit, Uix & bootstrap the project
     :LOGBOOK:
-    CLOCK: [2024-08-17 Sat 11:20]
+    CLOCK: [2024-08-17 Sat 13:25]
+    CLOCK: [2024-08-17 Sat 11:20]--[2024-08-17 Sat 11:38] =>  0:18
     - State "WORKING"    from "DONE"       [2024-08-17 Sat 11:20]
     - State "DONE"       from "TODO"       [2024-08-17 Sat 11:15]
     - State "TODO"       from              [2024-08-17 Sat 07:55]
@@ -30,13 +31,13 @@ development.
  - [X] Decided to use FastCGI instead of Kit in this round ([2024-08-17 Sat 11:20]). Reasons:
    - I already know how to use Jira integtration with Python
    - I want to gain some FastAPI experience
- - [ ] View (again) [[https://www.youtube.com/watch?v=4vgrLHsD0-I&t=3s][intro video from Roman Liutikov]]
- - [ ] Re-try modern React tutorial
- - [ ] Start learning Udemy React course, take some first lessons
- - [ ] How to add ReFrame? 11:29.44 (00:08) Found, explained in: https://github.com/pitch-io/uix-starter
+ - [X] How to add ReFrame? 11:29.44 (00:08) Found, explained in: https://github.com/pitch-io/uix-starter
    #+begin_example
    npx create-uix-app@latest my-app --re-frame # adds re-frame setup
    #+end_example
+ - [ ] View (again) [[https://www.youtube.com/watch?v=4vgrLHsD0-I&t=3s][intro video from Roman Liutikov]]
+ - [ ] Re-try modern React tutorial
+ - [ ] Start learning Udemy React course, take some first lessons
 
 *** TODO Use websocket for fast communication!
     :LOGBOOK:
@@ -65,7 +66,7 @@ development.
 
 ** TODO Bootstrap: FastAPI + UIx^2 in one folder & dev/prod start/deploy/+sentry/+logging
    :LOGBOOK:
-   CLOCK: [2024-08-17 Sat 10:04]
+   CLOCK: [2024-08-17 Sat 10:04]--[2024-08-17 Sat 10:24] =>  0:20
    - State "TODO"       from              [2024-08-17 Sat 08:20]
    :END:
 
