@@ -1,0 +1,69 @@
+
+* What is this
+
+I am playing with technology and trying new things. Because JIRA does not provide
+such functionality out of the box, I would like to develop SPA to play it with my
+team. I am aware about tons of similar products existing in this area, never seen
+any of them, and actually the work I do here is mostly for my personal skills 
+development.
+
+* WORKING Planning poker for Fieldhub
+  SCHEDULED: <2024-08-17 Sat>
+  :LOGBOOK:
+  CLOCK: [2024-08-17 Sat 09:52]--[2024-08-17 Sat 10:04] =>  0:12
+  CLOCK: [2024-08-17 Sat 08:14]--[2024-08-17 Sat 09:00] =>  0:46
+  - State "WORKING"    from "IDEA"       [2024-08-17 Sat 08:05]
+  - State "IDEA"       from "TODO"       [2024-08-17 Sat 08:05]
+  - State "TODO"       from              [2024-08-17 Sat 07:55]
+  :END:
+
+
+
+** Technical design & architecture
+*** TODO View practically, Kit, Uix & bootstrap the project
+    :LOGBOOK:
+    - State "TODO"       from              [2024-08-17 Sat 07:55]
+    :END:
+
+*** TODO Use websocket for fast communication!
+    :LOGBOOK:
+    - State "TODO"       from              [2024-08-17 Sat 08:10]
+    :END:
+
+*** TODO use FastAPI! use Google auth & ready Jira integration I have!
+    :LOGBOOK:
+    - State "TODO"       from              [2024-08-17 Sat 08:10]
+    :END:
+
+** TODO UI functional implementation [0/6]
+   :LOGBOOK:
+   - State "TODO"       from              [2024-08-17 Sat 08:10]
+   :END:
+
+ * SPA - one screen on UIx
+ * [ ] List logged in users
+ * [ ] Set color for facilitator?
+   * how to agree who is facilitator? may be anyone can? probably yes, but then warn on top who started it
+ * [ ] Countdown timer (configuration for length) starts
+ * [ ] List of SPs (configuration)
+ * [ ] Strike for users who voted
+ * [ ] Reveal cards with some visual effect
+
+** TODO Bootstrap: FastAPI + UIx^2 in one folder & dev/prod start/deploy/+sentry/+logging
+   :LOGBOOK:
+   CLOCK: [2024-08-17 Sat 10:04]
+   - State "TODO"       from              [2024-08-17 Sat 08:20]
+   :END:
+
+- [X] Install fastapi via poetry
+- [X] Bootstrap UIX^2 project
+- [ ] Add/commit to git
+- [ ] Publish on github
+** TODO Google auth & JWT token
+   :LOGBOOK:
+   - State "TODO"       from              [2024-08-17 Sat 08:25]
+   :END:
+** TODO List tickets from Jira by search criteria
+   :LOGBOOK:
+   - State "TODO"       from              [2024-08-17 Sat 08:25]
+   :END:
