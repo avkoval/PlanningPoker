@@ -18,18 +18,32 @@ development.
   :END:
 
 
-
 ** Technical design & architecture
-*** TODO View practically, Kit, Uix & bootstrap the project
+*** WORKING View practically, Kit, Uix & bootstrap the project
     :LOGBOOK:
+    CLOCK: [2024-08-17 Sat 11:20]
+    - State "WORKING"    from "DONE"       [2024-08-17 Sat 11:20]
+    - State "DONE"       from "TODO"       [2024-08-17 Sat 11:15]
     - State "TODO"       from              [2024-08-17 Sat 07:55]
     :END:
+
+ - [X] Decided to use FastCGI instead of Kit in this round ([2024-08-17 Sat 11:20]). Reasons:
+   - I already know how to use Jira integtration with Python
+   - I want to gain some FastAPI experience
+ - [ ] View (again) [[https://www.youtube.com/watch?v=4vgrLHsD0-I&t=3s][intro video from Roman Liutikov]]
+ - [ ] Re-try modern React tutorial
+ - [ ] Start learning Udemy React course, take some first lessons
+ - [ ] How to add ReFrame? 11:29.44 (00:08) Found, explained in: https://github.com/pitch-io/uix-starter
+   #+begin_example
+   npx create-uix-app@latest my-app --re-frame # adds re-frame setup
+   #+end_example
 
 *** TODO Use websocket for fast communication!
     :LOGBOOK:
     - State "TODO"       from              [2024-08-17 Sat 08:10]
     :END:
 
+ - FastAPI provides support: 
 *** TODO use FastAPI! use Google auth & ready Jira integration I have!
     :LOGBOOK:
     - State "TODO"       from              [2024-08-17 Sat 08:10]
