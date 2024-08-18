@@ -7,6 +7,14 @@ team. I am aware about tons of similar products existing in this area, never see
 any of them, and actually the work I do here is mostly for my personal skills 
 development.
 
+* Install
+* Run
+
+  #+begin_example
+  source .export.env
+  poetry run fastapi dev main.py
+  #+end_example
+
 * WORKING Planning poker for Fieldhub
   SCHEDULED: <2024-08-17 Sat>
   :LOGBOOK:
@@ -19,9 +27,11 @@ development.
 
 
 ** Technical design & architecture
-*** WORKING View practically, Kit, Uix & bootstrap the project
+*** DONE View practically, Kit, Uix & bootstrap the project
+    CLOSED: [2024-08-17 Sat 20:05]
     :LOGBOOK:
-    CLOCK: [2024-08-17 Sat 13:25]
+    - State "DONE"       from "WORKING"    [2024-08-17 Sat 20:05]
+    CLOCK: [2024-08-17 Sat 13:25]--[2024-08-17 Sat 17:07] =>  3:42
     CLOCK: [2024-08-17 Sat 11:20]--[2024-08-17 Sat 11:38] =>  0:18
     - State "WORKING"    from "DONE"       [2024-08-17 Sat 11:20]
     - State "DONE"       from "TODO"       [2024-08-17 Sat 11:15]
@@ -35,9 +45,22 @@ development.
    #+begin_example
    npx create-uix-app@latest my-app --re-frame # adds re-frame setup
    #+end_example
- - [ ] View (again) [[https://www.youtube.com/watch?v=4vgrLHsD0-I&t=3s][intro video from Roman Liutikov]]
- - [ ] Re-try modern React tutorial
- - [ ] Start learning Udemy React course, take some first lessons
+ - [X] View (again) [[https://www.youtube.com/watch?v=4vgrLHsD0-I&t=3s][intro video from Roman Liutikov]]
+ - [X] Re-try modern React tutorial
+ - [X] Start learning Udemy React course, take some first lessons
+
+*** TODO use FastAPI! use Google auth & ready Jira integration I have!
+    :LOGBOOK:
+    CLOCK: [2024-08-18 Sun 20:26]
+    CLOCK: [2024-08-18 Sun 08:37]--[2024-08-18 Sun 20:26] => 11:49
+    - State "TODO"       from              [2024-08-17 Sat 08:10]
+    :END:
+
+ - https://google-auth.readthedocs.io/en/master/
+ - https://github.com/hanchon-live/tutorial-fastapi-oauth
+ - https://blog.hanchon.live/guides/google-login-with-fastapi/ (following)
+ - https://docs.authlib.org/en/latest/client/starlette.html (works)
+
 
 *** TODO Use websocket for fast communication!
     :LOGBOOK:
@@ -45,11 +68,6 @@ development.
     :END:
 
  - FastAPI provides support: 
-*** TODO use FastAPI! use Google auth & ready Jira integration I have!
-    :LOGBOOK:
-    - State "TODO"       from              [2024-08-17 Sat 08:10]
-    :END:
-
 ** TODO UI functional implementation [0/6]
    :LOGBOOK:
    - State "TODO"       from              [2024-08-17 Sat 08:10]
