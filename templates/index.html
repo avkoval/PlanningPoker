@@ -6,9 +6,18 @@
     <title>Planning Poker game from O.K.!</title>
     <link rel="stylesheet" href="/static/css/bulma.min.css">
     <link rel="stylesheet" href="/static/css/google-login.css">
+    <script defer src="/static/js/alpine.cdn.min.js"></script>
   </head>
   <body>
     <section class="section">
+      {% for notification in notifications %}
+        <div x-data="{ open: true }">
+          <div class="notification is-{{ notification.type }}" x-show="open">
+            <button class="delete" x-on:click="open = ! open"></button>
+            {{ notification.text }}
+          </div>
+        </div>
+      {% endfor %}
     </section>
     <div class="columns is-vcentered">
       <div class="column is-1">

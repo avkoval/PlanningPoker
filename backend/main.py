@@ -1,8 +1,10 @@
 import os
+from functools import lru_cache
+from typing import Annotated, List
 
 from authlib.integrations.starlette_client import (  # type: ignore[import]
     OAuth, OAuthError)
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -10,11 +12,16 @@ from starlette.config import Config
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import RedirectResponse
 
+from .config import Settings
+
+settings = Settings()
+
 # OAuth settings
-GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID') or None
-GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET') or None
+GOOGLE_CLIENT_ID = settings.google_client_id
+GOOGLE_CLIENT_SECRET = settings.google_client_secret
 if GOOGLE_CLIENT_ID is None or GOOGLE_CLIENT_SECRET is None:
     raise BaseException('Missing env variables')
+
 
 # Set up oauth
 config_data = {'GOOGLE_CLIENT_ID': GOOGLE_CLIENT_ID, 'GOOGLE_CLIENT_SECRET': GOOGLE_CLIENT_SECRET}
@@ -43,10 +50,16 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
+    notifications: List = []
     if 'access_token' in request.session:
-        return RedirectResponse('/app/')
+        domain = request.session['access_token']['userinfo']['email'].split('@')[1]
+        if domain not in settings.allowed_email_domains.split(','):
+            msg = f"Domain not allowed: {domain} for user {request.session['access_token']['userinfo']['email']}"
+            notifications.append({'type': 'danger', 'text': msg})
+        else:
+            return RedirectResponse('/app/')
     return templates.TemplateResponse(
-        name="index.html", context={'request': request}
+        name="index.html", context={'request': request, 'notifications': notifications}
     )
 
 
