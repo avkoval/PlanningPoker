@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2024-08-25 нд 13:01 -->
+<!-- 2024-08-25 нд 15:02 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Planning Poker</title>
@@ -23,58 +23,105 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org2e1864d">What is this</a></li>
-<li><a href="#orge46332c">Install</a></li>
-<li><a href="#org8c1b7cb">Setup</a>
+<li><a href="#orgf44e839">What is this</a></li>
+<li><a href="#org53e4951">Project structure</a></li>
+<li><a href="#orgd38be0a">Install</a></li>
+<li><a href="#orgb971a3a">Setup</a>
 <ul>
-<li><a href="#org2404358">Available settings</a></li>
+<li><a href="#orgb787860">Available settings</a></li>
 </ul>
 </li>
-<li><a href="#orga0112f6">Run</a></li>
-<li><a href="#orge464bc0">WORKING Planning poker for Fieldhub</a>
+<li><a href="#orgacfc6eb">Run</a></li>
+<li><a href="#orgb2ff455">WORKING Planning poker for Fieldhub</a>
 <ul>
-<li><a href="#org1d769b1">Technical design &amp; architecture</a>
+<li><a href="#orgb92312e">Technical design &amp; architecture</a>
 <ul>
-<li><a href="#orgd47f8b7"><span class="done DONE">DONE</span> View practically, Kit, Uix &amp; bootstrap the project</a></li>
-<li><a href="#orgf39f6c1"><span class="todo TODO">TODO</span> use FastAPI! use Google auth &amp; ready Jira integration I have!</a></li>
-<li><a href="#org2249d35"><span class="todo TODO">TODO</span> Use websocket for fast communication!</a></li>
+<li><a href="#org99cb08e"><span class="done DONE">DONE</span> View practically, Kit, Uix &amp; bootstrap the project</a></li>
+<li><a href="#org84943e2"><span class="todo TODO">TODO</span> use FastAPI! use Google auth &amp; ready Jira integration I have!</a></li>
+<li><a href="#org3ee4f00"><span class="todo TODO">TODO</span> Use websocket for fast communication!</a></li>
 </ul>
 </li>
-<li><a href="#org277cb4d"><span class="todo TODO">TODO</span> UI functional implementation <code>[0/6]</code></a></li>
-<li><a href="#orgff1b8d4"><span class="done DONE">DONE</span> Bootstrap: FastAPI + UIx^2 in one folder &amp; dev/prod start/deploy/+sentry/+logging</a></li>
-<li><a href="#org405463c"><span class="done DONE">DONE</span> Google auth &amp; JWT token (or session cookie)</a></li>
-<li><a href="#org024bd4e"><span class="todo TODO">TODO</span> add running via bb.edn</a></li>
-<li><a href="#org1c2cdb8"><span class="todo TODO">TODO</span> Search for ticket (Estimate ticket screen) <code>[0/7]</code></a></li>
-<li><a href="#orga62eca3"><span class="todo TODO">TODO</span> List tickets from Jira by search criteria</a></li>
+<li><a href="#org827d7cb"><span class="todo TODO">TODO</span> UI functional implementation <code>[0/6]</code></a></li>
+<li><a href="#orga53034a"><span class="done DONE">DONE</span> Bootstrap: FastAPI + UIx^2 in one folder &amp; dev/prod start/deploy/+sentry/+logging</a></li>
+<li><a href="#org2c0f2c2"><span class="done DONE">DONE</span> Google auth &amp; JWT token (or session cookie)</a></li>
+<li><a href="#orgc236c0a"><span class="todo TODO">TODO</span> add running via bb.edn</a></li>
+<li><a href="#org587fe95"><span class="todo TODO">TODO</span> Search for ticket (Estimate ticket screen) <code>[0/7]</code></a></li>
+<li><a href="#org1f1ee97"><span class="todo TODO">TODO</span> List tickets from Jira by search criteria</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org2e1864d" class="outline-2">
-<h2 id="org2e1864d">What is this</h2>
-<div class="outline-text-2" id="text-org2e1864d">
+<div id="outline-container-orgf44e839" class="outline-2">
+<h2 id="orgf44e839">What is this</h2>
+<div class="outline-text-2" id="text-orgf44e839">
 <p>
 I am playing with technology and trying new things. Because JIRA does not provide
 such functionality out of the box, I would like to develop SPA to play it with my
-team. I am aware about tons of similar products existing in this area, never seen
-any of them, and actually the work I do here is mostly for my personal skills 
-development.
+team. I am aware about tons of <i>similar</i> products existing in this area (all are paid!), 
+never seen any of them, and actually the work I do here is mostly for <span class="underline">my personal skills 
+development</span>.
 </p>
 </div>
 </div>
-<div id="outline-container-orge46332c" class="outline-2">
-<h2 id="orge46332c">Install</h2>
+<div id="outline-container-org53e4951" class="outline-2">
+<h2 id="org53e4951">Project structure</h2>
+<div class="outline-text-2" id="text-org53e4951">
+<pre class="example" id="org28b6bcf">
+Directory tree
+==============
+[-] PlanningPoker
+ |--[+] __pycache__
+ |--[-] backend                    &lt;--- backed code
+ |   |--[+] __pycache__
+ |   |----- __init__.py
+ |   |----- config.py
+ |   `----- main.py                &lt;---------------- main.py
+ |--[+] planningpoker
+ |--[-] pp-front                   &lt;-- UIx project, created with:
+ |   |--[+] dev                        npx create-uix-app@latest pp-front --re-frame`
+ |   |--[+] node_modules
+ |   |--[+] public
+ |   |--[-] src
+ |   |   `--[-] app
+ |   |       |----- core.cljs      &lt;--- function of FrontEnd
+ |   |       |----- core.css
+ |   |       |----- db.cljs
+ |   |       |----- fx.cljs
+ |   |       |----- handlers.cljs
+ |   |       |----- hooks.cljs
+ |   |       `----- subs.cljs
+ |   |----- LICENSE.md
+ |   |----- README.md
+ |   |----- deps.edn
+ |   |----- package.json
+ |   |----- shadow-cljs.edn
+ |   `----- yarn.lock
+ |--[+] static
+ |--[-] templates
+ |   `----- index.html
+ |--[+] tests
+ |----- README.org                 &lt;----- mode Source of this README.html
+ |----- __init__.py
+ |----- bb.edn                     &lt;----- for commands
+ |----- poetry.lock
+ `----- pyproject.toml
+
+</pre>
+</div>
+</div>
+<div id="outline-container-orgd38be0a" class="outline-2">
+<h2 id="orgd38be0a">Install</h2>
 </div>
 
-<div id="outline-container-org8c1b7cb" class="outline-2">
-<h2 id="org8c1b7cb">Setup</h2>
-<div class="outline-text-2" id="text-org8c1b7cb">
+<div id="outline-container-orgb971a3a" class="outline-2">
+<h2 id="orgb971a3a">Setup</h2>
+<div class="outline-text-2" id="text-orgb971a3a">
 <p>
 Copy &amp; edit contents of .env file: setup variables
 </p>
 
-<pre class="example" id="org617a9fd">
+<pre class="example" id="org27d9dff">
 cp .env-example .env
 </pre>
 
@@ -82,9 +129,9 @@ cp .env-example .env
 To do this you will need to create Google Project and obtain Oauth authorization keys.
 </p>
 </div>
-<div id="outline-container-org2404358" class="outline-3">
-<h3 id="org2404358">Available settings</h3>
-<div class="outline-text-3" id="text-org2404358">
+<div id="outline-container-orgb787860" class="outline-3">
+<h3 id="orgb787860">Available settings</h3>
+<div class="outline-text-3" id="text-orgb787860">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -101,22 +148,22 @@ To do this you will need to create Google Project and obtain Oauth authorization
 </thead>
 <tbody>
 <tr>
-<td class="org-left">GOOGLE_CLIENT_ID=&#x2026;</td>
+<td class="org-left">GOOGLE_CLIENT_ID</td>
 <td class="org-left">Google Oauth credentials</td>
 </tr>
 
 <tr>
-<td class="org-left">GOOGLE_CLIENT_SECRET=&#x2026;</td>
+<td class="org-left">GOOGLE_CLIENT_SECRET</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
 <tr>
-<td class="org-left">SECRET_KEY=&#x2026;</td>
-<td class="org-left">Put some random data</td>
+<td class="org-left">SECRET_KEY</td>
+<td class="org-left">Secret key, must be specified</td>
 </tr>
 
 <tr>
-<td class="org-left">ALLOWED_EMAIL_DOMAINS=&#x2026;</td>
+<td class="org-left">ALLOWED_EMAIL_DOMAINS</td>
 <td class="org-left">Restrict domains list (for example list here only organization domains). If empty - all domains are allowed</td>
 </tr>
 </tbody>
@@ -124,32 +171,32 @@ To do this you will need to create Google Project and obtain Oauth authorization
 </div>
 </div>
 </div>
-<div id="outline-container-orga0112f6" class="outline-2">
-<h2 id="orga0112f6">Run</h2>
-<div class="outline-text-2" id="text-orga0112f6">
-<pre class="example" id="org4ff0746">
+<div id="outline-container-orgacfc6eb" class="outline-2">
+<h2 id="orgacfc6eb">Run</h2>
+<div class="outline-text-2" id="text-orgacfc6eb">
+<pre class="example" id="org493ed27">
 poetry run fastapi dev backend/main.py
 </pre>
 
 <p>
 (if you have babashka installed):
 </p>
-<pre class="example" id="org554c691">
+<pre class="example" id="orgbf8cbd0">
 bb run fastapi
 </pre>
 </div>
 </div>
-<div id="outline-container-orge464bc0" class="outline-2">
-<h2 id="orge464bc0">WORKING Planning poker for Fieldhub</h2>
-<div class="outline-text-2" id="text-orge464bc0">
+<div id="outline-container-orgb2ff455" class="outline-2">
+<h2 id="orgb2ff455">WORKING Planning poker for Fieldhub</h2>
+<div class="outline-text-2" id="text-orgb2ff455">
 </div>
-<div id="outline-container-org1d769b1" class="outline-3">
-<h3 id="org1d769b1">Technical design &amp; architecture</h3>
-<div class="outline-text-3" id="text-org1d769b1">
+<div id="outline-container-orgb92312e" class="outline-3">
+<h3 id="orgb92312e">Technical design &amp; architecture</h3>
+<div class="outline-text-3" id="text-orgb92312e">
 </div>
-<div id="outline-container-orgd47f8b7" class="outline-4">
-<h4 id="orgd47f8b7"><span class="done DONE">DONE</span> View practically, Kit, Uix &amp; bootstrap the project</h4>
-<div class="outline-text-4" id="text-orgd47f8b7">
+<div id="outline-container-org99cb08e" class="outline-4">
+<h4 id="org99cb08e"><span class="done DONE">DONE</span> View practically, Kit, Uix &amp; bootstrap the project</h4>
+<div class="outline-text-4" id="text-org99cb08e">
 <ul class="org-ul">
 <li class="on"><code>[X]</code> Decided to use FastCGI instead of Kit in this round (<span class="timestamp-wrapper"><span class="timestamp">[2024-08-17 сб 11:20]</span></span>). Reasons:
 <ul class="org-ul">
@@ -159,7 +206,7 @@ bb run fastapi
 <li class="on"><code>[X]</code> <p>
 How to add ReFrame? 11:29.44 (00:08) Found, explained in: <a href="https://github.com/pitch-io/uix-starter">https://github.com/pitch-io/uix-starter</a>
 </p>
-<pre class="example" id="orgca6db9b">
+<pre class="example" id="org0b1bdcf">
 npx create-uix-app@latest my-app --re-frame # adds re-frame setup
 </pre></li>
 <li class="on"><code>[X]</code> View (again) <a href="https://www.youtube.com/watch?v=4vgrLHsD0-I&amp;t=3s">intro video from Roman Liutikov</a></li>
@@ -168,9 +215,9 @@ npx create-uix-app@latest my-app --re-frame # adds re-frame setup
 </ul>
 </div>
 </div>
-<div id="outline-container-orgf39f6c1" class="outline-4">
-<h4 id="orgf39f6c1"><span class="todo TODO">TODO</span> use FastAPI! use Google auth &amp; ready Jira integration I have!</h4>
-<div class="outline-text-4" id="text-orgf39f6c1">
+<div id="outline-container-org84943e2" class="outline-4">
+<h4 id="org84943e2"><span class="todo TODO">TODO</span> use FastAPI! use Google auth &amp; ready Jira integration I have!</h4>
+<div class="outline-text-4" id="text-org84943e2">
 <ul class="org-ul">
 <li><a href="https://google-auth.readthedocs.io/en/master/">https://google-auth.readthedocs.io/en/master/</a></li>
 <li><a href="https://github.com/hanchon-live/tutorial-fastapi-oauth">https://github.com/hanchon-live/tutorial-fastapi-oauth</a></li>
@@ -179,18 +226,18 @@ npx create-uix-app@latest my-app --re-frame # adds re-frame setup
 </ul>
 </div>
 </div>
-<div id="outline-container-org2249d35" class="outline-4">
-<h4 id="org2249d35"><span class="todo TODO">TODO</span> Use websocket for fast communication!</h4>
-<div class="outline-text-4" id="text-org2249d35">
+<div id="outline-container-org3ee4f00" class="outline-4">
+<h4 id="org3ee4f00"><span class="todo TODO">TODO</span> Use websocket for fast communication!</h4>
+<div class="outline-text-4" id="text-org3ee4f00">
 <ul class="org-ul">
 <li>FastAPI provides support:</li>
 </ul>
 </div>
 </div>
 </div>
-<div id="outline-container-org277cb4d" class="outline-3">
-<h3 id="org277cb4d"><span class="todo TODO">TODO</span> UI functional implementation <code>[0/6]</code></h3>
-<div class="outline-text-3" id="text-org277cb4d">
+<div id="outline-container-org827d7cb" class="outline-3">
+<h3 id="org827d7cb"><span class="todo TODO">TODO</span> UI functional implementation <code>[0/6]</code></h3>
+<div class="outline-text-3" id="text-org827d7cb">
 <ul class="org-ul">
 <li>SPA - one screen on UIx</li>
 <li class="off"><code>[&#xa0;]</code> List logged in users</li>
@@ -205,9 +252,9 @@ npx create-uix-app@latest my-app --re-frame # adds re-frame setup
 </ul>
 </div>
 </div>
-<div id="outline-container-orgff1b8d4" class="outline-3">
-<h3 id="orgff1b8d4"><span class="done DONE">DONE</span> Bootstrap: FastAPI + UIx^2 in one folder &amp; dev/prod start/deploy/+sentry/+logging</h3>
-<div class="outline-text-3" id="text-orgff1b8d4">
+<div id="outline-container-orga53034a" class="outline-3">
+<h3 id="orga53034a"><span class="done DONE">DONE</span> Bootstrap: FastAPI + UIx^2 in one folder &amp; dev/prod start/deploy/+sentry/+logging</h3>
+<div class="outline-text-3" id="text-orga53034a">
 <ul class="org-ul">
 <li class="on"><code>[X]</code> Install fastapi via poetry</li>
 <li class="on"><code>[X]</code> Bootstrap UIX^2 project</li>
@@ -216,22 +263,22 @@ npx create-uix-app@latest my-app --re-frame # adds re-frame setup
 </ul>
 </div>
 </div>
-<div id="outline-container-org405463c" class="outline-3">
-<h3 id="org405463c"><span class="done DONE">DONE</span> Google auth &amp; JWT token (or session cookie)</h3>
-<div class="outline-text-3" id="text-org405463c">
+<div id="outline-container-org2c0f2c2" class="outline-3">
+<h3 id="org2c0f2c2"><span class="done DONE">DONE</span> Google auth &amp; JWT token (or session cookie)</h3>
+<div class="outline-text-3" id="text-org2c0f2c2">
 </div>
 </div>
-<div id="outline-container-org024bd4e" class="outline-3">
-<h3 id="org024bd4e"><span class="todo TODO">TODO</span> add running via bb.edn</h3>
-<div class="outline-text-3" id="text-org024bd4e">
+<div id="outline-container-orgc236c0a" class="outline-3">
+<h3 id="orgc236c0a"><span class="todo TODO">TODO</span> add running via bb.edn</h3>
+<div class="outline-text-3" id="text-orgc236c0a">
 <ul class="org-ul">
 <li>Finish watching <a href="https://www.youtube.com/watch?v=u5ECoR7KT1Y">Babashka tasks (by Michiel Borkent)</a> from <i>The London Clojurians are happy to present 3 years ago</i></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org1c2cdb8" class="outline-3">
-<h3 id="org1c2cdb8"><span class="todo TODO">TODO</span> Search for ticket (Estimate ticket screen) <code>[0/7]</code></h3>
-<div class="outline-text-3" id="text-org1c2cdb8">
+<div id="outline-container-org587fe95" class="outline-3">
+<h3 id="org587fe95"><span class="todo TODO">TODO</span> Search for ticket (Estimate ticket screen) <code>[0/7]</code></h3>
+<div class="outline-text-3" id="text-org587fe95">
 <ul class="org-ul">
 <li class="off"><code>[&#xa0;]</code> Select library to make HTTP calls.
 <ul class="org-ul">
@@ -248,16 +295,16 @@ npx create-uix-app@latest my-app --re-frame # adds re-frame setup
 </ul>
 </div>
 </div>
-<div id="outline-container-orga62eca3" class="outline-3">
-<h3 id="orga62eca3"><span class="todo TODO">TODO</span> List tickets from Jira by search criteria</h3>
-<div class="outline-text-3" id="text-orga62eca3">
+<div id="outline-container-org1f1ee97" class="outline-3">
+<h3 id="org1f1ee97"><span class="todo TODO">TODO</span> List tickets from Jira by search criteria</h3>
+<div class="outline-text-3" id="text-org1f1ee97">
 </div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: avkoval (ok)</p>
-<p class="date">Created: 2024-08-25 нд 13:01</p>
+<p class="date">Created: 2024-08-25 нд 15:02</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

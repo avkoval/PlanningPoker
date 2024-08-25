@@ -7,10 +7,53 @@
 
 I am playing with technology and trying new things. Because JIRA does not provide
 such functionality out of the box, I would like to develop SPA to play it with my
-team. I am aware about tons of similar products existing in this area, never seen
-any of them, and actually the work I do here is mostly for my personal skills 
-development.
+team. I am aware about tons of /similar/ products existing in this area (all are paid!), 
+never seen any of them, and actually the work I do here is mostly for _my personal skills 
+development_.
 
+* Project structure
+
+#+begin_example
+Directory tree
+==============
+[-] PlanningPoker
+ |--[+] __pycache__
+ |--[-] backend                    <--- backed code
+ |   |--[+] __pycache__
+ |   |----- __init__.py
+ |   |----- config.py
+ |   `----- main.py                <---------------- main.py
+ |--[+] planningpoker
+ |--[-] pp-front                   <-- UIx project, created with:
+ |   |--[+] dev                        npx create-uix-app@latest pp-front --re-frame`
+ |   |--[+] node_modules
+ |   |--[+] public
+ |   |--[-] src
+ |   |   `--[-] app
+ |   |       |----- core.cljs      <--- function of FrontEnd
+ |   |       |----- core.css
+ |   |       |----- db.cljs
+ |   |       |----- fx.cljs
+ |   |       |----- handlers.cljs
+ |   |       |----- hooks.cljs
+ |   |       `----- subs.cljs
+ |   |----- LICENSE.md
+ |   |----- README.md
+ |   |----- deps.edn
+ |   |----- package.json
+ |   |----- shadow-cljs.edn
+ |   `----- yarn.lock
+ |--[+] static
+ |--[-] templates
+ |   `----- index.html
+ |--[+] tests
+ |----- README.org                 <----- mode Source of this README.html
+ |----- __init__.py
+ |----- bb.edn                     <----- for commands
+ |----- poetry.lock
+ `----- pyproject.toml
+
+#+end_example
 * Install
 
 * Setup
@@ -25,12 +68,12 @@ cp .env-example .env
 
 ** Available settings
 
-| Variable name             | Documentation                                                                                               |
-|---------------------------+-------------------------------------------------------------------------------------------------------------|
-| GOOGLE_CLIENT_ID=...      | Google Oauth credentials                                                                                    |
-| GOOGLE_CLIENT_SECRET=...  |                                                                                                             |
-| SECRET_KEY=...            | Put some random data                                                                                        |
-| ALLOWED_EMAIL_DOMAINS=... | Restrict domains list (for example list here only organization domains). If empty - all domains are allowed |
+| Variable name         | Documentation                                                                                               |
+|-----------------------+-------------------------------------------------------------------------------------------------------------|
+| GOOGLE_CLIENT_ID      | Google Oauth credentials                                                                                    |
+| GOOGLE_CLIENT_SECRET  |                                                                                                             |
+| SECRET_KEY            | Secret key, must be specified                                                                               |
+| ALLOWED_EMAIL_DOMAINS | Restrict domains list (for example list here only organization domains). If empty - all domains are allowed |
 
 * Run
 
@@ -77,8 +120,10 @@ bb run fastapi
  - [X] Re-try modern React tutorial
  - [X] Start learning Udemy React course, take some first lessons
 
-*** TODO use FastAPI! use Google auth & ready Jira integration I have!
+*** DONE use FastAPI! use Google auth & ready Jira integration I have!
+    CLOSED: [2024-08-25 Sun 15:05]
     :LOGBOOK:
+    - State "DONE"       from "TODO"       [2024-08-25 Sun 15:05]
     CLOCK: [2024-08-18 Sun 20:26]--[2024-08-18 Sun 20:46] =>  0:20
     CLOCK: [2024-08-18 Sun 08:37]--[2024-08-18 Sun 20:26] => 11:49
     - State "TODO"       from              [2024-08-17 Sat 08:10]
@@ -88,7 +133,6 @@ bb run fastapi
  - https://github.com/hanchon-live/tutorial-fastapi-oauth
  - https://blog.hanchon.live/guides/google-login-with-fastapi/ (following)
  - https://docs.authlib.org/en/latest/client/starlette.html (works)
-
 
 *** TODO Use websocket for fast communication!
     :LOGBOOK:
@@ -128,21 +172,28 @@ bb run fastapi
    - State "DONE"       from "TODO"       [2024-08-25 Sun 07:05]
    - State "TODO"       from              [2024-08-17 Sat 08:25]
    :END:
-** TODO add running via bb.edn
+** WORKING add running via bb.edn
    :LOGBOOK:
+   - State "WORKING"    from "TODO"       [2024-08-25 Sun 15:05]
    - State "TODO"       from              [2024-08-25 Sun 12:10]
    :END:
  - Finish watching [[https://www.youtube.com/watch?v=u5ECoR7KT1Y][Babashka tasks (by Michiel Borkent)]] from /The London Clojurians are happy to present 3 years ago/
 
-** TODO Search for ticket (Estimate ticket screen) [0/7]
+** WORKING Search for ticket (Estimate ticket screen) [0/7]
    :LOGBOOK:
-   CLOCK: [2024-08-25 Sun 12:00]
+   - State "WORKING"    from "TODO"       [2024-08-25 Sun 15:05]
+   CLOCK: [2024-08-25 Sun 12:00]--[2024-08-25 Sun 13:29] =>  1:29
    - State "TODO"       from              [2024-08-25 Sun 07:05]
    :END:
 
  - [ ] Select library to make HTTP calls.
    - Trying https://github.com/lambdaisland/fetch
    - (this is an alternative to try) https://github.com/r0man/cljs-http?tab=readme-ov-file
+     #+begin_src verb
+     GET https://api.github.com/users?since=135
+     User-agent: emacs
+     #+end_src
+
    - some people suggest to use Axios directly from Clojurescript.
  - [ ] Make a stub function on FastAPI side for now.
  - [ ] Do a call via function

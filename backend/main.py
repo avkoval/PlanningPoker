@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, NamedTuple
 
 from authlib.integrations.starlette_client import (  # type: ignore[import]
     OAuth, OAuthError)
@@ -83,3 +83,16 @@ async def auth(request: Request):
         )
     request.session['access_token'] = access_token
     return RedirectResponse('/app/')
+
+
+class SearchResults(NamedTuple):
+    ticket_no: str = ""
+    subject: str = ""
+
+
+@app.get('/jira/search')
+async def search(request: Request, q: str) -> List[SearchResults]:
+    return [
+        SearchResults('JIRA-2201', 'subject ...'),
+        SearchResults('JIRA-2202', 'subject2 ...'),
+    ]

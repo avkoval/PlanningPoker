@@ -1,19 +1,20 @@
 (ns app.core
-  (:require
-    [cljs.spec.alpha :as s]
-    [uix.core :as uix :refer [defui $]]
-    [uix.dom]
-    [app.hooks :as hooks]
-    [app.subs]
-    [app.handlers]
-    [app.fx]
-    [app.db]
-    [re-frame.core :as rf]
-   ;;[kitchen-async.promise :as p]
-   ;; [lambdaisland.fetch :as fetch]
-    [cljs-http.client :as http]
-    [cljs.core.async :refer [<!]]
-    ))
+  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require [cljs.spec.alpha :as s]
+            [uix.core :as uix :refer [defui $]]
+            [uix.dom]
+            [app.hooks :as hooks]
+            [app.subs]
+            [app.handlers]
+            [app.fx]
+            [app.db]
+            [re-frame.core :as rf]
+            ;;[kitchen-async.promise :as p]
+            ;; [lambdaisland.fetch :as fetch]
+            [cljs-http.client :as http]
+            [cljs.core.async :refer [<!]]
+            [lambdaisland.uri :refer [uri join]]
+            ))
 
 ;; (defui header []
 ;;   ($ :header.app-header
@@ -109,6 +110,28 @@
 
 ;;(ticket-search "aaa")
 
+;; (def result-ref (atom nil))
+;; (defn into-ref [chan]
+;;   (go (reset! result-ref (<! chan))))
+;; (into-ref
+;;   (http/get "http://localhost:8000/jira/search?q=123"
+;;     {:query-params
+;;      {"q" "123"}}))
+;; @result-ref
+
+(def app-uri
+  (uri
+   (. (. js/document -location) -href)))
+
+(def api-url-base
+  (str (:scheme app-uri) "://" (:host app-uri) (if (nil? (:port app-uri)) "" (str ":" (:port app-uri)))))
+
+(defn search-tickets [query]
+  (http/get (str api-url-base "/jira/search")
+            {:query-params {"q" query}})
+)
+
+
 (defui navbar []
   ($ :nav.navbar {:role "navigation" :area-label="main navigation"}
      ($ :a.navbar-burger {:role "button" :aria-label "menu" :aria-expanded "false" :data-target "navbarBasicExample"}
@@ -146,12 +169,12 @@
         ))
 )
 
-(defui enter-ticket-no 
+(defui enter-ticket-no
   "Search for ticket"
   []
   (let [[q set-q!] (uix/use-state "")]
     ($ :div.ticket-search
-       ($ :section.section 
+       ($ :section.section
           ($ :container.has-text-centered
              ($ :h2.title "Estimate ticket")
              ))
@@ -160,15 +183,15 @@
           ($ :div.column
              ($ :div.field
                 ($ :label.label "Jira Ticket Search:")
-                ($ :div.control 
-                   ($ :input.input {:type "text" 
+                ($ :div.control
+                   ($ :input.input {:type "text"
                                     :value q
                                     :placeholder "Enter ticket number or subject"
                                     :on-change (fn [^js e]
                                                  (set-q! (.. e -target -value)))
                                     }))))
           ($ :div.column)
-          )))  
+          )))
   )
 
 (defui app []
