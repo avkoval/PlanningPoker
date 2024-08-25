@@ -1,10 +1,8 @@
-import os
-from functools import lru_cache
-from typing import Annotated, List
+from typing import List
 
 from authlib.integrations.starlette_client import (  # type: ignore[import]
     OAuth, OAuthError)
-from fastapi import Depends, FastAPI, Request
+from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -35,7 +33,7 @@ oauth.register(
 
 app = FastAPI()
 
-SECRET_KEY = os.environ.get('SECRET_KEY') or None
+SECRET_KEY = settings.secret_key
 if SECRET_KEY is None:
     raise Exception('Missing SECRET_KEY')
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
@@ -53,7 +51,8 @@ async def home(request: Request):
     notifications: List = []
     if 'access_token' in request.session:
         domain = request.session['access_token']['userinfo']['email'].split('@')[1]
-        if domain not in settings.allowed_email_domains.split(','):
+        allowed_domains = [d for d in settings.allowed_email_domains.split(',') if d != '']
+        if len(allowed_domains) and domain not in allowed_domains:
             msg = f"Domain not allowed: {domain} for user {request.session['access_token']['userinfo']['email']}"
             notifications.append({'type': 'danger', 'text': msg})
         else:

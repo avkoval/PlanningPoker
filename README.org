@@ -1,3 +1,7 @@
+#+AUTHOR: avkoval (ok)
+#+TITLE: Planning Poker
+#+SETUPFILE: https://raw.githubusercontent.com/fniessen/org-html-themes/master/org/theme-readtheorg.setup
+#+OPTIONS: num:nil toc:t ^:nil
 
 * What is this
 
@@ -8,12 +12,36 @@ any of them, and actually the work I do here is mostly for my personal skills
 development.
 
 * Install
+
+* Setup
+
+  Copy & edit contents of .env file: setup variables
+
+#+begin_example
+cp .env-example .env
+#+end_example
+  
+  To do this you will need to create Google Project and obtain Oauth authorization keys.
+
+** Available settings
+
+| Variable name             | Documentation                                                                                               |
+|---------------------------+-------------------------------------------------------------------------------------------------------------|
+| GOOGLE_CLIENT_ID=...      | Google Oauth credentials                                                                                    |
+| GOOGLE_CLIENT_SECRET=...  |                                                                                                             |
+| SECRET_KEY=...            | Put some random data                                                                                        |
+| ALLOWED_EMAIL_DOMAINS=... | Restrict domains list (for example list here only organization domains). If empty - all domains are allowed |
+
 * Run
 
-  #+begin_example
-  source .export.env
-  poetry run fastapi dev main.py
-  #+end_example
+#+begin_example
+poetry run fastapi dev backend/main.py
+#+end_example
+
+(if you have babashka installed):
+#+begin_example
+bb run fastapi
+#+end_example
 
 * WORKING Planning poker for Fieldhub
   SCHEDULED: <2024-08-17 Sat>
@@ -51,7 +79,7 @@ development.
 
 *** TODO use FastAPI! use Google auth & ready Jira integration I have!
     :LOGBOOK:
-    CLOCK: [2024-08-18 Sun 20:26]
+    CLOCK: [2024-08-18 Sun 20:26]--[2024-08-18 Sun 20:46] =>  0:20
     CLOCK: [2024-08-18 Sun 08:37]--[2024-08-18 Sun 20:26] => 11:49
     - State "TODO"       from              [2024-08-17 Sat 08:10]
     :END:
@@ -82,20 +110,47 @@ development.
  * [ ] Strike for users who voted
  * [ ] Reveal cards with some visual effect
 
-** TODO Bootstrap: FastAPI + UIx^2 in one folder & dev/prod start/deploy/+sentry/+logging
+** DONE Bootstrap: FastAPI + UIx^2 in one folder & dev/prod start/deploy/+sentry/+logging
+   CLOSED: [2024-08-25 Sun 07:05]
    :LOGBOOK:
+   - State "DONE"       from "TODO"       [2024-08-25 Sun 07:05]
    CLOCK: [2024-08-17 Sat 10:04]--[2024-08-17 Sat 10:24] =>  0:20
    - State "TODO"       from              [2024-08-17 Sat 08:20]
    :END:
 
 - [X] Install fastapi via poetry
 - [X] Bootstrap UIX^2 project
-- [ ] Add/commit to git
+- [X] Add/commit to git
 - [ ] Publish on github
-** TODO Google auth & JWT token
+** DONE Google auth & JWT token (or session cookie)
+   CLOSED: [2024-08-25 Sun 07:05]
    :LOGBOOK:
+   - State "DONE"       from "TODO"       [2024-08-25 Sun 07:05]
    - State "TODO"       from              [2024-08-17 Sat 08:25]
    :END:
+** TODO add running via bb.edn
+   :LOGBOOK:
+   - State "TODO"       from              [2024-08-25 Sun 12:10]
+   :END:
+ - Finish watching [[https://www.youtube.com/watch?v=u5ECoR7KT1Y][Babashka tasks (by Michiel Borkent)]] from /The London Clojurians are happy to present 3 years ago/
+
+** TODO Search for ticket (Estimate ticket screen) [0/7]
+   :LOGBOOK:
+   CLOCK: [2024-08-25 Sun 12:00]
+   - State "TODO"       from              [2024-08-25 Sun 07:05]
+   :END:
+
+ - [ ] Select library to make HTTP calls.
+   - Trying https://github.com/lambdaisland/fetch
+   - (this is an alternative to try) https://github.com/r0man/cljs-http?tab=readme-ov-file
+   - some people suggest to use Axios directly from Clojurescript.
+ - [ ] Make a stub function on FastAPI side for now.
+ - [ ] Do a call via function
+ - [ ] Connect results it via ~use-effect~ or somehow else? Read docs and do!
+ - [ ] Write async python function with results caching on FastAPI
+ - [ ] Fine tune the display results
+ - [ ] Enter - key event or Mouse on-click on the item - change the screen to the voting
+
 ** TODO List tickets from Jira by search criteria
    :LOGBOOK:
    - State "TODO"       from              [2024-08-17 Sat 08:25]
