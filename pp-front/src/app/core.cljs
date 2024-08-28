@@ -119,6 +119,13 @@
 ;;      {"q" "123"}}))
 ;; @result-ref
 
+(comment 
+  (go (let [response (<! (http/get "https://api.github.com/users"
+                                   {:with-credentials? false
+                                    :query-params {"since" 135}}))]
+        (prn (:status response))
+        (prn (map :login (:body response))))))
+
 (def app-uri
   (uri
    (. (. js/document -location) -href)))
@@ -127,10 +134,15 @@
   (str (:scheme app-uri) "://" (:host app-uri) (if (nil? (:port app-uri)) "" (str ":" (:port app-uri)))))
 
 (defn search-tickets [query]
-  (http/get (str api-url-base "/jira/search")
-            {:query-params {"q" query}})
-)
+  (go (let [response (<! (http/get (str api-url-base "/jira/search")
+                                   {:query-params {"q" query}}))
+            body (:body response)
+            ]
+        (js/console.log (clj->js body))
+        ))
+  )
 
+(search-tickets "aaa")
 
 (defui navbar []
   ($ :nav.navbar {:role "navigation" :area-label="main navigation"}
@@ -169,10 +181,33 @@
         ))
 )
 
+(def SEARCH_STARTS_AT 5)
+(def SEARCH_DELAY 1500)
+
 (defui enter-ticket-no
   "Search for ticket"
   []
-  (let [[q set-q!] (uix/use-state "")]
+  (let [[q set-q!] (uix/use-state "")
+        [tickets set-tickets!]  (uix/use-state [])
+        [last-query set-last-query!]  (uix/use-state "")
+        [last-query-time set-last-query-time!] (uix/use-state 0)
+        timestamp (.now js/Date)]
+    (uix/use-effect 
+     (fn []
+       (when (and (> (count q) SEARCH_STARTS_AT) (not (= q last-query)) (or (= 0 last-query-time) (> (- timestamp last-query-time) SEARCH_DELAY)))
+         (go (let [response (<! (http/get (str api-url-base "/jira/search")
+                                          {:query-params {"q" q}}))
+                   body (:body response)
+                   ]
+               (js/console.log "Query finished" tickets " diff " (- timestamp last-query-time) (> (- timestamp last-query-time) SEARCH_DELAY))
+               (set-tickets! body)
+               (set-last-query! q)
+               (set-last-query-time! timestamp))))
+       (when (< (- timestamp last-query-time) SEARCH_DELAY)
+         (js/setTimeout #(set-last-query-time! 0) SEARCH_DELAY)
+         )
+       js/undefined))
+    (js/console.log "ok-2024-08-28-1724872598 " (count tickets) (clj->js tickets))
     ($ :div.ticket-search
        ($ :section.section
           ($ :container.has-text-centered
@@ -190,9 +225,19 @@
                                     :on-change (fn [^js e]
                                                  (set-q! (.. e -target -value)))
                                     }))))
-          ($ :div.column)
-          )))
+          ($ :div.column))
+       ($ :table.table
+          ($ :tbody
+             (for [ticket tickets] ($ :tr {:key (str "tr-" (:key ticket))} 
+                                      ($ :td {:key (str "key-" (:key ticket))} ($ :a {:href (:url ticket) :target "_blank"} (:key ticket)))
+                                      ($ :td {:key (str "su-" (:key ticket))} (:summary ticket))
+                                      )))
+
+          )
+))
   )
+
+
 
 (defui app []
   ($ :div.container {:class "hero is-fullheight"}

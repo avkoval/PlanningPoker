@@ -6,5 +6,8 @@ class Settings(BaseSettings):
     google_client_id: str = ""
     google_client_secret: str = ""
     secret_key: str = ""
+    jira_token: str = ""
+    jira_user_email: str = ""
+    jira_server: str = ""
 
     model_config = SettingsConfigDict(env_file=".env")

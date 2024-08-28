@@ -140,7 +140,7 @@ bb run fastapi
     :END:
 
  - FastAPI provides support: 
-** TODO UI functional implementation [0/6]
+** UI Plan on functional implementation [0/6]
    :LOGBOOK:
    - State "TODO"       from              [2024-08-17 Sat 08:10]
    :END:
@@ -172,35 +172,56 @@ bb run fastapi
    - State "DONE"       from "TODO"       [2024-08-25 Sun 07:05]
    - State "TODO"       from              [2024-08-17 Sat 08:25]
    :END:
-** WORKING add running via bb.edn
+** DONE add running via bb.edn
+   CLOSED: [2024-08-27 Tue 06:15]
    :LOGBOOK:
+   - State "DONE"       from "WORKING"    [2024-08-27 Tue 06:15]
    - State "WORKING"    from "TODO"       [2024-08-25 Sun 15:05]
    - State "TODO"       from              [2024-08-25 Sun 12:10]
    :END:
  - Finish watching [[https://www.youtube.com/watch?v=u5ECoR7KT1Y][Babashka tasks (by Michiel Borkent)]] from /The London Clojurians are happy to present 3 years ago/
 
-** WORKING Search for ticket (Estimate ticket screen) [0/7]
+** WORKING Search for ticket (Estimate ticket screen) [4/7]            :verb:
    :LOGBOOK:
+   CLOCK: [2024-08-28 Wed 21:22]--[2024-08-28 Wed 23:22] =>  2:00
+   CLOCK: [2024-08-28 Wed 05:30]--[2024-08-28 Wed 07:00] =>  1:30
+   CLOCK: [2024-08-27 Tue 21:30]--[2024-08-27 Tue 21:55] =>  0:25
    - State "WORKING"    from "TODO"       [2024-08-25 Sun 15:05]
    CLOCK: [2024-08-25 Sun 12:00]--[2024-08-25 Sun 13:29] =>  1:29
    - State "TODO"       from              [2024-08-25 Sun 07:05]
    :END:
 
- - [ ] Select library to make HTTP calls.
-   - Trying https://github.com/lambdaisland/fetch
-   - (this is an alternative to try) https://github.com/r0man/cljs-http?tab=readme-ov-file
-     #+begin_src verb
-     GET https://api.github.com/users?since=135
-     User-agent: emacs
-     #+end_src
+ - [X] Make a stub function on FastAPI side for now.
+ - [X] Select library to make HTTP calls.
+   A) Trying https://github.com/lambdaisland/fetch
+   B) [X] (this is an alternative to try) https://github.com/r0man/cljs-http?tab=readme-ov-file
+      #+begin_src verb
+      GET https://api.github.com/users?since=135
+      User-agent: emacs
+      #+end_src
+      * [2024-08-27 Tue 09:25] I am having difficulties to connect async nature of core-async channels (same as promises?)
+        to the actual useEffect or anything. Reading...
+        * [[https://stackoverflow.com/questions/71174509/proper-async-await-syntax-for-fetching-data-using-useeffect-hook-in-react][async in useEffect]]
+        * [[https://pitch-io.github.io/uix/docs/hooks.html][Uix on hooks]]
+        * [[https://react.dev/learn/adding-interactivity][React event handlers]]
+        * [[https://clojure.org/guides/async_walkthrough][core.async Walkthrough]]
 
-   - some people suggest to use Axios directly from Clojurescript.
- - [ ] Make a stub function on FastAPI side for now.
- - [ ] Do a call via function
- - [ ] Connect results it via ~use-effect~ or somehow else? Read docs and do!
- - [ ] Write async python function with results caching on FastAPI
+   C) some people suggest to use Axios directly from Clojurescript.
+ - [X] Do a call via function
+ - [X] Connect results it via ~use-effect~ or somehow else? Read docs and do!
  - [ ] Fine tune the display results
+ - [ ] Write async python function with results caching on FastAPI
  - [ ] Enter - key event or Mouse on-click on the item - change the screen to the voting
+
+** TODO Voting screen
+   :LOGBOOK:
+   - State "TODO"       from              [2024-08-28 Wed 23:25]
+   :END:
+
+** TODO Websocket coordination
+   :LOGBOOK:
+   - State "TODO"       from              [2024-08-28 Wed 23:25]
+   :END:
 
 ** TODO List tickets from Jira by search criteria
    :LOGBOOK:

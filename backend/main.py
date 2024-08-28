@@ -6,6 +6,8 @@ from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from jira import JIRA
+from pydantic import BaseModel
 from starlette.config import Config
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import RedirectResponse
@@ -41,6 +43,13 @@ app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 app.mount("/app/", StaticFiles(directory="pp-front/public", html=True), name="app")
 app.mount("/static/", StaticFiles(directory="static", html=True), name="static")
 favicon_path = 'static/favicon.ico'
+
+jira = JIRA(
+    options={
+        "server": settings.jira_server
+    },
+    basic_auth=(settings.jira_user_email, settings.jira_token)
+)
 
 
 templates = Jinja2Templates(directory="templates")
@@ -85,14 +94,16 @@ async def auth(request: Request):
     return RedirectResponse('/app/')
 
 
-class SearchResults(NamedTuple):
-    ticket_no: str = ""
-    subject: str = ""
+class SearchResult(BaseModel):
+    key: str = ""
+    url: str = ""
+    summary: str = ""
 
 
 @app.get('/jira/search')
-async def search(request: Request, q: str) -> List[SearchResults]:
-    return [
-        SearchResults('JIRA-2201', 'subject ...'),
-        SearchResults('JIRA-2202', 'subject2 ...'),
-    ]
+def search(request: Request, q: str) -> List[SearchResult]:
+    search = f'text ~ "{q}"'
+    if '-' in q and q.index('-') == 2:
+        search = f'key = "{q}"'
+    return [{'key': issue.key, 'summary': issue.fields.summary, 'url': issue.permalink()}
+           for issue in jira.search_issues(search)]
