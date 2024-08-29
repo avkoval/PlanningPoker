@@ -42,6 +42,8 @@ app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 
 app.mount("/app/", StaticFiles(directory="pp-front/public", html=True), name="app")
 app.mount("/static/", StaticFiles(directory="static", html=True), name="static")
+app.mount("/js/", StaticFiles(directory="pp-front/public/js/", html=True), name="static")
+
 favicon_path = 'static/favicon.ico'
 
 jira = JIRA(
@@ -98,6 +100,7 @@ class SearchResult(BaseModel):
     key: str = ""
     url: str = ""
     summary: str = ""
+    type: str=""
 
 
 @app.get('/jira/search')
@@ -105,5 +108,9 @@ def search(request: Request, q: str) -> List[SearchResult]:
     search = f'text ~ "{q}"'
     if '-' in q and q.index('-') == 2:
         search = f'key = "{q}"'
-    return [{'key': issue.key, 'summary': issue.fields.summary, 'url': issue.permalink()}
+    return [{'key': issue.key,
+             'summary': issue.fields.summary,
+             'url': issue.permalink(),
+             'type': str(issue.fields.issuetype)}
            for issue in jira.search_issues(search)]
+

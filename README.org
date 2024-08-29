@@ -181,7 +181,7 @@ bb run fastapi
    :END:
  - Finish watching [[https://www.youtube.com/watch?v=u5ECoR7KT1Y][Babashka tasks (by Michiel Borkent)]] from /The London Clojurians are happy to present 3 years ago/
 
-** WORKING Search for ticket (Estimate ticket screen) [4/7]            :verb:
+** WORKING Search for ticket (Estimate ticket screen) [4/8]            :verb:
    :LOGBOOK:
    CLOCK: [2024-08-28 Wed 21:22]--[2024-08-28 Wed 23:22] =>  2:00
    CLOCK: [2024-08-28 Wed 05:30]--[2024-08-28 Wed 07:00] =>  1:30
@@ -207,6 +207,8 @@ bb run fastapi
         * [[https://clojure.org/guides/async_walkthrough][core.async Walkthrough]]
 
    C) some people suggest to use Axios directly from Clojurescript.
+ - [ ] Display nice formatted results
+   - https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-type-properties/#api-rest-api-3-issuetype-issuetypeid-properties-get
  - [X] Do a call via function
  - [X] Connect results it via ~use-effect~ or somehow else? Read docs and do!
  - [ ] Fine tune the display results

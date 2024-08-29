@@ -14,6 +14,7 @@
             [cljs-http.client :as http]
             [cljs.core.async :refer [<!]]
             [lambdaisland.uri :refer [uri join]]
+            [clojure.string :as str]
             ))
 
 ;; (defui header []
@@ -145,7 +146,7 @@
 (search-tickets "aaa")
 
 (defui navbar []
-  ($ :nav.navbar {:role "navigation" :area-label="main navigation"}
+  ($ :nav.navbar {:role "navigation" :aria-label "main navigation"}
      ($ :a.navbar-burger {:role "button" :aria-label "menu" :aria-expanded "false" :data-target "navbarBasicExample"}
         ($ :span {:aria-hidden "true"})
         ($ :span {:aria-hidden "true"})
@@ -208,9 +209,10 @@
          )
        js/undefined))
     (js/console.log "ok-2024-08-28-1724872598 " (count tickets) (clj->js tickets))
+    
     ($ :div.ticket-search
        ($ :section.section
-          ($ :container.has-text-centered
+          ($ :div.container {:class "has-text-centered"}
              ($ :h2.title "Estimate ticket")
              ))
        ($ :div.columns {:class "pl-3 pr-3"}
@@ -226,16 +228,20 @@
                                                  (set-q! (.. e -target -value)))
                                     }))))
           ($ :div.column))
-       ($ :table.table
-          ($ :tbody
-             (for [ticket tickets] ($ :tr {:key (str "tr-" (:key ticket))} 
-                                      ($ :td {:key (str "key-" (:key ticket))} ($ :a {:href (:url ticket) :target "_blank"} (:key ticket)))
-                                      ($ :td {:key (str "su-" (:key ticket))} (:summary ticket))
-                                      )))
-
-          )
-))
-  )
+       (when (> (count tickets) 0)
+         ($ :table.table
+            ($ :thead ($ :tr 
+                         ($ :th "Key")
+                         ($ :th "Summary")
+                         ($ :th "Type")
+                         ))
+            ($ :tbody
+               (for [ticket tickets] ($ :tr {:key (str "tr-" (:key ticket))} 
+                                        ($ :td {:key (str "key-" (:key ticket))}
+                                           ($ :a {:href (:url ticket) :target "_blank"} (:key ticket)))
+                                        ($ :td {:key (str "su-" (:key ticket))} (:summary ticket))
+                                        ($ :td ($ :img {:width 15 :src (str "/static/img/jira-ticket/" (str/lower-case (:type ticket)) ".png")}) " " (:type ticket))
+                                        ))))))))
 
 
 
