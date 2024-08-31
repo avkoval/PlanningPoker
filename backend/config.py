@@ -9,5 +9,6 @@ class Settings(BaseSettings):
     jira_token: str = ""
     jira_user_email: str = ""
     jira_server: str = ""
+    limit_to_project: str = ""
 
     model_config = SettingsConfigDict(env_file=".env")

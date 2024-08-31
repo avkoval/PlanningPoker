@@ -1,5 +1,6 @@
-from typing import List, NamedTuple
+from typing import Any, List
 
+import starlette.status as status
 from authlib.integrations.starlette_client import (  # type: ignore[import]
     OAuth, OAuthError)
 from fastapi import FastAPI, Request
@@ -7,6 +8,9 @@ from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jira import JIRA
+from jira.client import ResultList
+from jira.exceptions import JIRAError
+from jira.resources import Issue
 from pydantic import BaseModel
 from starlette.config import Config
 from starlette.middleware.sessions import SessionMiddleware
@@ -84,6 +88,36 @@ async def login(request: Request):
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
 
+@app.post('/logout')
+async def logout(request: Request):
+    if 'access_token' in request.session:
+        del request.session['access_token']
+    return RedirectResponse('/', status_code=status.HTTP_302_FOUND)
+
+
+class UserInfo(BaseModel):
+    logged_in: bool = False
+    email: str | None = None
+    family_name: str | None = None
+    given_name: str | None = None
+    name: str | None = None
+    picture: str | None = None
+
+
+@app.get('/userInfo')
+async def user_info(request: Request) -> UserInfo:
+    if not request.session.get('access_token'):
+        return UserInfo()
+    userinfo = request.session['access_token']['userinfo']
+    return UserInfo(
+        email=userinfo['email'],
+        family_name=userinfo['family_name'],
+        given_name=userinfo['given_name'],
+        name=userinfo['name'],
+        picture=userinfo['picture'],
+    )
+
+
 @app.route('/auth')
 async def auth(request: Request):
     try:
@@ -96,21 +130,40 @@ async def auth(request: Request):
     return RedirectResponse('/app/')
 
 
-class SearchResult(BaseModel):
+class FoundIssue(BaseModel):
     key: str = ""
     url: str = ""
     summary: str = ""
-    type: str=""
+    type: str = ""
+    original_estimate: int | None = None
 
 
 @app.get('/jira/search')
-def search(request: Request, q: str) -> List[SearchResult]:
+def search(request: Request, q: str) -> List[FoundIssue]:
+    if not request.session.get('access_token'):
+        return []
+
+    issues: List | dict[str, Any] | ResultList[Issue] = []
+    q = q.strip()
+
     search = f'text ~ "{q}"'
     if '-' in q and q.index('-') == 2:
         search = f'key = "{q}"'
-    return [{'key': issue.key,
-             'summary': issue.fields.summary,
-             'url': issue.permalink(),
-             'type': str(issue.fields.issuetype)}
-           for issue in jira.search_issues(search)]
+    if settings.limit_to_project:
+        search += f' and project={settings.limit_to_project}'
 
+    try:
+        issues = jira.search_issues(search)
+    except JIRAError as e:
+        print(q, ' => ', e.text)
+    
+    return [
+        FoundIssue(  # FIXME return type of `jira.search_issues` has some problem
+            key=issue.key,  # type: ignore
+            summary=issue.fields.summary,  # type: ignore
+            url=issue.permalink(),  # type: ignore
+            type=str(issue.fields.issuetype),  # type: ignore
+            original_estimate=issue.fields.timeoriginalestimate,  # type: ignore
+        )  # type: ignore
+        for issue in issues
+    ]

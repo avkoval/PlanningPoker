@@ -181,8 +181,10 @@ bb run fastapi
    :END:
  - Finish watching [[https://www.youtube.com/watch?v=u5ECoR7KT1Y][Babashka tasks (by Michiel Borkent)]] from /The London Clojurians are happy to present 3 years ago/
 
-** WORKING Search for ticket (Estimate ticket screen) [4/8]            :verb:
+** WORKING Search for ticket (Estimate ticket screen) [10/12]          :verb:
    :LOGBOOK:
+   CLOCK: [2024-08-31 Sat 14:10]--[2024-08-31 Sat 16:10] =>  2:00
+   CLOCK: [2024-08-30 Fri 07:25]--[2024-08-30 Fri 10:56] =>  3:31
    CLOCK: [2024-08-29 Thu 08:05]--[2024-08-29 Thu 10:05] =>  2:00
    CLOCK: [2024-08-28 Wed 21:22]--[2024-08-28 Wed 23:22] =>  2:00
    CLOCK: [2024-08-28 Wed 05:30]--[2024-08-28 Wed 07:00] =>  1:30
@@ -206,15 +208,21 @@ bb run fastapi
         * [[https://pitch-io.github.io/uix/docs/hooks.html][Uix on hooks]]
         * [[https://react.dev/learn/adding-interactivity][React event handlers]]
         * [[https://clojure.org/guides/async_walkthrough][core.async Walkthrough]]
+        * [[https://stackoverflow.com/questions/56028913/usememo-vs-useeffect-usestate][useMemo vs. useEffect + useState]]
+        * https://www.freecodecamp.org/news/how-to-work-with-usememo-in-react/
 
    C) some people suggest to use Axios directly from Clojurescript.
- - [ ] Display nice formatted results
+ - [X] Display nice formatted results
    - https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-type-properties/#api-rest-api-3-issuetype-issuetypeid-properties-get
  - [X] Do a call via function
  - [X] Connect results it via ~use-effect~ or somehow else? Read docs and do!
- - [ ] Fine tune the display results
+ - [X] Fine tune the display results
+ - [X] Show estimates column
+ - [X] Limit to a project via settings
+ - [X] Add button to ticket details & estimation process
+ - [X] Logout button
  - [ ] Write async python function with results caching on FastAPI
- - [ ] Enter - key event or Mouse on-click on the item - change the screen to the voting
+ - [ ] switch to voting screen
 
 ** TODO Voting screen
    :LOGBOOK:
