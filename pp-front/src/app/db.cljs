@@ -1,4 +1,8 @@
 (ns app.db)
 
 (def default-db
-  {:todos (sorted-map-by >)})
+  {:current-screen "search"
+   :estimate-ticket nil
+   :voting-results []
+   :members-online []
+   })

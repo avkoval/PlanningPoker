@@ -83,12 +83,8 @@
         [tickets set-tickets!]  (uix/use-state [])
         [last-query set-last-query!]  (uix/use-state "")
         [last-query-time set-last-query-time!] (uix/use-state 0)
-        [last-query-tickets set-last-query-tickets!] (uix/use-state [])
         timestamp (.now js/Date)]
 
-    ;; (uix/use-memo 
-    ;;  (fn []
-    ;;    ) )
     (uix/use-effect 
      (fn []
        (when (and (> (count q) SEARCH_STARTS_AT) (not (= q last-query)) (or (= 0 last-query-time) (> (- timestamp last-query-time) SEARCH_DELAY)))
@@ -99,8 +95,7 @@
                (js/console.log "Query finished" tickets " diff " (- timestamp last-query-time) (> (- timestamp last-query-time) SEARCH_DELAY))
                (set-tickets! body)
                (set-last-query! q)
-               (set-last-query-time! timestamp)
-               (set-last-query-tickets! body))))
+               (set-last-query-time! timestamp))))
        (when (< (- timestamp last-query-time) SEARCH_DELAY)
          (js/setTimeout #(set-last-query-time! 0) SEARCH_DELAY)
          )
@@ -141,16 +136,24 @@
                                         ($ :td {:key (str "su-" (:key ticket))} (:summary ticket))
                                         ($ :td ($ :img {:width 15 :src (str "/static/img/jira-ticket/" (str/lower-case (:type ticket)) ".png")}) " " (:type ticket))
                                         ($ :td (:original_estimate ticket))
-                                        ($ :td ($ :button.button  "⏲"))
+                                        ($ :td ($ :button.button {:on-click (fn [^js e] (js/console.log e))} "⏲"))
                                         ))))))))
 
 
+(defui vote []
+  ($ :div "Lets vote!")
+  )
+
 
 (defui app []
-  ($ :div.container {:class "hero is-fullheight"}
-     ($ navbar)
-     ($ enter-ticket-no)
-     ($ footer)))
+  (let [current-screen (hooks/use-subscribe [:app/current-screen])]
+    ($ :div.container {:class "hero is-fullheight"}
+       ($ navbar)
+       (case current-screen
+         "search" ($ enter-ticket-no)
+         "vote" ($ vote)
+         ($ :div.notification {:class "is-info"} "no screen selected"))
+       ($ footer))))
 
 (defonce root
   (uix.dom/create-root (js/document.getElementById "root")))

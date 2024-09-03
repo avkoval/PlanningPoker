@@ -32,3 +32,8 @@
   (fn [db [_ created-at]]
     (update-in db [:todos created-at :status] {:unresolved :resolved
                                                :resolved :unresolved})))
+
+;; (rf/reg-event-db :todo/start-voting
+;;   [store-todos]
+;;   (fn [db [_ created-at text]]
+;;     (assoc-in db [:todos created-at :text] text)))

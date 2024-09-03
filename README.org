@@ -55,7 +55,6 @@ Directory tree
 
 #+end_example
 * Install
-
 * Setup
 
   Copy & edit contents of .env file: setup variables
@@ -183,6 +182,7 @@ bb run fastapi
 
 ** WORKING Search for ticket (Estimate ticket screen) [10/12]          :verb:
    :LOGBOOK:
+   CLOCK: [2024-09-03 Tue 08:52]--[2024-09-03 Tue 09:52] =>  1:00
    CLOCK: [2024-08-31 Sat 14:10]--[2024-08-31 Sat 16:10] =>  2:00
    CLOCK: [2024-08-30 Fri 07:25]--[2024-08-30 Fri 10:56] =>  3:31
    CLOCK: [2024-08-29 Thu 08:05]--[2024-08-29 Thu 10:05] =>  2:00
@@ -221,8 +221,8 @@ bb run fastapi
  - [X] Limit to a project via settings
  - [X] Add button to ticket details & estimation process
  - [X] Logout button
- - [ ] Write async python function with results caching on FastAPI
- - [ ] switch to voting screen
+ - [ ] Switch to voting screen
+ - [ ] Async python function with results caching on FastAPI / (memoize | Redis)
 
 ** TODO Voting screen
    :LOGBOOK:
