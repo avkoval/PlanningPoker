@@ -7,6 +7,7 @@
 
 (rf/reg-sub :app/current-screen
   (fn [db _]
+    (js/console.log db)
     (:current-screen db)))
 
 (rf/reg-sub :app/estimate-ticket

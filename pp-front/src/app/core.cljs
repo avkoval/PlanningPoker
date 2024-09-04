@@ -5,7 +5,7 @@
             [uix.dom]
             [app.hooks :as hooks]
             [app.subs]
-            [app.handlers]
+            [app.handlers :as handlers]
             [app.fx]
             [app.db]
             [re-frame.core :as rf]
@@ -36,25 +36,26 @@
 (search-tickets "aaa")
 
 (defui navbar []
-  ($ :nav.navbar {:role "navigation" :aria-label "main navigation"}
-     ($ :a.navbar-burger {:role "button" :aria-label "menu" :aria-expanded "false" :data-target "navbarBasicExample"}
-        ($ :span {:aria-hidden "true"})
-        ($ :span {:aria-hidden "true"})
-        ($ :span {:aria-hidden "true"})
-        ($ :span {:aria-hidden "true"}))
-     ($ :div.navbar-menu
-        ($ :div.navbar-start
-           ($ :a.navbar-item {:href "/"} "Home")
-           ($ :a.navbar-item {:href "/static/docs/README.html" :target "_docs"} "Docs")
-           ($ :a.navbar-item "Estimate")
-           ($ :a.navbar-item "Browse tickets"))
-        ($ :div.navbar-end
-           ($ :div.navbar-item
-              ($ :div.buttons
-                 ($ :form {:method "post" :action "/logout"}
-                    ($ :button.button {:class "is-primary"}
-                       ($ :strong "Logout")))))
-           )))
+  (let [current-screen (hooks/use-subscribe [:app/current-screen])]
+    ($ :nav.navbar {:role "navigation" :aria-label "main navigation"}
+       ($ :a.navbar-burger {:role "button" :aria-label "menu" :aria-expanded "false" :data-target "navbarBasicExample"}
+          ($ :span {:aria-hidden "true"})
+          ($ :span {:aria-hidden "true"})
+          ($ :span {:aria-hidden "true"})
+          ($ :span {:aria-hidden "true"}))
+       ($ :div.navbar-menu
+          ($ :div.navbar-start
+             ($ :a.navbar-item {:href "/"} "Home")
+             ($ :a.navbar-item {:href "/static/docs/README.html" :target "_docs"} "Docs")
+             ($ :a.navbar-item {:class (if (= "estimate" current-screen) "is-active" "")} "Estimate")
+             ($ :a.navbar-item "Browse tickets"))
+          ($ :div.navbar-end
+             ($ :div.navbar-item
+                ($ :div.buttons
+                   ($ :form {:method "post" :action "/logout"}
+                      ($ :button.button {:class "is-primary"}
+                         ($ :strong "Logout")))))
+             ))))
 )
 
 (defui footer []
@@ -76,7 +77,7 @@
 (def SEARCH_STARTS_AT 5)
 (def SEARCH_DELAY 1500)
 
-(defui enter-ticket-no
+(defui browse-tickets
   "Search for ticket"
   []
   (let [[q set-q!] (uix/use-state "")
@@ -136,12 +137,12 @@
                                         ($ :td {:key (str "su-" (:key ticket))} (:summary ticket))
                                         ($ :td ($ :img {:width 15 :src (str "/static/img/jira-ticket/" (str/lower-case (:type ticket)) ".png")}) " " (:type ticket))
                                         ($ :td (:original_estimate ticket))
-                                        ($ :td ($ :button.button {:on-click (fn [^js e] (js/console.log e))} "⏲"))
+                                        ($ :td ($ :button.button {:on-click (fn [^js _] (rf/dispatch [::handlers/start-voting (:key ticket)]))} "⏲"))
                                         ))))))))
 
 
 (defui vote []
-  ($ :div "Lets vote!")
+  ($ :h3.title "Lets vote!")
   )
 
 
@@ -150,16 +151,16 @@
     ($ :div.container {:class "hero is-fullheight"}
        ($ navbar)
        (case current-screen
-         "search" ($ enter-ticket-no)
-         "vote" ($ vote)
-         ($ :div.notification {:class "is-info"} "no screen selected"))
+         "browse-tickets" ($ browse-tickets)
+         "estimate" ($ vote)
+         ($ :div.notification {:class "is-info"} (str "no screen selected /" current-screen)))
        ($ footer))))
 
 (defonce root
   (uix.dom/create-root (js/document.getElementById "root")))
 
 (defn render []
-  (rf/dispatch-sync [:app/init-db app.db/default-db])
+  (rf/dispatch-sync [::handlers/initialize-db])
   (uix.dom/render-root ($ app) root))
 
 (defn ^:export init []

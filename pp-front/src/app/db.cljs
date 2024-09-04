@@ -1,7 +1,7 @@
 (ns app.db)
 
 (def default-db
-  {:current-screen "search"
+  {:current-screen "browse-tickets"
    :estimate-ticket nil
    :voting-results []
    :members-online []

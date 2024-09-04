@@ -180,8 +180,9 @@ bb run fastapi
    :END:
  - Finish watching [[https://www.youtube.com/watch?v=u5ECoR7KT1Y][Babashka tasks (by Michiel Borkent)]] from /The London Clojurians are happy to present 3 years ago/
 
-** WORKING Search for ticket (Estimate ticket screen) [10/12]          :verb:
+** WORKING Search for ticket (Estimate ticket screen) [11/12]          :verb:
    :LOGBOOK:
+   CLOCK: [2024-09-04 Wed 07:23]--[2024-09-04 Wed 09:23] =>  2:00
    CLOCK: [2024-09-03 Tue 08:52]--[2024-09-03 Tue 09:52] =>  1:00
    CLOCK: [2024-08-31 Sat 14:10]--[2024-08-31 Sat 16:10] =>  2:00
    CLOCK: [2024-08-30 Fri 07:25]--[2024-08-30 Fri 10:56] =>  3:31
@@ -221,7 +222,7 @@ bb run fastapi
  - [X] Limit to a project via settings
  - [X] Add button to ticket details & estimation process
  - [X] Logout button
- - [ ] Switch to voting screen
+ - [X] Switch to voting screen
  - [ ] Async python function with results caching on FastAPI / (memoize | Redis)
 
 ** TODO Voting screen
