@@ -54,6 +54,18 @@ Directory tree
  `----- pyproject.toml
 
 #+end_example
+
+* Architecture & UI ideas [3/7]
+
+ - [X] FastAPI on Backend
+ - [X] UIX^2 on Frontend
+ - [X] .env configuration
+ - [ ] Local memory caching for retrieved Jira data
+ - [ ] Websocket for group actions
+ - [ ] Logging screen on frontend (from websocket log)
+   - [ ] "Vote accepted from ..."
+   - [ ] "User ... logged in"
+
 * Install
 * Setup
 
@@ -85,7 +97,7 @@ poetry run fastapi dev backend/main.py
 bb run fastapi
 #+end_example
 
-* WORKING Planning poker for Fieldhub
+* WORKING Work Log: Planning poker for Fieldhub
   SCHEDULED: <2024-08-17 Sat>
   :LOGBOOK:
   CLOCK: [2024-08-17 Sat 09:52]--[2024-08-17 Sat 10:04] =>  0:12
@@ -94,7 +106,6 @@ bb run fastapi
   - State "IDEA"       from "TODO"       [2024-08-17 Sat 08:05]
   - State "TODO"       from              [2024-08-17 Sat 07:55]
   :END:
-
 
 ** Technical design & architecture
 *** DONE View practically, Kit, Uix & bootstrap the project
@@ -225,10 +236,16 @@ bb run fastapi
  - [X] Switch to voting screen
  - [ ] Async python function with results caching on FastAPI / (memoize | Redis)
 
-** TODO Voting screen
+** WORKING Voting screen
    :LOGBOOK:
+   - State "WORKING"    from "TODO"       [2024-09-05 Thu 09:25]
+   CLOCK: [2024-09-05 Thu 07:30]--[2024-09-05 Thu 09:27] =>  1:57
    - State "TODO"       from              [2024-08-28 Wed 23:25]
    :END:
+
+ - [X] Menu is-active
+ - [X] Prepare FastAPI endpoint
+ - [ ] Display data on screen
 
 ** TODO Websocket coordination
    :LOGBOOK:

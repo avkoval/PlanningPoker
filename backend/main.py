@@ -156,7 +156,7 @@ def search(request: Request, q: str) -> List[FoundIssue]:
         issues = jira.search_issues(search)
     except JIRAError as e:
         print(q, ' => ', e.text)
-    
+
     return [
         FoundIssue(  # FIXME return type of `jira.search_issues` has some problem
             key=issue.key,  # type: ignore
@@ -167,3 +167,42 @@ def search(request: Request, q: str) -> List[FoundIssue]:
         )  # type: ignore
         for issue in issues
     ]
+
+
+class IssueDetail(BaseModel):
+    summary: str = ""
+    description: str = ""
+    updated: str = ""
+    issuetype: str = ""
+    priority: str = ""
+    reporter: str = ""
+    assignee: str = ""
+    aggregatetimespent: int = 0
+    comments: List[str] = []
+
+
+@app.get('/jira/info')
+def detail(request: Request, issue_key: str) -> IssueDetail | None:
+    if not request.session.get('access_token'):
+        return None
+    issue_key = issue_key.strip()
+    search = f'key = "{issue_key}"'
+    if settings.limit_to_project:
+        search += f' and project={settings.limit_to_project}'
+    try:
+        issue = jira.search_issues(search)[0]  # type: ignore
+    except IndexError:
+        return None
+    except JIRAError as e:
+        print(issue_key, ' => ', e.text)
+        return None
+    detail = IssueDetail(summary=issue.fields.summary,
+                         description=issue.fields.description or "",
+                         updated=issue.fields.updated,
+                         issuetype=str(issue.fields.issuetype),
+                         priority=str(issue.fields.priority),
+                         reporter=str(issue.fields.reporter),
+                         assignee=str(issue.fields.assignee),
+                         aggregatetimespent=issue.fields.aggregatetimespent,
+                         )
+    return detail

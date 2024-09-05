@@ -43,7 +43,6 @@
 (rf/reg-event-db 
  ::start-voting
   (fn [db [_ jira-ticket]]
-    (js/console.log "ok-2024-09-04-1725427629" jira-ticket)
     (-> db
             (assoc :estimate-ticket jira-ticket)
             (assoc :current-screen "estimate")

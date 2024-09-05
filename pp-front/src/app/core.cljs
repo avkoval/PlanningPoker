@@ -48,7 +48,8 @@
              ($ :a.navbar-item {:href "/"} "Home")
              ($ :a.navbar-item {:href "/static/docs/README.html" :target "_docs"} "Docs")
              ($ :a.navbar-item {:class (if (= "estimate" current-screen) "is-active" "")} "Estimate")
-             ($ :a.navbar-item "Browse tickets"))
+             ($ :a.navbar-item {:on-click (fn [^js _] (rf/dispatch [::handlers/browse-tickets]))
+                                :class (if (= "browse-tickets" current-screen) "is-active" "")} "Browse tickets"))
           ($ :div.navbar-end
              ($ :div.navbar-item
                 ($ :div.buttons
@@ -93,7 +94,6 @@
                                           {:query-params {"q" q}}))
                    body (:body response)
                    ]
-               (js/console.log "Query finished" tickets " diff " (- timestamp last-query-time) (> (- timestamp last-query-time) SEARCH_DELAY))
                (set-tickets! body)
                (set-last-query! q)
                (set-last-query-time! timestamp))))
@@ -101,7 +101,6 @@
          (js/setTimeout #(set-last-query-time! 0) SEARCH_DELAY)
          )
        js/undefined))
-    (js/console.log "ok-2024-08-28-1724872598 " (count tickets) (clj->js tickets))
     
     ($ :div.ticket-search
        ($ :section.section
