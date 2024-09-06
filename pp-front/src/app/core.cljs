@@ -24,16 +24,6 @@
 (def api-url-base
   (str (:scheme app-uri) "://" (:host app-uri) (if (nil? (:port app-uri)) "" (str ":" (:port app-uri)))))
 
-(defn search-tickets [query]
-  (go (let [response (<! (http/get (str api-url-base "/jira/search")
-                                   {:query-params {"q" query}}))
-            body (:body response)
-            ]
-        (js/console.log (clj->js body))
-        ))
-  )
-
-(search-tickets "aaa")
 
 (defui navbar []
   (let [current-screen (hooks/use-subscribe [:app/current-screen])]
@@ -167,19 +157,25 @@
             ($ :div.columns 
                ($ :div.column {:class "is-three-quarters"} 
                   ($ :table.table ($ :tbody 
-                               ($ :tr ($ :th.is-info "Key") ($ :td (:key info)))
-                               ($ :tr ($ :th "Summary") ($ :td (:summary info)))
-                               ($ :tr ($ :th "Assignee") ($ :td (:assignee info)))
-                               ($ :tr ($ :th "Reporter") ($ :td (:reporter info)))
-                               ($ :tr ($ :th "Type") ($ :td (:issuetype info)))
-                               ($ :tr ($ :th "Updated") ($ :td (:updated info)))
-                               ($ :tr ($ :th "Aggregate Time Spent") ($ :td (:aggregatetimespent info)))
-                               ))
-                  ($ :div.block
-                     ($ :h2.subtitle "Description")
-                     ($ :div.box (:description info)))
+                                     ($ :tr ($ :th "Key") ($ :a {:class "is-light" :href (:url info) :target "_blank"} ($ :td (:key info))))
+                                     ($ :tr ($ :th "Summary") ($ :td (:summary info)))
+                                     ($ :tr ($ :th "Assignee") ($ :td (:assignee info)))
+                                     ($ :tr ($ :th "Reporter") ($ :td (:reporter info)))
+                                     ($ :tr ($ :th "Type") ($ :td (:issuetype info)))
+                                     ($ :tr ($ :th "Updated") ($ :td (:updated info)))
+                                     ($ :tr ($ :th "Aggregate Time Spent") ($ :td (:aggregatetimespent info)))
+                                     ))
+                  
                   )
-               ($ :div.column "Vote here"))))
+               ($ :div.column ($ :h2.title "Your estimate (story points):")
+                  ($ :div.buttons 
+                     ($ :button.button "0.5") ($ :button.button "1") ($ :button.button "2") ($ :button.button "3") ($ :button.button "5") ($ :button.button "8")
+                     )
+                  ))
+            ($ :div.block
+                     ($ :h2.subtitle "Description")
+                     ($ :div.box #js {:dangerouslySetInnerHTML #js {:__html (:description info)}} ))
+            ))
       )
     ))
 

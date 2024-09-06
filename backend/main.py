@@ -1,5 +1,6 @@
 from typing import Any, List
 
+import markdown
 import starlette.status as status
 from authlib.integrations.starlette_client import (  # type: ignore[import]
     OAuth, OAuthError)
@@ -171,6 +172,7 @@ def search(request: Request, q: str) -> List[FoundIssue]:
 
 class IssueDetail(BaseModel):
     key: str = ""
+    url: str = ""
     summary: str = ""
     description: str = ""
     updated: str = ""
@@ -199,8 +201,9 @@ def detail(request: Request, issue_key: str) -> IssueDetail | None:
         return None
 
     detail = IssueDetail(key=issue.key,
+                         url=issue.permalink(),
                          summary=issue.fields.summary,
-                         description=issue.fields.description or "",
+                         description=markdown.markdown(issue.fields.description) or "",
                          updated=issue.fields.updated,
                          issuetype=str(issue.fields.issuetype),
                          priority=str(issue.fields.priority),
