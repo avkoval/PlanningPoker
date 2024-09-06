@@ -236,8 +236,9 @@ bb run fastapi
  - [X] Switch to voting screen
  - [ ] Async python function with results caching on FastAPI / (memoize | Redis)
 
-** WORKING Voting screen
+** WORKING Voting screen [/]
    :LOGBOOK:
+   CLOCK: [2024-09-06 Fri 07:31]--[2024-09-06 Fri 08:24] =>  0:53
    - State "WORKING"    from "TODO"       [2024-09-05 Thu 09:25]
    CLOCK: [2024-09-05 Thu 07:30]--[2024-09-05 Thu 09:27] =>  1:57
    - State "TODO"       from              [2024-08-28 Wed 23:25]
@@ -246,6 +247,11 @@ bb run fastapi
  - [X] Menu is-active
  - [X] Prepare FastAPI endpoint
  - [ ] Display data on screen
+   - [2024-09-06 Fri 09:25] data is displayed but ~markdown~ formatting is required...
+   - [ ] format markdown (on backend?)
+ - [ ] Add 'vote' layout block
+ - [ ] Send vote data to server
+ - [ ] Display vote results at bottom
 
 ** TODO Websocket coordination
    :LOGBOOK:

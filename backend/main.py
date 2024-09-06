@@ -170,6 +170,7 @@ def search(request: Request, q: str) -> List[FoundIssue]:
 
 
 class IssueDetail(BaseModel):
+    key: str = ""
     summary: str = ""
     description: str = ""
     updated: str = ""
@@ -196,13 +197,15 @@ def detail(request: Request, issue_key: str) -> IssueDetail | None:
     except JIRAError as e:
         print(issue_key, ' => ', e.text)
         return None
-    detail = IssueDetail(summary=issue.fields.summary,
+
+    detail = IssueDetail(key=issue.key,
+                         summary=issue.fields.summary,
                          description=issue.fields.description or "",
                          updated=issue.fields.updated,
                          issuetype=str(issue.fields.issuetype),
                          priority=str(issue.fields.priority),
                          reporter=str(issue.fields.reporter),
                          assignee=str(issue.fields.assignee),
-                         aggregatetimespent=issue.fields.aggregatetimespent,
+                         aggregatetimespent=issue.fields.aggregatetimespent or 0,
                          )
     return detail

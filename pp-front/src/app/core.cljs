@@ -87,7 +87,7 @@
         [last-query-time set-last-query-time!] (uix/use-state 0)
         timestamp (.now js/Date)]
 
-    (uix/use-effect 
+    (uix/use-effect
      (fn []
        (when (and (> (count q) SEARCH_STARTS_AT) (not (= q last-query)) (or (= 0 last-query-time) (> (- timestamp last-query-time) SEARCH_DELAY)))
          (go (let [response (<! (http/get (str api-url-base "/jira/search")
@@ -101,7 +101,7 @@
          (js/setTimeout #(set-last-query-time! 0) SEARCH_DELAY)
          )
        js/undefined))
-    
+
     ($ :div.ticket-search
        ($ :section.section
           ($ :div.container {:class "has-text-centered"}
@@ -122,7 +122,7 @@
           ($ :div.column))
        (when (> (count tickets) 0)
          ($ :table.table
-            ($ :thead ($ :tr 
+            ($ :thead ($ :tr
                          ($ :th "Key")
                          ($ :th "Summary")
                          ($ :th "Type")
@@ -130,7 +130,7 @@
                          ($ :th "Go!")
                          ))
             ($ :tbody
-               (for [ticket tickets] ($ :tr {:key (str "tr-" (:key ticket))} 
+               (for [ticket tickets] ($ :tr {:key (str "tr-" (:key ticket))}
                                         ($ :td {:key (str "key-" (:key ticket))}
                                            ($ :a.button {:href (:url ticket) :target "_blank" :class "is-light"} (:key ticket)))
                                         ($ :td {:key (str "su-" (:key ticket))} (:summary ticket))
@@ -141,8 +141,47 @@
 
 
 (defui vote []
-  ($ :h3.title "Lets vote!")
-  )
+  (let [estimate-ticket (hooks/use-subscribe [:app/estimate-ticket])
+        [info set-info!] (uix/use-state {})]
+
+    (uix/use-effect
+     (fn []
+       (when (not (= estimate-ticket (:key info)))
+         (js/console.log "running query")
+         (go (let [response (<! (http/get (str api-url-base "/jira/info")
+                                          {:query-params {"issue_key" estimate-ticket}}))
+                   body (:body response)
+                   ]
+               (set-info! body)
+               )))
+       js/undefined)
+       )
+    (if (not (= estimate-ticket (:key info)))
+      ($ :div.block 
+         ($ :div.notification {:class "is-info mt-4"} (str "Loading ticket information for key " estimate-ticket)
+            ($ :progress.progress {:class "is-small is-primary" :max "100"})
+            ))
+      ($ :div.block 
+         ($ :div.container 
+            ($ :h2.title {:class "mt-4"} (str "Estimating ticket " estimate-ticket))
+            ($ :div.columns 
+               ($ :div.column {:class "is-three-quarters"} 
+                  ($ :table.table ($ :tbody 
+                               ($ :tr ($ :th.is-info "Key") ($ :td (:key info)))
+                               ($ :tr ($ :th "Summary") ($ :td (:summary info)))
+                               ($ :tr ($ :th "Assignee") ($ :td (:assignee info)))
+                               ($ :tr ($ :th "Reporter") ($ :td (:reporter info)))
+                               ($ :tr ($ :th "Type") ($ :td (:issuetype info)))
+                               ($ :tr ($ :th "Updated") ($ :td (:updated info)))
+                               ($ :tr ($ :th "Aggregate Time Spent") ($ :td (:aggregatetimespent info)))
+                               ))
+                  ($ :div.block
+                     ($ :h2.subtitle "Description")
+                     ($ :div.box (:description info)))
+                  )
+               ($ :div.column "Vote here"))))
+      )
+    ))
 
 
 (defui app []
