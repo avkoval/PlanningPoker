@@ -18,6 +18,11 @@
   (fn [db _]
     (:voting-results db)))
 
+(rf/reg-sub :app/my-vote
+  (fn [db _]
+    (js/console.log (clj->js (:my-vote db)))
+    (:my-vote db)))
+
 (rf/reg-sub :app/members-online
   (fn [db _]
     (:members-online db)))

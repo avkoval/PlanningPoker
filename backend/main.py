@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any, List
 
 import markdown
@@ -39,6 +40,26 @@ oauth.register(
 )
 
 app = FastAPI()
+app_data: dict = {
+    "estimate-ticket": None,
+    "votes": []
+}
+
+
+def store_reset():
+    global app_data
+    app_data['estimate-ticket'] = None
+    app_data['votes'] = []
+
+
+def start_voting(key: str):
+    global app_data
+    app_data['estimate-ticket'] = key
+
+
+def add_vote(Vote):
+    pass
+
 
 SECRET_KEY = settings.secret_key
 if SECRET_KEY is None:
@@ -203,7 +224,7 @@ def detail(request: Request, issue_key: str) -> IssueDetail | None:
     detail = IssueDetail(key=issue.key,
                          url=issue.permalink(),
                          summary=issue.fields.summary,
-                         description=markdown.markdown(issue.fields.description) or "",
+                         description=markdown.markdown(issue.fields.description or ""),
                          updated=issue.fields.updated,
                          issuetype=str(issue.fields.issuetype),
                          priority=str(issue.fields.priority),
@@ -212,3 +233,16 @@ def detail(request: Request, issue_key: str) -> IssueDetail | None:
                          aggregatetimespent=issue.fields.aggregatetimespent or 0,
                          )
     return detail
+
+
+class Vote(BaseModel):
+    key: str = ""
+    user: str = ""
+    vote: str = ""
+    stamp: datetime | None = None
+
+
+@app.post('/votes/save')
+def vote(vote: Vote) -> Vote:
+    vote.stamp = datetime.now()
+    return vote

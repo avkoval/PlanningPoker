@@ -50,6 +50,16 @@
     ))
 
 (rf/reg-event-db 
+ ::vote-for-ticket
+  (fn [db [_ vote]]
+    (js/console.log "set" vote)
+    (-> db
+            (assoc :my-vote vote)
+        )
+    ))
+
+
+(rf/reg-event-db 
  ::browse-tickets
   (fn [db]
     (-> db

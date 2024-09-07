@@ -1270,6 +1270,17 @@ shellingham = ">=1.3.0"
 typing-extensions = ">=3.7.4.3"
 
 [[package]]
+name = "types-markdown"
+version = "3.7.0.20240822"
+description = "Typing stubs for Markdown"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "types-Markdown-3.7.0.20240822.tar.gz", hash = "sha256:183557c9f4f865bdefd8f5f96a38145c31819271cde111d35557c3bd2069e78d"},
+    {file = "types_Markdown-3.7.0.20240822-py3-none-any.whl", hash = "sha256:bec91c410aaf2470ffdb103e38438fbcc53689b00133f19e64869eb138432ad7"},
+]
+
+[[package]]
 name = "types-oauthlib"
 version = "3.2.0.20240806"
 description = "Typing stubs for oauthlib"
@@ -1560,4 +1571,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "7cd7527ed7ced185915e9b817001ffdc5e22f5d8f05494649a113432d8d90d2d"
+content-hash = "20c30c06aa2a00e1cab3cb02782b969051fa6095882897ccfe5889e6d538db06"

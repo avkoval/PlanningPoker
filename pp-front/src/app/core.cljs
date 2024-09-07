@@ -132,32 +132,32 @@
 
 (defui vote []
   (let [estimate-ticket (hooks/use-subscribe [:app/estimate-ticket])
-        [info set-info!] (uix/use-state {})]
+        [info set-info!] (uix/use-state {})
+        my-vote (hooks/use-subscribe [:app/my-vote])]
 
     (uix/use-effect
-     (fn []
-       (when (not (= estimate-ticket (:key info)))
-         (js/console.log "running query")
-         (go (let [response (<! (http/get (str api-url-base "/jira/info")
-                                          {:query-params {"issue_key" estimate-ticket}}))
-                   body (:body response)
-                   ]
-               (set-info! body)
-               )))
-       js/undefined)
-       )
+       (fn []
+         (when (not (= estimate-ticket (:key info)))
+           (go (let [response (<! (http/get (str api-url-base "/jira/info")
+                                            {:query-params {"issue_key" estimate-ticket}}))
+                     body (:body response)
+                     ]
+                 (set-info! body)
+                 )))
+         js/undefined))
+
     (if (not (= estimate-ticket (:key info)))
-      ($ :div.block 
+      ($ :div.block {:class "mt-auto"}
          ($ :div.notification {:class "is-info mt-4"} (str "Loading ticket information for key " estimate-ticket)
             ($ :progress.progress {:class "is-small is-primary" :max "100"})
             ))
-      ($ :div.block 
-         ($ :div.container 
+      ($ :div.block
+         ($ :div.container
             ($ :h2.title {:class "mt-4"} (str "Estimating ticket " estimate-ticket))
-            ($ :div.columns 
-               ($ :div.column {:class "is-three-quarters"} 
-                  ($ :table.table ($ :tbody 
-                                     ($ :tr ($ :th "Key") ($ :a {:class "is-light" :href (:url info) :target "_blank"} ($ :td (:key info))))
+            ($ :div.columns
+               ($ :div.column {:class "is-three-quarters"}
+                  ($ :table.table ($ :tbody
+                                     ($ :tr ($ :th "Key") ($ :a.button {:class "is-link is-light is-small mb-2" :href (:url info) :target "_blank"} ($ :td (:url info))))
                                      ($ :tr ($ :th "Summary") ($ :td (:summary info)))
                                      ($ :tr ($ :th "Assignee") ($ :td (:assignee info)))
                                      ($ :tr ($ :th "Reporter") ($ :td (:reporter info)))
@@ -165,12 +165,16 @@
                                      ($ :tr ($ :th "Updated") ($ :td (:updated info)))
                                      ($ :tr ($ :th "Aggregate Time Spent") ($ :td (:aggregatetimespent info)))
                                      ))
-                  
+
                   )
-               ($ :div.column ($ :h2.title "Your estimate (story points):")
-                  ($ :div.buttons 
-                     ($ :button.button "0.5") ($ :button.button "1") ($ :button.button "2") ($ :button.button "3") ($ :button.button "5") ($ :button.button "8")
-                     )
+               ($ :div.column ($ :div.box ($ :h2.title "Your estimate (story points):")
+                                 ($ :div.buttons
+                                    (for [est ["0.25" "0.5" "1" "2" "3" "5" "8" ">8"]]
+                                      ($ :button.button {:class (when (= est my-vote)
+                                                                  (case est "8" "is-warning" ">8" "is-danger" "is-success"))
+                                                         :key est :on-click (fn [^js _] (rf/dispatch [::handlers/vote-for-ticket est]))} est)
+                                      )
+                                    ))
                   ))
             ($ :div.block
                      ($ :h2.subtitle "Description")

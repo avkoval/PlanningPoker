@@ -236,8 +236,9 @@ bb run fastapi
  - [X] Switch to voting screen
  - [ ] Async python function with results caching on FastAPI / (memoize | Redis)
 
-** WORKING Voting screen [/]
+** WORKING Voting screen [4/8]
    :LOGBOOK:
+   CLOCK: [2024-09-07 Sat 08:42]--[2024-09-07 Sat 13:00] =>  4:18
    CLOCK: [2024-09-06 Fri 07:31]--[2024-09-06 Fri 08:24] =>  0:53
    - State "WORKING"    from "TODO"       [2024-09-05 Thu 09:25]
    CLOCK: [2024-09-05 Thu 07:30]--[2024-09-05 Thu 09:27] =>  1:57
@@ -246,19 +247,28 @@ bb run fastapi
 
  - [X] Menu is-active
  - [X] Prepare FastAPI endpoint
- - [ ] Display data on screen
+ - [-] Display data on screen
    - [2024-09-06 Fri 09:25] data is displayed but ~markdown~ formatting is required...
-   - [ ] format markdown (on backend?)
- - [ ] Add 'vote' layout block
+   - [X] format markdown (on backend?)
+   - [ ] format URLs via custom fn
+   - [ ] format images as external URLs via custom fn
+ - [X] Add 'vote' layout block
+ - [X] Set voted ticket & bg color for button
  - [ ] Send vote data to server
- - [ ] Display vote results at bottom
+   - [ ] add backend endpoint
+     - [ ] store data in dict. [[https://stackoverflow.com/questions/19201290/how-to-save-a-dictionary-to-a-file][use pickle?]]
+   - [ ] add fx handler event
+   - [ ] send data only if value has changed!
+ - [ ] Countdown timer for voting (configure the length via .env)
+ - [ ] Reveal results & set estimate via Jira API
 
 ** TODO Websocket coordination
    :LOGBOOK:
    - State "TODO"       from              [2024-08-28 Wed 23:25]
    :END:
+ 
+- [ ] Synhronize current screen
+- [ ] Listen & display voting results
+- [ ] Listen & display online members
+- [ ] Display vote results at bottom
 
-** TODO List tickets from Jira by search criteria
-   :LOGBOOK:
-   - State "TODO"       from              [2024-08-17 Sat 08:25]
-   :END:
