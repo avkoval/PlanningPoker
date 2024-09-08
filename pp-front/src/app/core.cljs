@@ -1,28 +1,19 @@
 (ns app.core
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [cljs.spec.alpha :as s]
-            [uix.core :as uix :refer [defui $]]
+  (:require [uix.core :as uix :refer [defui $]]
             [uix.dom]
             [app.hooks :as hooks]
             [app.subs]
             [app.handlers :as handlers]
             [app.fx]
             [app.db]
+            [app.util]
             [re-frame.core :as rf]
-            ;;[kitchen-async.promise :as p]
-            ;; [lambdaisland.fetch :as fetch]
             [cljs-http.client :as http]
             [cljs.core.async :refer [<!]]
-            [lambdaisland.uri :refer [uri join]]
             [clojure.string :as str]
             ))
 
-(def app-uri
-  (uri
-   (. (. js/document -location) -href)))
-
-(def api-url-base
-  (str (:scheme app-uri) "://" (:host app-uri) (if (nil? (:port app-uri)) "" (str ":" (:port app-uri)))))
 
 
 (defui navbar []
@@ -62,6 +53,8 @@
            " and "
            ($ :a {:href "https://github.com/pitch-io/uix" :target "_blank"} "UIX^2")
            )
+        ($ :p
+           ($ :a {:href "https://github.com/avkoval/PlanningPoker" :target "_blank"} "GitHub"))
         ))
 )
 
@@ -80,7 +73,7 @@
     (uix/use-effect
      (fn []
        (when (and (> (count q) SEARCH_STARTS_AT) (not (= q last-query)) (or (= 0 last-query-time) (> (- timestamp last-query-time) SEARCH_DELAY)))
-         (go (let [response (<! (http/get (str api-url-base "/jira/search")
+         (go (let [response (<! (http/get (str app.util/api-url-base "/jira/search")
                                           {:query-params {"q" q}}))
                    body (:body response)
                    ]
@@ -138,7 +131,7 @@
     (uix/use-effect
        (fn []
          (when (not (= estimate-ticket (:key info)))
-           (go (let [response (<! (http/get (str api-url-base "/jira/info")
+           (go (let [response (<! (http/get (str app.util/api-url-base "/jira/info")
                                             {:query-params {"issue_key" estimate-ticket}}))
                      body (:body response)
                      ]
@@ -153,16 +146,14 @@
             ))
       ($ :div.block
          ($ :div.container
-            ($ :h2.title {:class "mt-4"} (str "Estimating ticket " estimate-ticket))
+            ($ :h1.title {:class "mt-4"} (str "[" estimate-ticket "] " (:summary info)))
             ($ :div.columns
                ($ :div.column {:class "is-three-quarters"}
                   ($ :table.table ($ :tbody
-                                     ($ :tr ($ :th "Key") ($ :a.button {:class "is-link is-light is-small mb-2" :href (:url info) :target "_blank"} ($ :td (:url info))))
-                                     ($ :tr ($ :th "Summary") ($ :td (:summary info)))
-                                     ($ :tr ($ :th "Assignee") ($ :td (:assignee info)))
-                                     ($ :tr ($ :th "Reporter") ($ :td (:reporter info)))
-                                     ($ :tr ($ :th "Type") ($ :td (:issuetype info)))
-                                     ($ :tr ($ :th "Updated") ($ :td (:updated info)))
+                                     ($ :tr ($ :th "Key") ($ :a.button {:class "is-link is-light is-small mb-2" :href (:url info) :target "_blank"} (:url info))
+                                        ($ :th "Type") ($ :td.is-info (:issuetype info)))
+                                     ($ :tr ($ :th "Reporter") ($ :td (:reporter info)) ($ :th "Assignee") ($ :td (:assignee info)))
+                                     ($ :tr ($ :th "Created") ($ :td (:created info)) ($ :th "Updated") ($ :td (:updated info)))
                                      ($ :tr ($ :th "Aggregate Time Spent") ($ :td (:aggregatetimespent info)))
                                      ))
 

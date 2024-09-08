@@ -49,7 +49,7 @@ app_data: dict = {
 def store_reset():
     global app_data
     app_data['estimate-ticket'] = None
-    app_data['votes'] = []
+    app_data['votes'] = {}
 
 
 def start_voting(key: str):
@@ -57,8 +57,17 @@ def start_voting(key: str):
     app_data['estimate-ticket'] = key
 
 
-def add_vote(Vote):
-    pass
+class Vote(BaseModel):
+    key: str = ""
+    vote: str = ""
+    stamp: datetime | None = None
+
+
+def add_vote(username: str, vote: Vote):
+    if vote.key == app_data['estimate-ticket']:
+        app_data['votes'][username] = vote.vote
+    else:
+        print(f"Error: vote ticket {vote.key} is not the same as global estimate ticket {app_data['estimate-ticket']}")
 
 
 SECRET_KEY = settings.secret_key
@@ -197,6 +206,7 @@ class IssueDetail(BaseModel):
     summary: str = ""
     description: str = ""
     updated: str = ""
+    created: str = ""
     issuetype: str = ""
     priority: str = ""
     reporter: str = ""
@@ -226,6 +236,7 @@ def detail(request: Request, issue_key: str) -> IssueDetail | None:
                          summary=issue.fields.summary,
                          description=markdown.markdown(issue.fields.description or ""),
                          updated=issue.fields.updated,
+                         created=issue.fields.created,
                          issuetype=str(issue.fields.issuetype),
                          priority=str(issue.fields.priority),
                          reporter=str(issue.fields.reporter),
@@ -235,14 +246,14 @@ def detail(request: Request, issue_key: str) -> IssueDetail | None:
     return detail
 
 
-class Vote(BaseModel):
-    key: str = ""
-    user: str = ""
-    vote: str = ""
-    stamp: datetime | None = None
+def username(userinfo: dict) -> str:
+    return f"{userinfo['given_name']} {userinfo['family_name']} {userinfo['email']}"
 
 
-@app.post('/votes/save')
-def vote(vote: Vote) -> Vote:
+@app.post('/vote')
+def vote(request: Request, vote: Vote) -> Vote | None:
+    if not request.session.get('access_token'):
+        return None
     vote.stamp = datetime.now()
+    add_vote(username(request.session.get('access_token')['userinfo']), vote)  # type: ignore
     return vote

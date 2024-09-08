@@ -1,8 +1,13 @@
 (ns app.handlers
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [re-frame.core :as rf]
             ;; [day8.re-frame.tracing :refer-macros [fn-traced]]
             [app.db :as db]
-            [app.fx :as fx]))
+            [app.fx :as fx]
+            [app.util]
+            [cljs-http.client :as http]
+            [cljs.core.async :refer [<!]]
+            ))
 
 (def load-todos (rf/inject-cofx :store/todos "uix-starter/todos"))
 (def store-todos (fx/store-todos "uix-starter/todos"))
@@ -52,11 +57,13 @@
 (rf/reg-event-db 
  ::vote-for-ticket
   (fn [db [_ vote]]
-    (js/console.log "set" vote)
-    (-> db
-            (assoc :my-vote vote)
-        )
-    ))
+    (http/post (str app.util/api-url-base "/vote")
+               {:body (app.util/tojson {"key" (:estimate-ticket db)
+                                        "stamp" nil
+                                        "vote" vote})
+                :content-type "application/json"
+                :accept "application/json"})
+    (-> db (assoc :my-vote vote))))
 
 
 (rf/reg-event-db 

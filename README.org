@@ -238,6 +238,7 @@ bb run fastapi
 
 ** WORKING Voting screen [4/8]
    :LOGBOOK:
+   CLOCK: [2024-09-08 Sun 10:30]--[2024-09-08 Sun 11:04] =>  0:34
    CLOCK: [2024-09-07 Sat 08:42]--[2024-09-07 Sat 13:00] =>  4:18
    CLOCK: [2024-09-06 Fri 07:31]--[2024-09-06 Fri 08:24] =>  0:53
    - State "WORKING"    from "TODO"       [2024-09-05 Thu 09:25]
@@ -254,11 +255,12 @@ bb run fastapi
    - [ ] format images as external URLs via custom fn
  - [X] Add 'vote' layout block
  - [X] Set voted ticket & bg color for button
- - [ ] Send vote data to server
-   - [ ] add backend endpoint
-     - [ ] store data in dict. [[https://stackoverflow.com/questions/19201290/how-to-save-a-dictionary-to-a-file][use pickle?]]
-   - [ ] add fx handler event
+ - [-] Send vote data to server
+   - [X] add backend endpoint
+     - [X] store data in dict. [[https://stackoverflow.com/questions/19201290/how-to-save-a-dictionary-to-a-file][use pickle?]]
+   - [X] add fx handler event
    - [ ] send data only if value has changed!
+   - [ ] we also need to send POST on estimation start!
  - [ ] Countdown timer for voting (configure the length via .env)
  - [ ] Reveal results & set estimate via Jira API
 
