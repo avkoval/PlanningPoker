@@ -53,13 +53,13 @@
            " and "
            ($ :a {:href "https://github.com/pitch-io/uix" :target "_blank"} "UIX^2")
            )
-        ($ :p
-           ($ :a {:href "https://github.com/avkoval/PlanningPoker" :target "_blank"} "GitHub"))
         ))
 )
 
 (def SEARCH_STARTS_AT 5)
 (def SEARCH_DELAY 1500)
+
+(defn img-for-type [type] (str "/static/img/jira-ticket/" (str/lower-case type) ".png"))
 
 (defui browse-tickets
   "Search for ticket"
@@ -117,16 +117,48 @@
                                         ($ :td {:key (str "key-" (:key ticket))}
                                            ($ :a.button {:href (:url ticket) :target "_blank" :class "is-light"} (:key ticket)))
                                         ($ :td {:key (str "su-" (:key ticket))} (:summary ticket))
-                                        ($ :td ($ :img {:width 15 :src (str "/static/img/jira-ticket/" (str/lower-case (:type ticket)) ".png")}) " " (:type ticket))
+                                        ($ :td ($ :img {:width 15 :src (img-for-type (:type ticket))}) " " (:type ticket))
                                         ($ :td (:original_estimate ticket))
                                         ($ :td ($ :button.button {:on-click (fn [^js _] (rf/dispatch [::handlers/start-voting (:key ticket)]))} "⏲"))
                                         ))))))))
 
 
-(defui vote []
+(defui your-estimate [key]
+  (let [my-vote (hooks/use-subscribe [:app/my-vote])
+        [previous-vote set-previous-vote!] (uix/use-state "")
+        [previous-vote-ticket set-previous-vote-ticket!] (uix/use-state "")
+        ;; [seconds-left set-seconds-left!] (uix/use-state 60)
+        ]
+
+    ;; (uix/use-effect 
+    ;;  (fn [] 
+    ;;    (when (> seconds-left 0)
+    ;;      (js/setInterval #(set-seconds-left! (- seconds-left 1))) 5000) js/undefined) [seconds-left])
+
+    ;; (when (not= previous-vote-ticket key) 
+    ;;   (rf/dispatch [::handlers/reset-my-vote])
+    ;;   (when (not= seconds-left 60)
+    ;;     (js/console.log "okok-2024-09-08-1725807090")
+    ;;     ;; (set-seconds-left! 60)
+    ;;     )
+    ;;   )
+
+    ($ :div.column ($ :div.box ($ :h2.title "Your estimate (story points):")
+                      ($ :div.buttons
+                         (for [est ["0.25" "0.5" "1" "2" "3" "5" "8" ">8"]]
+                           ($ :button.button {:class (when (= est my-vote)
+                                                       (case est "8" "is-warning" ">8" "is-danger" "is-success"))
+                                              :key est 
+                                              :on-click (fn [^js _] 
+                                                          (when (not= est previous-vote)
+                                                            (rf/dispatch [::handlers/vote-for-ticket est])
+                                                            (set-previous-vote! est)
+                                                            (set-previous-vote-ticket! key)))
+                                              } est)))))))
+
+(defui vote-screen []
   (let [estimate-ticket (hooks/use-subscribe [:app/estimate-ticket])
-        [info set-info!] (uix/use-state {})
-        my-vote (hooks/use-subscribe [:app/my-vote])]
+        [info set-info!] (uix/use-state {})]
 
     (uix/use-effect
        (fn []
@@ -150,23 +182,16 @@
             ($ :div.columns
                ($ :div.column {:class "is-three-quarters"}
                   ($ :table.table ($ :tbody
-                                     ($ :tr ($ :th "Key") ($ :a.button {:class "is-link is-light is-small mb-2" :href (:url info) :target "_blank"} (:url info))
-                                        ($ :th "Type") ($ :td.is-info (:issuetype info)))
+                                     ($ :tr ($ :th "Key") ($ :td ($ :a {:class "is-link" :href (:url info) :target "_blank"} (:url info)))
+                                        ($ :th "Type") ($ :td ($ :div.tag ($ :img {:width 15 :class "mx-2" :src (img-for-type (:issuetype info))}) (:issuetype info)) ))
                                      ($ :tr ($ :th "Reporter") ($ :td (:reporter info)) ($ :th "Assignee") ($ :td (:assignee info)))
                                      ($ :tr ($ :th "Created") ($ :td (:created info)) ($ :th "Updated") ($ :td (:updated info)))
                                      ($ :tr ($ :th "Aggregate Time Spent") ($ :td (:aggregatetimespent info)))
                                      ))
 
                   )
-               ($ :div.column ($ :div.box ($ :h2.title "Your estimate (story points):")
-                                 ($ :div.buttons
-                                    (for [est ["0.25" "0.5" "1" "2" "3" "5" "8" ">8"]]
-                                      ($ :button.button {:class (when (= est my-vote)
-                                                                  (case est "8" "is-warning" ">8" "is-danger" "is-success"))
-                                                         :key est :on-click (fn [^js _] (rf/dispatch [::handlers/vote-for-ticket est]))} est)
-                                      )
-                                    ))
-                  ))
+               ($ your-estimate {:key (:key info)})
+               )
             ($ :div.block
                      ($ :h2.subtitle "Description")
                      ($ :div.box #js {:dangerouslySetInnerHTML #js {:__html (:description info)}} ))
@@ -181,7 +206,7 @@
        ($ navbar)
        (case current-screen
          "browse-tickets" ($ browse-tickets)
-         "estimate" ($ vote)
+         "estimate" ($ vote-screen)
          ($ :div.notification {:class "is-info"} (str "no screen selected /" current-screen)))
        ($ footer))))
 

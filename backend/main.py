@@ -1,3 +1,4 @@
+import pprint
 from datetime import datetime
 from typing import Any, List
 
@@ -5,7 +6,7 @@ import markdown
 import starlette.status as status
 from authlib.integrations.starlette_client import (  # type: ignore[import]
     OAuth, OAuthError)
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -46,15 +47,15 @@ app_data: dict = {
 }
 
 
-def store_reset():
+def get_estimate_ticket():
     global app_data
-    app_data['estimate-ticket'] = None
+    return app_data['estimate-ticket']
+
+
+def store_reset(estimate_ticket: str | None) -> None:
+    global app_data
+    app_data['estimate-ticket'] = estimate_ticket
     app_data['votes'] = {}
-
-
-def start_voting(key: str):
-    global app_data
-    app_data['estimate-ticket'] = key
 
 
 class Vote(BaseModel):
@@ -64,10 +65,14 @@ class Vote(BaseModel):
 
 
 def add_vote(username: str, vote: Vote):
+    global app_data
+    if app_data['estimate-ticket'] is None:
+        store_reset(vote.key)
     if vote.key == app_data['estimate-ticket']:
         app_data['votes'][username] = vote.vote
     else:
         print(f"Error: vote ticket {vote.key} is not the same as global estimate ticket {app_data['estimate-ticket']}")
+    pprint.pprint(app_data)
 
 
 SECRET_KEY = settings.secret_key
@@ -230,6 +235,9 @@ def detail(request: Request, issue_key: str) -> IssueDetail | None:
     except JIRAError as e:
         print(issue_key, ' => ', e.text)
         return None
+    if get_estimate_ticket() != issue.key:
+        print('Resetting voting to:', issue.key)
+        store_reset(issue.key)
 
     detail = IssueDetail(key=issue.key,
                          url=issue.permalink(),
@@ -257,3 +265,11 @@ def vote(request: Request, vote: Vote) -> Vote | None:
     vote.stamp = datetime.now()
     add_vote(username(request.session.get('access_token')['userinfo']), vote)  # type: ignore
     return vote
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        await websocket.send_text(f"Message text was: {data}")

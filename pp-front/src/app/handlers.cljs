@@ -67,6 +67,12 @@
 
 
 (rf/reg-event-db 
+ ::reset-my-vote
+  (fn [db [_]]
+    (-> db (assoc :my-vote ""))))
+
+
+(rf/reg-event-db 
  ::browse-tickets
   (fn [db]
     (-> db
