@@ -100,6 +100,7 @@ bb run fastapi
 * WORKING Work Log: Planning poker for Fieldhub
   SCHEDULED: <2024-08-17 Sat>
   :LOGBOOK:
+  CLOCK: [2024-09-09 Mon 07:08]--[2024-09-09 Mon 07:45] =>  0:37
   CLOCK: [2024-08-17 Sat 09:52]--[2024-08-17 Sat 10:04] =>  0:12
   CLOCK: [2024-08-17 Sat 08:14]--[2024-08-17 Sat 09:00] =>  0:46
   - State "WORKING"    from "IDEA"       [2024-08-17 Sat 08:05]
@@ -273,15 +274,24 @@ bb run fastapi
  - [ ] Reveal results & set estimate via Jira API
  - [ ] Abort previous search request on new search
 
-** TODO Websocket coordination [/]
+** TODO Websocket coordination [1/6]
    :LOGBOOK:
+   CLOCK: [2024-09-09 Mon 07:35]--[2024-09-09 Mon 08:02] =>  0:27
    - State "TODO"       from              [2024-08-28 Wed 23:25]
    :END:
  
-- [ ] Add WS handler on backend, check it works with sample HTML code
+- [X] Add WS handler on backend, check it works with sample HTML code
 - [ ] Add WS support on cljs side
+  - https://github.com/weavejester/haslett
 - [ ] Synhronize current screen
-- [ ] Listen & display voting results
+  - add 'app-state' endpoint - we will check this after login/on app load because
+    async user can do anything async
+  - react to ws messages online - e.g. commands:
+    - [ ] Goto screen <name>
+    - [ ] Vote for ticket <jira id>
+    - [ ] Voting finished (works for manual finish too)
+    - [ ] User logged in: (<username>)
+    - [ ] Online members (16): A, B, C
+- [ ] Display voting results when 'voting finished' received
 - [ ] Listen & display online members
 - [ ] Display vote results at bottom
-
