@@ -8,12 +8,12 @@
             [app.fx]
             [app.db]
             [app.util]
+            [app.websockets]
             [re-frame.core :as rf]
             [cljs-http.client :as http]
             [cljs.core.async :refer [<!]]
             [clojure.string :as str]
             ))
-
 
 
 (defui navbar []
@@ -37,8 +37,7 @@
                    ($ :form {:method "post" :action "/logout"}
                       ($ :button.button {:class "is-primary"}
                          ($ :strong "Logout")))))
-             ))))
-)
+             )))))
 
 (defui footer []
   ($ :footer.footer {:class "is-flex-align-items-flex-end mt-auto"}
@@ -215,6 +214,7 @@
 
 (defn render []
   (rf/dispatch-sync [::handlers/initialize-db])
+  (app.websockets/connect! (str app.util/api-url-base "/ws") handlers/handle-response!)
   (uix.dom/render-root ($ app) root))
 
 (defn ^:export init []

@@ -274,21 +274,40 @@ bb run fastapi
  - [ ] Reveal results & set estimate via Jira API
  - [ ] Abort previous search request on new search
 
-** TODO Websocket coordination [1/6]
+** TODO Websocket coordination [2/7]
    :LOGBOOK:
+   CLOCK: [2024-09-14 Sat 07:46]
+   CLOCK: [2024-09-12 Thu 07:54]--[2024-09-12 Thu 09:27] =>  1:33
+   CLOCK: [2024-09-11 Wed 07:00]--[2024-09-11 Wed 08:00] =>  1:00
+   CLOCK: [2024-09-10 Tue 20:52]--[2024-09-11 Wed 07:56] => 11:04
+   CLOCK: [2024-09-09 Mon 22:00]--[2024-09-09 Mon 22:46] =>  0:46
    CLOCK: [2024-09-09 Mon 07:35]--[2024-09-09 Mon 08:02] =>  0:27
    - State "TODO"       from              [2024-08-28 Wed 23:25]
    :END:
  
 - [X] Add WS handler on backend, check it works with sample HTML code
+- [X] pub/sub pattern on FastAPI backend:
+  - https://pypi.org/project/fastapi-websocket-pubsub/
+  - https://gist.github.com/appeltel/fd3ddeeed6c330c7208502462639d2c9
+  - https://github.com/6ixOnline/fastapi-pubsub
+  - tired from non-working examples. switching to a well known path with 
+    aioredis https://aioredis.readthedocs.io/en/latest/#installation
+  - https://gist.github.com/charsyam/1efc7f38860225c63b05379fffe73256
+  - https://medium.com/@nandagopal05/scaling-websockets-with-pub-sub-using-python-redis-fastapi-b16392ffe291
+  - [X] https://github.com/Thierry46/pubsub (Looks good, embedding it!) [2024-09-11 Wed 07:55]
 - [ ] Add WS support on cljs side
   - https://github.com/weavejester/haslett
+  - https://github.com/RutledgePaulV/websocket-fx?tab=readme-ov-file
+  - https://github.com/ftravers/reframe-websocket
+  - https://heykieran.github.io/post/using-sse-and-websockets/
+- [2024-09-14 Sat 15:35] got tired by implementing websocket coordination but it finally works
+- [ ] 'sync' button to reconnect websocket (red/green/auto reconnect)
 - [ ] Synhronize current screen
   - add 'app-state' endpoint - we will check this after login/on app load because
     async user can do anything async
   - react to ws messages online - e.g. commands:
-    - [ ] Goto screen <name>
-    - [ ] Vote for ticket <jira id>
+    - +[ ] Goto screen <name>+
+    - [X] Vote for ticket <jira id>
     - [ ] Voting finished (works for manual finish too)
     - [ ] User logged in: (<username>)
     - [ ] Online members (16): A, B, C

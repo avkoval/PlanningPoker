@@ -7,7 +7,6 @@
 
 (rf/reg-sub :app/current-screen
   (fn [db _]
-    (js/console.log db)
     (:current-screen db)))
 
 (rf/reg-sub :app/estimate-ticket
@@ -20,7 +19,6 @@
 
 (rf/reg-sub :app/my-vote
   (fn [db _]
-    (js/console.log (clj->js (:my-vote db)))
     (:my-vote db)))
 
 (rf/reg-sub :app/members-online
