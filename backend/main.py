@@ -197,12 +197,14 @@ def search(request: Request, q: str) -> List[FoundIssue]:
 
     issues: List | dict[str, Any] | ResultList[Issue] = []
     q = q.strip()
-
-    search = f'text ~ "{q}"'
-    if '-' in q and q.index('-') == 2:
-        search = f'key = "{q}"'
-    if settings.limit_to_project:
-        search += f' and project={settings.limit_to_project}'
+    if q.startswith('jql:'):
+        search = q[4:]
+    else:
+        search = f'text ~ "{q}"'
+        if '-' in q and q.index('-') == 2:
+            search = f'key = "{q}"'
+        if settings.limit_to_project:
+            search += f' and project={settings.limit_to_project}'
 
     issues = search_jira_issues(search)
     return [

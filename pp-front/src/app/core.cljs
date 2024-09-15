@@ -100,7 +100,11 @@
                                     :placeholder "Enter ticket number or subject"
                                     :on-change (fn [^js e]
                                                  (set-q! (.. e -target -value)))
-                                    }))))
+                                    }))
+                ($ :p.help {:class "is-info"} "You can also enter JQL by using prefix "
+                         ($ :b "jql:")
+                         )
+                ))
           ($ :div.column))
        (when (> (count tickets) 0)
          ($ :table.table
