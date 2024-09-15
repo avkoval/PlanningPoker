@@ -212,9 +212,15 @@
 (defonce root
   (uix.dom/create-root (js/document.getElementById "root")))
 
+(defn websocket-onopen []
+  (js/console.log "sending 'sync' to websocket")
+  (app.websockets/send-message! "sync")
+  )
+
+
 (defn render []
   (rf/dispatch-sync [::handlers/initialize-db])
-  (app.websockets/connect! (str app.util/api-url-base "/ws") handlers/handle-response!)
+  (app.websockets/connect! (str app.util/api-url-base "/ws") handlers/handle-response! websocket-onopen)
   (uix.dom/render-root ($ app) root))
 
 (defn ^:export init []

@@ -29,7 +29,7 @@
   (fn [db [_ jira-ticket]]
     (when-not (= (:estimate-ticket db) jira-ticket)
       (js/console.log "need to dispatch" (:estimate-ticket db) jira-ticket)
-      (rf/dispatch [::ws-send! (str "start voting: " jira-ticket)])
+      ;; (rf/dispatch [::ws-send! (str "start voting: " jira-ticket)])
       )
     (js/console.log "call to start-voting for:" jira-ticket)
     (-> db
@@ -68,11 +68,11 @@
 (defn handle-response! [response]
   (if-let [errors (:errors response)]
     (js/console.log "Errors from ws:" errors)
-    (let [[command argument] (str/split response #":")]
-      (js/console.log response)
+    (let [[command argument] (str/split response #"::")]
+      (js/console.log "ok-2024-09-15-1726393745:" response)
       (case command
         "start voting" (rf/dispatch [::start-voting (str/trim argument)])
-        :else (js/console.log "No match: " argument))
+        (js/console.log "No match: " argument))
       )
     ))
 

@@ -1,3 +1,4 @@
+import asyncio
 import pprint
 from datetime import datetime
 from typing import Any, List
@@ -19,7 +20,9 @@ from starlette.config import Config
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import RedirectResponse
 
+# from .channels import get_next_message, publish
 from .config import Settings
+from .websocket import notifier
 
 settings = Settings()
 
@@ -178,6 +181,7 @@ class FoundIssue(BaseModel):
 def search(request: Request, q: str) -> List[FoundIssue]:
     if not request.session.get('access_token'):
         return []
+    # user = username(request.session.get('access_token')['userinfo'])  # type: ignore
 
     issues: List | dict[str, Any] | ResultList[Issue] = []
     q = q.strip()
@@ -235,8 +239,10 @@ def detail(request: Request, issue_key: str) -> IssueDetail | None:
     except JIRAError as e:
         print(issue_key, ' => ', e.text)
         return None
+    user = username(request.session.get('access_token')['userinfo'])  # type: ignore
     if get_estimate_ticket() != issue.key:
-        print('Resetting voting to:', issue.key)
+        print(f'Voting starts for ticket {issue.key} by {user}')
+        asyncio.run(push_to_connected_websockets(f"start voting:: {issue.key}"))
         store_reset(issue.key)
 
     detail = IssueDetail(key=issue.key,
@@ -267,37 +273,29 @@ def vote(request: Request, vote: Vote) -> Vote | None:
     return vote
 
 
-class ConnectionManager:
-    def __init__(self):
-        self.active_connections: list[WebSocket] = []  # type: ignore
-
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections.append(websocket)
-
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
-
-    async def send_personal_message(self, message: str, websocket: WebSocket):
-        await websocket.send_text(message)
-
-    async def broadcast(self, message: str):
-        for connection in self.active_connections:
-            await connection.send_text(message)
-
-
-manager = ConnectionManager()
-
-
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    await manager.connect(websocket)
+    await notifier.connect(websocket)
     try:
         while True:
             data = await websocket.receive_text()
-            print(data)
-            # await manager.send_personal_message(f"You wrote: {data}", websocket)
-            await manager.broadcast(data)
+            print('got some data over websocket:', data)
+            match data:
+                case 'sync':
+                    current_ticket = get_estimate_ticket()
+                    print('syncing new websocket client', )
+                    if current_ticket:
+                        print('current ticket is' + current_ticket)
+                        await websocket.send_text(f"start voting:: {current_ticket}")
     except WebSocketDisconnect:
-        manager.disconnect(websocket)
-        await manager.broadcast("Client left the chat")
+        notifier.remove(websocket)
+        print("WebSocketDisconnect detected")
+
+
+@app.on_event("startup")
+async def startup():
+    await notifier.generator.asend(None)
+
+
+async def push_to_connected_websockets(message: str):
+    await notifier.push(message)

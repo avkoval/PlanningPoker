@@ -241,7 +241,7 @@ bb run fastapi
    :LOGBOOK:
    - State "TODO"       from              [2024-09-08 Sun 12:55]
    :END:
-** WORKING Voting screen [5/9]
+** WORKING Voting screen [5/10] [50%]
    :LOGBOOK:
    CLOCK: [2024-09-08 Sun 16:35]--[2024-09-08 Sun 18:01] =>  1:26
    CLOCK: [2024-09-08 Sun 15:00]--[2024-09-08 Sun 15:40] =>  0:40
@@ -274,9 +274,19 @@ bb run fastapi
  - [ ] Reveal results & set estimate via Jira API
  - [ ] Abort previous search request on new search
 
+** TODO check logged in state (when in ~/app~) and other statuses (because currenly it allows to see ~/app/~
+   :LOGBOOK:
+   - State "TODO"       from "REVIEW"     [2024-09-15 Sun 08:45]
+   - State "REVIEW"     from              [2024-09-15 Sun 08:45]
+   :END:
+
+ - make 'sync' / 'status' query.
+ - make sure ws is working
+
 ** TODO Websocket coordination [2/7]
    :LOGBOOK:
-   CLOCK: [2024-09-14 Sat 07:46]
+   CLOCK: [2024-09-15 Sun 10:05]
+   CLOCK: [2024-09-14 Sat 07:46]--[2024-09-14 Sat 15:48] =>  8:02
    CLOCK: [2024-09-12 Thu 07:54]--[2024-09-12 Thu 09:27] =>  1:33
    CLOCK: [2024-09-11 Wed 07:00]--[2024-09-11 Wed 08:00] =>  1:00
    CLOCK: [2024-09-10 Tue 20:52]--[2024-09-11 Wed 07:56] => 11:04
@@ -295,12 +305,16 @@ bb run fastapi
   - https://gist.github.com/charsyam/1efc7f38860225c63b05379fffe73256
   - https://medium.com/@nandagopal05/scaling-websockets-with-pub-sub-using-python-redis-fastapi-b16392ffe291
   - [X] https://github.com/Thierry46/pubsub (Looks good, embedding it!) [2024-09-11 Wed 07:55]
+  - https://github.com/fastapi/fastapi/issues/258
 - [ ] Add WS support on cljs side
   - https://github.com/weavejester/haslett
   - https://github.com/RutledgePaulV/websocket-fx?tab=readme-ov-file
   - https://github.com/ftravers/reframe-websocket
   - https://heykieran.github.io/post/using-sse-and-websockets/
+  - https://dev.to/bitecode/turn-sync-function-to-async-python-tips-58nn
 - [2024-09-14 Sat 15:35] got tired by implementing websocket coordination but it finally works
+- [ ] auto reconnect web socket?
+- [ ] send current screen info after auto reconnect/connect!
 - [ ] 'sync' button to reconnect websocket (red/green/auto reconnect)
 - [ ] Synhronize current screen
   - add 'app-state' endpoint - we will check this after login/on app load because
@@ -314,3 +328,4 @@ bb run fastapi
 - [ ] Display voting results when 'voting finished' received
 - [ ] Listen & display online members
 - [ ] Display vote results at bottom
+- [ ] websocket for logging updates!
