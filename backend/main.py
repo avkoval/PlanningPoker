@@ -234,21 +234,26 @@ class IssueDetail(BaseModel):
     comments: List[str] = []
 
 
-@app.get('/jira/info')
-def detail(request: Request, issue_key: str) -> IssueDetail | None:
-    if not request.session.get('access_token'):
-        return None
+@cached(cache=TTLCache(maxsize=1024, ttl=600))
+def get_issue_info(issue_key: str):
     issue_key = issue_key.strip()
     search = f'key = "{issue_key}"'
     if settings.limit_to_project:
         search += f' and project={settings.limit_to_project}'
     try:
-        issue = jira.search_issues(search)[0]  # type: ignore
-    except IndexError:
-        return None
+        return jira.search_issues(search)[0]  # type: ignore
     except JIRAError as e:
         print(issue_key, ' => ', e.text)
         return None
+    except IndexError:
+        return None
+
+
+@app.get('/jira/info')
+def detail(request: Request, issue_key: str) -> IssueDetail | None:
+    if not request.session.get('access_token'):
+        return None
+    issue = get_issue_info(issue_key)
     user = username(request.session.get('access_token')['userinfo'])  # type: ignore
     if get_estimate_ticket() != issue.key:
         print(f'Voting starts for ticket {issue.key} by {user}')

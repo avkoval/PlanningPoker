@@ -248,7 +248,7 @@ bb run fastapi
    - State "DONE"       from "TODO"       [2024-09-15 Sun 15:30]
    - State "TODO"       from              [2024-09-08 Sun 12:55]
    :END:
-** WORKING Voting screen [5/10] [50%]
+** WORKING Voting screen [6/11] [54%]
    :LOGBOOK:
    CLOCK: [2024-09-08 Sun 16:35]--[2024-09-08 Sun 18:01] =>  1:26
    CLOCK: [2024-09-08 Sun 15:00]--[2024-09-08 Sun 15:40] =>  0:40
@@ -263,6 +263,7 @@ bb run fastapi
 
  - [X] Menu is-active
  - [X] Prepare FastAPI endpoint
+ - [X] Cache ticket data
  - [-] Display data on screen
    - [2024-09-06 Fri 09:25] data is displayed but ~markdown~ formatting is required...
    - [X] format markdown (on backend?)
