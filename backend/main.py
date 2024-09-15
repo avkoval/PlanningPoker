@@ -7,6 +7,7 @@ import markdown
 import starlette.status as status
 from authlib.integrations.starlette_client import (  # type: ignore[import]
     OAuth, OAuthError)
+from cachetools import TTLCache, cached
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -46,7 +47,8 @@ oauth.register(
 app = FastAPI()
 app_data: dict = {
     "estimate-ticket": None,
-    "votes": []
+    "votes": [],
+    "users": []
 }
 
 
@@ -59,6 +61,7 @@ def store_reset(estimate_ticket: str | None) -> None:
     global app_data
     app_data['estimate-ticket'] = estimate_ticket
     app_data['votes'] = {}
+    app_data['users'] = []
 
 
 class Vote(BaseModel):
@@ -177,6 +180,15 @@ class FoundIssue(BaseModel):
     original_estimate: int | None = None
 
 
+@cached(cache=TTLCache(maxsize=1024, ttl=600))
+def search_jira_issues(search):
+    try:
+        return jira.search_issues(search)
+    except JIRAError as e:
+        print(search, ' => ', e.text)
+    return []
+
+
 @app.get('/jira/search')
 def search(request: Request, q: str) -> List[FoundIssue]:
     if not request.session.get('access_token'):
@@ -192,11 +204,7 @@ def search(request: Request, q: str) -> List[FoundIssue]:
     if settings.limit_to_project:
         search += f' and project={settings.limit_to_project}'
 
-    try:
-        issues = jira.search_issues(search)
-    except JIRAError as e:
-        print(q, ' => ', e.text)
-
+    issues = search_jira_issues(search)
     return [
         FoundIssue(  # FIXME return type of `jira.search_issues` has some problem
             key=issue.key,  # type: ignore
