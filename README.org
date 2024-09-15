@@ -242,8 +242,10 @@ bb run fastapi
  - [X] Switch to voting screen
  - [X] Async python function with results caching on FastAPI / (memoize | Redis)
 
-** TODO add jql: search support
+** DONE add jql: search support
+   CLOSED: [2024-09-15 Sun 15:30]
    :LOGBOOK:
+   - State "DONE"       from "TODO"       [2024-09-15 Sun 15:30]
    - State "TODO"       from              [2024-09-08 Sun 12:55]
    :END:
 ** WORKING Voting screen [5/10] [50%]
@@ -265,7 +267,7 @@ bb run fastapi
    - [2024-09-06 Fri 09:25] data is displayed but ~markdown~ formatting is required...
    - [X] format markdown (on backend?)
    - [ ] format URLs via custom fn
-   - [ ] format images as external URLs via custom fn
+   - [ ] (maybe) format images as external URLs via custom fn?
  - [X] Add 'vote' layout block
  - [X] Set voted ticket & bg color for button
  - [X] Send vote data to server
@@ -274,19 +276,20 @@ bb run fastapi
    - [X] add fx handler event
    - +[ ] we also need to send POST on estimation start!+ we already have info
    - [X] send data only if value has changed!
- - [ ] Countdown timer for voting (configure the length via .env)
+ - +[ ] Countdown timer for voting (configure the length via .env)+ no need, can be replaced by 'finish'
  - [ ] Indication who has started voting.
+ - [ ] Indication of people which finished voting - list.
  - [ ] Reveal results & set estimate via Jira API
  - [ ] Abort previous search request on new search
 
-** TODO check logged in state (when in ~/app~) and other statuses (because currenly it allows to see ~/app/~
+** TODO check logged in state (when in ~/app~) and other statuses (because currenly it allows to see ~/app/~ [1/2]
    :LOGBOOK:
    - State "TODO"       from "REVIEW"     [2024-09-15 Sun 08:45]
    - State "REVIEW"     from              [2024-09-15 Sun 08:45]
    :END:
 
- - make 'sync' / 'status' query.
- - make sure ws is working
+ - [X] make 'sync' / 'status' query.
+ - [ ] make sure ws is still working, reconnect if not.
 
 ** TODO Websocket coordination [2/7]
    :LOGBOOK:
