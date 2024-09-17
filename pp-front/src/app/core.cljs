@@ -39,20 +39,34 @@
                          ($ :strong "Logout")))))
              )))))
 
-(defui footer []
-  ($ :footer.footer {:class "is-flex-align-items-flex-end mt-auto"}
-     ($ :div.content {:class "has-text-centered"}
-        ($ :p "(C) 2024 "
-           ($ :a {:href "http://alex.koval.kharkov.ua" :target "_blank"} "Oleksii Koval")
-           " as part of Daily Learning Excercise "
-           )
+(defui logger []
+  (let [log-messages (hooks/use-subscribe [:app/log-messages])]
+    (js/console.log log-messages)
+    (when-not (empty? log-messages)
+      ($ :div.container
+           ($ :div.notification {:class "mt-2 mb-2 "} ($ :h5.subtitle "System logger / Events") (for [[n msg] (map-indexed #(vector %1 %2) log-messages)]
+                                                           ($ :p.disappear {:key n} msg))
+              ($ :button.delete {:on-click (fn [^js _] (rf/dispatch [::handlers/clear-log]))})
+              ))
+      ))
+  )
 
-        ($ :p "Technologies used to implement this page: "
-           ($ :a {:href "https://fastapi.tiangolo.com/" :target "_blank"} "FastAPI")
-           " and "
-           ($ :a {:href "https://github.com/pitch-io/uix" :target "_blank"} "UIX^2")
-           )
-        ))
+(defui footer []
+  ($ :div
+     ($ logger)
+     ($ :footer.footer {:class "is-flex-align-items-flex-end mt-auto"}
+        ($ :div.content {:class "has-text-centered"}
+           ($ :p "(C) 2024 "
+              ($ :a {:href "http://alex.koval.kharkov.ua" :target "_blank"} "Oleksii Koval")
+              " as part of Daily Learning Excercise "
+              )
+
+           ($ :p "Technologies used to implement this page: "
+              ($ :a {:href "https://fastapi.tiangolo.com/" :target "_blank"} "FastAPI")
+              " and "
+              ($ :a {:href "https://github.com/pitch-io/uix" :target "_blank"} "UIX^2")
+              )
+           )))
 )
 
 (def SEARCH_STARTS_AT 5)
@@ -126,38 +140,32 @@
                                         ))))))))
 
 
-(defui your-estimate [key]
+(defui results []
+  (let [results-loading (hooks/use-subscribe [:app/results-loading])]
+    ($ :div.box {:class "is-center"}
+       ($ :h2.title "Results")
+       (if results-loading ($ :progress.progress {:class "is-small is-primary" :max "100"})
+           ($ :button.button {:on-click (fn [^js _] (rf/dispatch [::handlers/reveal-results]))} "Reveal results"))))
+)
+
+(defui your-estimate []
   (let [my-vote (hooks/use-subscribe [:app/my-vote])
         [previous-vote set-previous-vote!] (uix/use-state "")
-        [previous-vote-ticket set-previous-vote-ticket!] (uix/use-state "")
-        ;; [seconds-left set-seconds-left!] (uix/use-state 60)
+        results-loading (hooks/use-subscribe [:app/results-loading])
         ]
 
-    ;; (uix/use-effect 
-    ;;  (fn [] 
-    ;;    (when (> seconds-left 0)
-    ;;      (js/setInterval #(set-seconds-left! (- seconds-left 1))) 5000) js/undefined) [seconds-left])
-
-    ;; (when (not= previous-vote-ticket key) 
-    ;;   (rf/dispatch [::handlers/reset-my-vote])
-    ;;   (when (not= seconds-left 60)
-    ;;     (js/console.log "okok-2024-09-08-1725807090")
-    ;;     ;; (set-seconds-left! 60)
-    ;;     )
-    ;;   )
-
-    ($ :div.column ($ :div.box ($ :h2.title "Your estimate (story points):")
+    ($ :div.box ($ :h2.title {:class (if results-loading "has-text-grey-light" "")} "Your estimate (story points):")
                       ($ :div.buttons
                          (for [est ["0.25" "0.5" "1" "2" "3" "5" "8" ">8"]]
                            ($ :button.button {:class (when (= est my-vote)
                                                        (case est "8" "is-warning" ">8" "is-danger" "is-success"))
-                                              :key est 
-                                              :on-click (fn [^js _] 
-                                                          (when (not= est previous-vote)
+                                              :key est
+                                              :on-click (fn [^js _]
+                                                          (when (and (false? results-loading) (not= est previous-vote))
                                                             (rf/dispatch [::handlers/vote-for-ticket est])
                                                             (set-previous-vote! est)
-                                                            (set-previous-vote-ticket! key)))
-                                              } est)))))))
+                                                            ))
+                                              } est))))))
 
 (defui vote-screen []
   (let [estimate-ticket (hooks/use-subscribe [:app/estimate-ticket])
@@ -193,7 +201,11 @@
                                      ))
 
                   )
-               ($ your-estimate {:key (:key info)})
+               ($ :div.column 
+                  ($ your-estimate)
+                  ($ results)
+                  )
+               
                )
             ($ :div.block
                      ($ :h2.subtitle "Description")
@@ -202,11 +214,13 @@
       )
     ))
 
+(defui header [])
 
 (defui app []
   (let [current-screen (hooks/use-subscribe [:app/current-screen])]
-    ($ :div.container {:class "hero is-fullheight"}
+    ($ :div.container
        ($ navbar)
+       ($ header)
        (case current-screen
          "browse-tickets" ($ browse-tickets)
          "estimate" ($ vote-screen)

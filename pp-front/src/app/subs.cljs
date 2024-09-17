@@ -24,3 +24,11 @@
 (rf/reg-sub :app/members-online
   (fn [db _]
     (:members-online db)))
+
+(rf/reg-sub :app/log-messages
+  (fn [db _]
+    (:log-messages db)))
+
+(rf/reg-sub :app/results-loading
+  (fn [db _]
+    (:results-loading db)))

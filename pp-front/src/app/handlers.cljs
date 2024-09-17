@@ -55,23 +55,54 @@
   (fn [db [_]]
     (-> db (assoc :my-vote ""))))
 
-
 (rf/reg-event-db 
  ::browse-tickets
-  (fn [db]
-    (-> db
-            (assoc :current-screen "browse-tickets")
-        )
-    ))
+ (fn [db]
+   (-> db
+       (assoc :current-screen "browse-tickets"))))
 
+(rf/reg-event-db 
+ ::reveal-results
+ (fn [db]
+   (-> db
+       (assoc :results-loading true))))
+
+(rf/reg-event-db 
+ ::set-log-message
+ (fn [db [_ msg]]
+   (js/console.log "got this message ok-2024-09-16-1726507078:" msg)
+   (js/setTimeout
+      (fn []
+        (rf/dispatch [::clear-log-message 0]))
+      30000)
+   (-> db
+       (assoc :log-messages (conj (:log-messages db) msg)))))
+
+(defn vec-remove
+  "remove elem in coll"
+  [pos coll]
+  (into (subvec coll 0 pos) (subvec coll (inc pos))))
+
+(rf/reg-event-db 
+ ::clear-log-message
+ (fn [db [_ n]]
+   (-> db
+       (assoc :log-messages (vec-remove n (:log-messages db))))))
+
+(rf/reg-event-db 
+ ::clear-log
+ (fn [db [_]]
+   (-> db
+       (assoc :log-messages []))))
 
 (defn handle-response! [response]
   (if-let [errors (:errors response)]
     (js/console.log "Errors from ws:" errors)
-    (let [[command argument] (str/split response #"::")]
-      (js/console.log "ok-2024-09-15-1726393745:" response)
-      (case command
-        "start voting" (rf/dispatch [::start-voting (str/trim argument)])
+    (let [[cmd argument] (str/split response #"::")
+          arg (str/trim argument)]
+      (case cmd
+        "start voting" (rf/dispatch [::start-voting arg])
+        "log" (rf/dispatch [::set-log-message arg])
         (js/console.log "No match: " argument))
       )
     ))

@@ -194,9 +194,13 @@ bb run fastapi
    :END:
  - Finish watching [[https://www.youtube.com/watch?v=u5ECoR7KT1Y][Babashka tasks (by Michiel Borkent)]] from /The London Clojurians are happy to present 3 years ago/
 
-** DONE Search for ticket (Estimate ticket screen) [12/12]             :verb:
-   CLOSED: [2024-09-15 Sun 15:15]
+** TODO use iframe for docs part
    :LOGBOOK:
+   - State "TODO"       from              [2024-09-17 Tue 09:35]
+   :END:
+** TODO Search for ticket (Estimate ticket screen) [12/13]             :verb:
+   :LOGBOOK:
+   - State "TODO"       from "DONE"       [2024-09-16 Mon 20:40]
    - State "DONE"       from "WORKING"    [2024-09-15 Sun 15:15]
    CLOCK: [2024-09-15 Sun 15:08]--[2024-09-15 Sun 15:15] =>  0:07
    CLOCK: [2024-09-04 Wed 07:23]--[2024-09-04 Wed 09:23] =>  2:00
@@ -241,12 +245,34 @@ bb run fastapi
  - [X] Logout button
  - [X] Switch to voting screen
  - [X] Async python function with results caching on FastAPI / (memoize | Redis)
+ - [ ] indicate that query is running, also which query is running! with a color and sticker! and some effect!
 
 ** DONE add jql: search support
    CLOSED: [2024-09-15 Sun 15:30]
    :LOGBOOK:
    - State "DONE"       from "TODO"       [2024-09-15 Sun 15:30]
    - State "TODO"       from              [2024-09-08 Sun 12:55]
+   :END:
+** DONE logging
+   CLOSED: [2024-09-17 Tue 07:30]
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2024-09-17 Tue 07:30]
+   - State "TODO"       from              [2024-09-16 Mon 09:55]
+   :END:
+ - [X] Log display as is-info
+ - [X] Or display N lines with timestamp and history scroll
+ - [X] disappear after 1-3 seconds with fade out effect!
+   - https://ericnormand.me/guide/timeout-effect-in-re-frame
+   - https://stackoverflow.com/questions/76258055/how-to-add-fade-in-animation-to-a-component-when-it-is-loaded-in-react
+ - [X] delete individual message
+ - +[ ] display not more then 3 messages+
+** TODO Keep tickets list? refresh the same criterial? add (x) to the right?
+   :LOGBOOK:
+   - State "TODO"       from              [2024-09-16 Mon 20:20]
+   :END:
+** TODO avoid 2 staged query/re-render for search term 'payment`
+   :LOGBOOK:
+   - State "TODO"       from              [2024-09-16 Mon 20:20]
    :END:
 ** WORKING Voting screen [6/11] [54%]
    :LOGBOOK:
@@ -322,7 +348,7 @@ bb run fastapi
   - https://heykieran.github.io/post/using-sse-and-websockets/
   - https://dev.to/bitecode/turn-sync-function-to-async-python-tips-58nn
 - [2024-09-14 Sat 15:35] got tired by implementing websocket coordination but it finally works
-- [ ] auto reconnect web socket?
+- [ ] auto reconnect web socket?!!
 - [ ] send current screen info after auto reconnect/connect!
 - [ ] 'sync' button to reconnect websocket (red/green/auto reconnect)
 - [ ] Synhronize current screen

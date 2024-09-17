@@ -2,3 +2,16 @@
 .navbar-link.is-active, .navbar-link.is-selected, a.navbar-item.is-active, a.navbar-item.is-selected {
   color: #fff;
 }
+
+.disappear {
+  animation: fade-out 50s;
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 100;
+  }
+  to {
+    opacity: 0;
+  }
+}

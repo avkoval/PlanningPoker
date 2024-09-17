@@ -4,7 +4,7 @@
                     [babashka.tasks :refer [shell]])
 
          fastapi     {:doc  "start FastAPI devserver"
-                      :task (shell {:dir "."} "poetry run fastapi dev backend/main.py")}
+                      :task (shell {:dir "."} "poetry run fastapi dev --port 8003 backend/main.py")}
 
          uix         {:doc  "start UIx Front dev"
                       :task (shell {:dir "pp-front"} "yarn dev")}

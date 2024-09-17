@@ -254,10 +254,13 @@ def detail(request: Request, issue_key: str) -> IssueDetail | None:
     if not request.session.get('access_token'):
         return None
     issue = get_issue_info(issue_key)
-    user = username(request.session.get('access_token')['userinfo'])  # type: ignore
+    user = get_username(request.session.get('access_token')['userinfo'])  # type: ignore
+    now = format_datetime(datetime.now())
     if get_estimate_ticket() != issue.key:
-        print(f'Voting starts for ticket {issue.key} by {user}')
+        log_msg = f'{now} Voting started by {user} for Jira ticket № {issue.key}'
+        print(log_msg)
         asyncio.run(push_to_connected_websockets(f"start voting:: {issue.key}"))
+        asyncio.run(push_to_connected_websockets(f"log:: {log_msg}"))
         store_reset(issue.key)
 
     detail = IssueDetail(key=issue.key,
@@ -275,8 +278,12 @@ def detail(request: Request, issue_key: str) -> IssueDetail | None:
     return detail
 
 
-def username(userinfo: dict) -> str:
+def get_username(userinfo: dict) -> str:
     return f"{userinfo['given_name']} {userinfo['family_name']} {userinfo['email']}"
+
+
+def format_datetime(dt):
+    return dt.strftime("%Y/%m/%d, %H:%M:%S")
 
 
 @app.post('/vote')
@@ -284,7 +291,9 @@ def vote(request: Request, vote: Vote) -> Vote | None:
     if not request.session.get('access_token'):
         return None
     vote.stamp = datetime.now()
-    add_vote(username(request.session.get('access_token')['userinfo']), vote)  # type: ignore
+    username = get_username(request.session.get('access_token')['userinfo'])
+    add_vote(username, vote)  # type: ignore
+    asyncio.run(push_to_connected_websockets(f"log::{format_datetime(vote.stamp)} Got Vote from {username}"))
     return vote
 
 
