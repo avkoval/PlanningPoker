@@ -1,4 +1,5 @@
 import asyncio
+import json
 import pprint
 from datetime import datetime
 from typing import Any, List
@@ -48,7 +49,8 @@ app = FastAPI()
 app_data: dict = {
     "estimate-ticket": None,
     "votes": [],
-    "users": []
+    "users": [],
+    "finished": False,
 }
 
 
@@ -57,11 +59,17 @@ def get_estimate_ticket():
     return app_data['estimate-ticket']
 
 
+def is_finished():
+    global app_data
+    return app_data['finished']
+
+
 def store_reset(estimate_ticket: str | None) -> None:
     global app_data
     app_data['estimate-ticket'] = estimate_ticket
     app_data['votes'] = {}
     app_data['users'] = []
+    app_data['finished'] = False
 
 
 class Vote(BaseModel):
@@ -291,10 +299,18 @@ def vote(request: Request, vote: Vote) -> Vote | None:
     if not request.session.get('access_token'):
         return None
     vote.stamp = datetime.now()
-    username = get_username(request.session.get('access_token')['userinfo'])
+    username = get_username(request.session.get('access_token')['userinfo'])  # type: ignore
     add_vote(username, vote)  # type: ignore
     asyncio.run(push_to_connected_websockets(f"log::{format_datetime(vote.stamp)} Got Vote from {username}"))
     return vote
+
+
+@app.post('/vote/finish')
+def vote_finish(request: Request) -> None:
+    global app_data
+    if request.session.get('access_token'):
+        app_data['finished'] = True
+        asyncio.run(push_to_connected_websockets("results::" + json.dumps(app_data['votes'])))
 
 
 @app.websocket("/ws")

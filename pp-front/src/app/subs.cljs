@@ -32,3 +32,7 @@
 (rf/reg-sub :app/results-loading
   (fn [db _]
     (:results-loading db)))
+
+(rf/reg-sub :app/results
+  (fn [db _]
+    (:results db)))

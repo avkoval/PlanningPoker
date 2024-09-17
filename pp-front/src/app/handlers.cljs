@@ -56,14 +56,19 @@
     (-> db (assoc :my-vote ""))))
 
 (rf/reg-event-db 
- ::browse-tickets
- (fn [db]
+ ::set-screen
+ (fn [db [_ screen]]
    (-> db
-       (assoc :current-screen "browse-tickets"))))
+       (assoc :current-screen screen))))
+
 
 (rf/reg-event-db 
  ::reveal-results
  (fn [db]
+   (http/post (str app.util/api-url-base "/vote/finish")
+               {:body (app.util/tojson {})
+                :content-type "application/json"
+                :accept "application/json"})
    (-> db
        (assoc :results-loading true))))
 
@@ -95,6 +100,15 @@
    (-> db
        (assoc :log-messages []))))
 
+(rf/reg-event-db 
+ ::set-results
+ (fn [db [_ results]]
+   (-> db
+       ;; (assoc :results-loading false)
+       (assoc :results results))))
+
+
+
 (defn handle-response! [response]
   (if-let [errors (:errors response)]
     (js/console.log "Errors from ws:" errors)
@@ -103,6 +117,7 @@
       (case cmd
         "start voting" (rf/dispatch [::start-voting arg])
         "log" (rf/dispatch [::set-log-message arg])
+        "results" (rf/dispatch [::set-results (js->clj (js/JSON.parse argument))])
         (js/console.log "No match: " argument))
       )
     ))

@@ -27,9 +27,10 @@
        ($ :div.navbar-menu
           ($ :div.navbar-start
              ($ :a.navbar-item {:href "/"} "Home")
-             ($ :a.navbar-item {:href "/static/docs/README.html" :target "_docs"} "Docs")
+             ($ :a.navbar-item {:on-click (fn [^js _] (rf/dispatch [::handlers/set-screen "docs"]))
+                                :class (if (= "docs" current-screen) "is-active" "")} "Docs")
              ($ :a.navbar-item {:class (if (= "estimate" current-screen) "is-active" "")} "Estimate")
-             ($ :a.navbar-item {:on-click (fn [^js _] (rf/dispatch [::handlers/browse-tickets]))
+             ($ :a.navbar-item {:on-click (fn [^js _] (rf/dispatch [::handlers/set-screen "browse-tickets"]))
                                 :class (if (= "browse-tickets" current-screen) "is-active" "")} "Browse tickets"))
           ($ :div.navbar-end
              ($ :div.navbar-item
@@ -139,21 +140,23 @@
                                         ($ :td ($ :button.button {:on-click (fn [^js _] (rf/dispatch [::handlers/start-voting (:key ticket)]))} "⏲"))
                                         ))))))))
 
-
 (defui results []
-  (let [results-loading (hooks/use-subscribe [:app/results-loading])]
+  (let [results-loading (hooks/use-subscribe [:app/results-loading])
+        results (hooks/use-subscribe [:app/results])]
+    (js/console.log (clj->js results))
     ($ :div.box {:class "is-center"}
-       ($ :h2.title "Results")
-       (if results-loading ($ :progress.progress {:class "is-small is-primary" :max "100"})
-           ($ :button.button {:on-click (fn [^js _] (rf/dispatch [::handlers/reveal-results]))} "Reveal results"))))
-)
+       ($ :h2.title "Voting Results")
+       (if (and results-loading (empty? results)) 
+         ($ :progress.progress {:class "is-small is-primary" :max "100"})
+         (if (empty? results)
+           ($ :button.button {:on-click (fn [^js _] (rf/dispatch [::handlers/reveal-results]))} "Reveal results")
+           ($ :table.table ($ :tbody (for [[k v] results] ($ :tr {:key k} ($ :td k) ($ :td v))))))))))
 
 (defui your-estimate []
   (let [my-vote (hooks/use-subscribe [:app/my-vote])
         [previous-vote set-previous-vote!] (uix/use-state "")
         results-loading (hooks/use-subscribe [:app/results-loading])
         ]
-
     ($ :div.box ($ :h2.title {:class (if results-loading "has-text-grey-light" "")} "Your estimate (story points):")
                       ($ :div.buttons
                          (for [est ["0.25" "0.5" "1" "2" "3" "5" "8" ">8"]]
@@ -216,6 +219,10 @@
 
 (defui header [])
 
+(defui docs-screen []
+  ($ :iframe {:src "/static/docs/README.html" :width "100%" :height "1000px"})
+)
+
 (defui app []
   (let [current-screen (hooks/use-subscribe [:app/current-screen])]
     ($ :div.container
@@ -224,6 +231,7 @@
        (case current-screen
          "browse-tickets" ($ browse-tickets)
          "estimate" ($ vote-screen)
+         "docs" ($ docs-screen)
          ($ :div.notification {:class "is-info"} (str "no screen selected /" current-screen)))
        ($ footer))))
 

@@ -194,8 +194,15 @@ bb run fastapi
    :END:
  - Finish watching [[https://www.youtube.com/watch?v=u5ECoR7KT1Y][Babashka tasks (by Michiel Borkent)]] from /The London Clojurians are happy to present 3 years ago/
 
-** TODO use iframe for docs part
+** TODO fix burger menu for mobile
    :LOGBOOK:
+   - State "TODO"       from              [2024-09-17 Tue 15:20]
+   :END:
+
+** WORKING use iframe for docs part
+   :LOGBOOK:
+   - State "WORKING"    from "TODO"       [2024-09-17 Tue 14:30]
+   CLOCK: [2024-09-17 Tue 14:32]--[2024-09-17 Tue 14:57] =>  0:25
    - State "TODO"       from              [2024-09-17 Tue 09:35]
    :END:
 ** TODO Search for ticket (Estimate ticket screen) [12/13]             :verb:
