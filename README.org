@@ -55,18 +55,22 @@ Directory tree
 
 #+end_example
 
-* Architecture & UI ideas [3/7]
+* Architecture & UI ideas [6/6]
 
  - [X] FastAPI on Backend
  - [X] UIX^2 on Frontend
  - [X] .env configuration
- - [ ] Local memory caching for retrieved Jira data
- - [ ] Websocket for group actions
- - [ ] Logging screen on frontend (from websocket log)
-   - [ ] "Vote accepted from ..."
-   - [ ] "User ... logged in"
+ - [X] Local memory caching for retrieved Jira data
+ - [X] Websocket for group actions
+ - [X] Logging screen on frontend (from websocket log)
+   - [X] "Vote accepted from ..."
+   - [X] "User ... logged in"
 
 * Install
+  Backend:
+  #+begin_src tmux
+  poetry install
+  #+end_src
 * Setup
 
   Copy & edit contents of .env file: setup variables
@@ -199,13 +203,15 @@ bb run fastapi
    - State "TODO"       from              [2024-09-17 Tue 15:20]
    :END:
 
-** WORKING use iframe for docs part
+** DONE use iframe for docs part
+   CLOSED: [2024-09-17 Tue 20:45]
    :LOGBOOK:
+   - State "DONE"       from "WORKING"    [2024-09-17 Tue 20:45]
    - State "WORKING"    from "TODO"       [2024-09-17 Tue 14:30]
    CLOCK: [2024-09-17 Tue 14:32]--[2024-09-17 Tue 14:57] =>  0:25
    - State "TODO"       from              [2024-09-17 Tue 09:35]
    :END:
-** TODO Search for ticket (Estimate ticket screen) [12/13]             :verb:
+** TODO Search for ticket (Estimate ticket screen) [12/14]             :verb:
    :LOGBOOK:
    - State "TODO"       from "DONE"       [2024-09-16 Mon 20:40]
    - State "DONE"       from "WORKING"    [2024-09-15 Sun 15:15]
@@ -253,6 +259,7 @@ bb run fastapi
  - [X] Switch to voting screen
  - [X] Async python function with results caching on FastAPI / (memoize | Redis)
  - [ ] indicate that query is running, also which query is running! with a color and sticker! and some effect!
+ - [ ] avoid 2 staged query/re-render for search term 'payment`
 
 ** DONE add jql: search support
    CLOSED: [2024-09-15 Sun 15:30]
@@ -277,11 +284,7 @@ bb run fastapi
    :LOGBOOK:
    - State "TODO"       from              [2024-09-16 Mon 20:20]
    :END:
-** TODO avoid 2 staged query/re-render for search term 'payment`
-   :LOGBOOK:
-   - State "TODO"       from              [2024-09-16 Mon 20:20]
-   :END:
-** WORKING Voting screen [6/11] [54%]
+** WORKING Voting screen [9/12] [75%]
    :LOGBOOK:
    CLOCK: [2024-09-08 Sun 16:35]--[2024-09-08 Sun 18:01] =>  1:26
    CLOCK: [2024-09-08 Sun 15:00]--[2024-09-08 Sun 15:40] =>  0:40
@@ -311,21 +314,22 @@ bb run fastapi
    - +[ ] we also need to send POST on estimation start!+ we already have info
    - [X] send data only if value has changed!
  - +[ ] Countdown timer for voting (configure the length via .env)+ no need, can be replaced by 'finish'
- - [ ] Indication who has started voting.
- - [ ] Indication of people which finished voting - list.
- - [ ] Reveal results & set estimate via Jira API
- - [ ] Abort previous search request on new search
+ - [X] Indication who has started voting.
+ - [X] Indication of people which finished voting - +list.+ log
+ - [X] Reveal results
+ - [ ] Set estimate via Jira API
 
-** TODO check logged in state (when in ~/app~) and other statuses (because currenly it allows to see ~/app/~ [1/2]
+** DONE check logged in state (when in ~/app~) and other statuses (because currenly it allows to see ~/app/~ [1/2]
+   CLOSED: [2024-09-17 Tue 20:50]
    :LOGBOOK:
+   - State "DONE"       from "TODO"       [2024-09-17 Tue 20:50]
    - State "TODO"       from "REVIEW"     [2024-09-15 Sun 08:45]
    - State "REVIEW"     from              [2024-09-15 Sun 08:45]
    :END:
 
  - [X] make 'sync' / 'status' query.
- - [ ] make sure ws is still working, reconnect if not.
 
-** TODO Websocket coordination [2/7]
+** TODO Websocket coordination [9/10]
    :LOGBOOK:
    CLOCK: [2024-09-15 Sun 10:05]--[2024-09-15 Sun 15:08] =>  5:03
    CLOCK: [2024-09-14 Sat 07:46]--[2024-09-14 Sat 15:48] =>  8:02
@@ -348,7 +352,7 @@ bb run fastapi
   - https://medium.com/@nandagopal05/scaling-websockets-with-pub-sub-using-python-redis-fastapi-b16392ffe291
   - [X] https://github.com/Thierry46/pubsub (Looks good, embedding it!) [2024-09-11 Wed 07:55]
   - https://github.com/fastapi/fastapi/issues/258
-- [ ] Add WS support on cljs side
+- [X] Add WS support on cljs side
   - https://github.com/weavejester/haslett
   - https://github.com/RutledgePaulV/websocket-fx?tab=readme-ov-file
   - https://github.com/ftravers/reframe-websocket
@@ -356,18 +360,17 @@ bb run fastapi
   - https://dev.to/bitecode/turn-sync-function-to-async-python-tips-58nn
 - [2024-09-14 Sat 15:35] got tired by implementing websocket coordination but it finally works
 - [ ] auto reconnect web socket?!!
-- [ ] send current screen info after auto reconnect/connect!
-- [ ] 'sync' button to reconnect websocket (red/green/auto reconnect)
-- [ ] Synhronize current screen
+- [X] send current screen info after auto reconnect/connect!
+- [X] +'sync' button to reconnect websocket (red/green/auto reconnect)+ can use Home!
+- [X] Synhronize current screen
   - add 'app-state' endpoint - we will check this after login/on app load because
     async user can do anything async
   - react to ws messages online - e.g. commands:
     - +[ ] Goto screen <name>+
     - [X] Vote for ticket <jira id>
-    - [ ] Voting finished (works for manual finish too)
-    - [ ] User logged in: (<username>)
-    - [ ] Online members (16): A, B, C
-- [ ] Display voting results when 'voting finished' received
-- [ ] Listen & display online members
-- [ ] Display vote results at bottom
-- [ ] websocket for logging updates!
+    - [X] Voting finished (works for manual finish too)
+    - [X] User logged in: (<username>)
+    - [X] Online members (16): A, B, C
+- [X] Display voting results when 'voting finished' received
+- [X] Listen & display online members (log)
+- [X] websocket for logging updates!
