@@ -198,8 +198,10 @@ bb run fastapi
    :END:
  - Finish watching [[https://www.youtube.com/watch?v=u5ECoR7KT1Y][Babashka tasks (by Michiel Borkent)]] from /The London Clojurians are happy to present 3 years ago/
 
-** TODO fix burger menu for mobile
+** DONE fix burger menu for mobile
+   CLOSED: [2024-09-18 Wed 09:10]
    :LOGBOOK:
+   - State "DONE"       from "TODO"       [2024-09-18 Wed 09:10]
    - State "TODO"       from              [2024-09-17 Tue 15:20]
    :END:
 
@@ -260,6 +262,8 @@ bb run fastapi
  - [X] Async python function with results caching on FastAPI / (memoize | Redis)
  - [ ] indicate that query is running, also which query is running! with a color and sticker! and some effect!
  - [ ] avoid 2 staged query/re-render for search term 'payment`
+ - [ ] (low pri) May be make a list of previous queries to be able to re-run them
+ - [ ] (low pri) Provide a list of pre-defined queiries on app start or save them to a file and then restore
 
 ** DONE add jql: search support
    CLOSED: [2024-09-15 Sun 15:30]
@@ -284,7 +288,7 @@ bb run fastapi
    :LOGBOOK:
    - State "TODO"       from              [2024-09-16 Mon 20:20]
    :END:
-** WORKING Voting screen [9/12] [75%]
+** WORKING Voting screen [9/13] [69%]
    :LOGBOOK:
    CLOCK: [2024-09-08 Sun 16:35]--[2024-09-08 Sun 18:01] =>  1:26
    CLOCK: [2024-09-08 Sun 15:00]--[2024-09-08 Sun 15:40] =>  0:40
@@ -318,6 +322,14 @@ bb run fastapi
  - [X] Indication of people which finished voting - +list.+ log
  - [X] Reveal results
  - [ ] Set estimate via Jira API
+ - [ ] Rewrite widget to split voting into 3 categories: Frontend, Backend and QA
+   - [ ] Also make it possible to choose: SP or Hours
+ - [ ] Send results to Jira by adding formatted comment to ticket like (in hours):
+   #+begin_example
+   Back: ...
+   Front: ...
+   QA: ...
+   #+end_example
 
 ** DONE check logged in state (when in ~/app~) and other statuses (because currenly it allows to see ~/app/~ [1/2]
    CLOSED: [2024-09-17 Tue 20:50]

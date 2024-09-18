@@ -15,16 +15,19 @@
             [clojure.string :as str]
             ))
 
-
 (defui navbar []
-  (let [current-screen (hooks/use-subscribe [:app/current-screen])]
+  (let [current-screen (hooks/use-subscribe [:app/current-screen])
+        [navbar-is-active set-navbar-is-active!] (uix/use-state false)]
     ($ :nav.navbar {:role "navigation" :aria-label "main navigation"}
-       ($ :a.navbar-burger {:role "button" :aria-label "menu" :aria-expanded "false" :data-target "navbarBasicExample"}
+       ($ :a.navbar-burger {:role "button" :aria-label "menu" :aria-expanded "false" :data-target "navbarBasicExample"
+                            :class (if navbar-is-active "is-active" "")
+                            :on-click (fn [^js _] (set-navbar-is-active! (not navbar-is-active)))}
           ($ :span {:aria-hidden "true"})
           ($ :span {:aria-hidden "true"})
           ($ :span {:aria-hidden "true"})
           ($ :span {:aria-hidden "true"}))
        ($ :div.navbar-menu
+          {:class (if navbar-is-active "is-active" "")}
           ($ :div.navbar-start
              ($ :a.navbar-item {:href "/"} "Home")
              ($ :a.navbar-item {:on-click (fn [^js _] (rf/dispatch [::handlers/set-screen "docs"]))
@@ -35,6 +38,7 @@
           ($ :div.navbar-end
              ($ :div.navbar-item
                 ($ :div.buttons
+                   ($ :button.button {:class "is-danger1"} "💡")
                    ($ :form {:method "post" :action "/logout"}
                       ($ :button.button {:class "is-primary"}
                          ($ :strong "Logout")))))
