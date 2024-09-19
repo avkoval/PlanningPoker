@@ -1,6 +1,7 @@
 import asyncio
 import json
 import pprint
+from collections import defaultdict
 from datetime import datetime
 from typing import Any, List
 
@@ -67,7 +68,7 @@ def is_finished():
 def store_reset(estimate_ticket: str | None) -> None:
     global app_data
     app_data['estimate-ticket'] = estimate_ticket
-    app_data['votes'] = {}
+    app_data['votes'] = defaultdict(dict)
     app_data['users'] = []
     app_data['finished'] = False
 
@@ -75,6 +76,7 @@ def store_reset(estimate_ticket: str | None) -> None:
 class Vote(BaseModel):
     key: str = ""
     vote: str = ""
+    category: str = ""
     stamp: datetime | None = None
 
 
@@ -83,7 +85,9 @@ def add_vote(username: str, vote: Vote):
     if app_data['estimate-ticket'] is None:
         store_reset(vote.key)
     if vote.key == app_data['estimate-ticket']:
-        app_data['votes'][username] = vote.vote
+        votes = app_data['votes'][username]
+        votes.update({vote.category: vote.vote})
+        app_data['votes'][username] = votes
     else:
         print(f"Error: vote ticket {vote.key} is not the same as global estimate ticket {app_data['estimate-ticket']}")
     pprint.pprint(app_data)

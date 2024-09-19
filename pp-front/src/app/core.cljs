@@ -38,7 +38,7 @@
           ($ :div.navbar-end
              ($ :div.navbar-item
                 ($ :div.buttons
-                   ($ :button.button {:class "is-danger1"} "💡")
+                   ;; ($ :button.button {:class "is-danger1"} "💡")
                    ($ :form {:method "post" :action "/logout"}
                       ($ :button.button {:class "is-primary"}
                          ($ :strong "Logout")))))
@@ -147,7 +147,6 @@
 (defui results []
   (let [results-loading (hooks/use-subscribe [:app/results-loading])
         results (hooks/use-subscribe [:app/results])]
-    (js/console.log (clj->js results))
     ($ :div.box {:class "is-center"}
        ($ :h2.title "Voting Results")
        (if (and results-loading (empty? results)) 
@@ -156,23 +155,36 @@
            ($ :button.button {:on-click (fn [^js _] (rf/dispatch [::handlers/reveal-results]))} "Reveal results")
            ($ :table.table ($ :tbody (for [[k v] results] ($ :tr {:key k} ($ :td k) ($ :td v))))))))))
 
+(defui tab [{:keys [title class on-click]}]
+  ($ :li {:class class} ($ :a {:on-click on-click} ($ :span title)))
+)
+
 (defui your-estimate []
-  (let [my-vote (hooks/use-subscribe [:app/my-vote])
-        [previous-vote set-previous-vote!] (uix/use-state "")
+  (let [my-votes (hooks/use-subscribe [:app/my-votes])
+        [category set-category!] (uix/use-state :back)
+        vote (get my-votes category)
+        [previous-votes set-previous-votes!] (uix/use-state {:back "" :front "" :qa ""})
+        previous-vote (get previous-votes category)
         results-loading (hooks/use-subscribe [:app/results-loading])
         ]
     ($ :div.box ($ :h2.title {:class (if results-loading "has-text-grey-light" "")} "Your estimate (story points):")
-                      ($ :div.buttons
-                         (for [est ["0.25" "0.5" "1" "2" "3" "5" "8" ">8"]]
-                           ($ :button.button {:class (when (= est my-vote)
-                                                       (case est "8" "is-warning" ">8" "is-danger" "is-success"))
-                                              :key est
-                                              :on-click (fn [^js _]
-                                                          (when (and (false? results-loading) (not= est previous-vote))
-                                                            (rf/dispatch [::handlers/vote-for-ticket est])
-                                                            (set-previous-vote! est)
-                                                            ))
-                                              } est))))))
+       ($ :div.tabs 
+          ($ :ul
+             ($ tab {:class (if (= category :back) "is-active" "") :title "Back" :on-click (fn [^js _] (set-category! :back))})
+             ($ tab {:class (if (= category :front) "is-active" "") :title "Front"  :on-click (fn [^js _] (set-category! :front))})
+             ($ tab {:class (if (= category :qa) "is-active" "") :title "QA"  :on-click (fn [^js _] (set-category! :qa))})
+             ))
+       ($ :div.buttons
+          (for [est ["0.25" "0.5" "1" "2" "3" "5" "8" ">8"]]
+            ($ :button.button {:class (when (= est vote)
+                                        (case est "8" "is-warning" ">8" "is-danger" "is-success"))
+                               :key est
+                               :on-click (fn [^js _]
+                                           (when (and (false? results-loading) (not= est previous-vote))
+                                             (rf/dispatch [::handlers/vote-for-ticket est category])
+                                             (set-previous-votes! (assoc previous-votes category est))
+                                             ))
+                               } est))))))
 
 (defui vote-screen []
   (let [estimate-ticket (hooks/use-subscribe [:app/estimate-ticket])

@@ -21,6 +21,10 @@
   (fn [db _]
     (:my-vote db)))
 
+(rf/reg-sub :app/my-votes
+  (fn [db _]
+    (:vote db)))
+
 (rf/reg-sub :app/members-online
   (fn [db _]
     (:members-online db)))

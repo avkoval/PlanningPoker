@@ -40,14 +40,15 @@
 
 (rf/reg-event-db 
  ::vote-for-ticket
-  (fn [db [_ vote]]
+  (fn [db [_ vote category]]
     (http/post (str app.util/api-url-base "/vote")
                {:body (app.util/tojson {"key" (:estimate-ticket db)
                                         "stamp" nil
-                                        "vote" vote})
+                                        "vote" vote
+                                        "category" category})
                 :content-type "application/json"
                 :accept "application/json"})
-    (-> db (assoc :my-vote vote))))
+    (-> db (assoc-in [:vote category] vote))))
 
 
 (rf/reg-event-db 

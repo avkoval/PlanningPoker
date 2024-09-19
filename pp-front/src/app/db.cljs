@@ -5,6 +5,7 @@
    :estimate-ticket nil
    :vote-started-by ""
    :log-messages []
+   :vote {:back "" :front "" :qa ""}
    :my-vote ""
    :results-loading false
    :results []
