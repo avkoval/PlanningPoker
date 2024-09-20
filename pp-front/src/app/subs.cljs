@@ -33,9 +33,9 @@
   (fn [db _]
     (:log-messages db)))
 
-(rf/reg-sub :app/results-loading
+(rf/reg-sub :app/voting-blocked
   (fn [db _]
-    (:results-loading db)))
+    (:voting-blocked db)))
 
 (rf/reg-sub :app/results
   (fn [db _]

@@ -295,8 +295,9 @@ bb run fastapi
    :LOGBOOK:
    - State "TODO"       from              [2024-09-16 Mon 20:20]
    :END:
-** WORKING Voting screen [9/13] [69%]
+** WORKING Voting screen [13/15] [86%]
    :LOGBOOK:
+   CLOCK: [2024-09-20 Fri 07:58]--[2024-09-20 Fri 08:39] =>  0:41
    CLOCK: [2024-09-20 Fri 07:00]--[2024-09-20 Fri 07:38] =>  0:38
    CLOCK: [2024-09-19 Thu 06:00]--[2024-09-19 Thu 08:00] =>  2:00
    CLOCK: [2024-09-08 Sun 16:35]--[2024-09-08 Sun 18:01] =>  1:26
@@ -330,17 +331,19 @@ bb run fastapi
  - [X] Indication who has started voting.
  - [X] Indication of people which finished voting - +list.+ log
  - [X] Reveal results
- - [ ] Set estimate via Jira API
- - [-] Rewrite widget to split voting into 3 categories: Frontend, Backend and QA
+ - [X] Fix red/yellow colors for big estimates, add for hours too
+ - [X] Fix estimate restart
+ - [X] Rewrite widget to split voting into 3 categories: Frontend, Backend and QA
    - [X] Splitting into categories in voting box & backend
    - [X] Splitting into categories in results box
-   - [ ] Make it possible to choose: SP or Hours
+   - [X] Make it possible to choose: SP or Hours
  - [ ] Send results to Jira by adding formatted comment to ticket like (in hours):
    #+begin_example
    Back: ...
    Front: ...
    QA: ...
    #+end_example
+ - [X] How to reset use-state data when voting restarts?
 
 ** DONE check logged in state (when in ~/app~) and other statuses (because currenly it allows to see ~/app/~ [1/2]
    CLOSED: [2024-09-17 Tue 20:50]

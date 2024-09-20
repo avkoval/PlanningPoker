@@ -34,6 +34,9 @@
     (js/console.log "call to start-voting for:" jira-ticket)
     (-> db
             (assoc :estimate-ticket jira-ticket)
+            (assoc :voting-blocked false)
+            (assoc :results [])
+            (assoc :vote {:back "" :front "" :qa ""})
             (assoc :current-screen "estimate")
         )
     ))
@@ -71,7 +74,7 @@
                 :content-type "application/json"
                 :accept "application/json"})
    (-> db
-       (assoc :results-loading true))))
+       (assoc :voting-blocked true))))
 
 (rf/reg-event-db 
  ::set-log-message
@@ -105,7 +108,7 @@
  ::set-results
  (fn [db [_ results]]
    (-> db
-       ;; (assoc :results-loading false)
+       ;; (assoc :voting-blocked false)
        (assoc :results results))))
 
 

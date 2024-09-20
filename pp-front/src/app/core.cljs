@@ -145,15 +145,15 @@
                                         ))))))))
 
 (defui results []
-  (let [results-loading (hooks/use-subscribe [:app/results-loading])
+  (let [voting-blocked (hooks/use-subscribe [:app/voting-blocked])
         results (hooks/use-subscribe [:app/results])]
     ($ :div.box {:class "is-center"}
        ($ :h4.title {:class "is-4"} "Voting Results")
-       (if (and results-loading (empty? results)) 
+       (if (and voting-blocked (empty? results))
          ($ :progress.progress {:class "is-small is-primary" :max "100"})
          (if (empty? results)
            ($ :button.button {:on-click (fn [^js _] (rf/dispatch [::handlers/reveal-results]))} "Reveal results")
-           ($ :table.table ($ :tbody 
+           ($ :table.table ($ :tbody
                               ($ :tr $ ($ :td "Developer") ($ :td "Back") ($ :td "Front") ($ :td "QA"))
                               (for [[k v] results] ($ :tr {:key k} ($ :td k) ($ :td (get v "back")) ($ :td (get v "front")) ($ :td (get v "qa")))))))))))
 
@@ -164,26 +164,32 @@
 (defui your-estimate []
   (let [my-votes (hooks/use-subscribe [:app/my-votes])
         [category set-category!] (uix/use-state :back)
+        [measure set-measure!] (uix/use-state "sp")
+        estimate-values (if (= measure "sp") ["0.25sp" "0.5sp" "1sp" "2sp" "3sp" "5sp" "8sp" ">8sp"] ["0.5h" "1h" "2h" "4h" "8h" "16h" "40h"])
         vote (get my-votes category)
         [previous-votes set-previous-votes!] (uix/use-state {:back "" :front "" :qa ""})
         previous-vote (get previous-votes category)
-        results-loading (hooks/use-subscribe [:app/results-loading])
+        voting-blocked (hooks/use-subscribe [:app/voting-blocked])
         ]
-    ($ :div.box ($ :h4.title {:class (if results-loading "has-text-grey-light is-4" "is-4")} "Your estimate (story points): " 
-                   (when results-loading ($ :span.tag {:class "is-info"} "sent!") ))
-       ($ :div.tabs 
+    ($ :div.box ($ :h4.title {:class (if voting-blocked "has-text-grey-light is-4" "is-4")} "Your estimate: "
+                   (when voting-blocked ($ :span.tag {:class "is-success is-light"} "estimation process completed")))
+       ($ :p.has-text-right
+          "Measure in: "
+          ($ :a {:on-click (fn [^js _] (set-measure! "sp")) :class (str "is-link" (when (= "sp" measure) " has-text-weight-bold")) } "sp") " / "
+          ($ :a {:class (str "is-link" (when (= "hours" measure) " has-text-weight-bold")) :on-click (fn [^js _] (set-measure! "hours"))} "hours"))
+       ($ :div.tabs
           ($ :ul
              ($ tab {:class (if (= category :back) "is-active" "") :title "Back" :on-click (fn [^js _] (set-category! :back))})
              ($ tab {:class (if (= category :front) "is-active" "") :title "Front"  :on-click (fn [^js _] (set-category! :front))})
              ($ tab {:class (if (= category :qa) "is-active" "") :title "QA"  :on-click (fn [^js _] (set-category! :qa))})
              ))
        ($ :div.buttons
-          (for [est ["0.25" "0.5" "1" "2" "3" "5" "8" ">8"]]
+          (for [est estimate-values]
             ($ :button.button {:class (when (= est vote)
-                                        (case est "8" "is-warning" ">8" "is-danger" "is-success"))
+                                        (case est "8sp" "is-warning" ">8sp" "is-danger" "16h" "is-warning" "40h" "is-danger" "is-success"))
                                :key est
                                :on-click (fn [^js _]
-                                           (when (and (false? results-loading) (not= est previous-vote))
+                                           (when (and (false? voting-blocked) (not= est previous-vote))
                                              (rf/dispatch [::handlers/vote-for-ticket est category])
                                              (set-previous-votes! (assoc previous-votes category est))
                                              ))
@@ -229,7 +235,7 @@
                      ($ :div.box #js {:dangerouslySetInnerHTML #js {:__html (:description info)}} ))
             )
          ($ :div.container {:class "mt-4"}
-            ($ :div.columns 
+            ($ :div.columns
                ($ :div.column {:class "is-half"} ($ your-estimate))
                ($ :div.column {:class "is-half"} ($ results))
                )

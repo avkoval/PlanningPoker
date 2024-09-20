@@ -7,7 +7,7 @@
    :log-messages []
    :vote {:back "" :front "" :qa ""}
    :my-vote ""
-   :results-loading false
+   :voting-blocked false
    :results []
    :voting-results []
    :members-online []
