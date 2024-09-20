@@ -153,7 +153,9 @@
          ($ :progress.progress {:class "is-small is-primary" :max "100"})
          (if (empty? results)
            ($ :button.button {:on-click (fn [^js _] (rf/dispatch [::handlers/reveal-results]))} "Reveal results")
-           ($ :table.table ($ :tbody (for [[k v] results] ($ :tr {:key k} ($ :td k) ($ :td v))))))))))
+           ($ :table.table ($ :tbody 
+                              ($ :tr $ ($ :td "Developer") ($ :td "Back") ($ :td "Front") ($ :td "QA"))
+                              (for [[k v] results] ($ :tr {:key k} ($ :td k) ($ :td (get v "back")) ($ :td (get v "front")) ($ :td (get v "qa")))))))))))
 
 (defui tab [{:keys [title class on-click]}]
   ($ :li {:class class} ($ :a {:on-click on-click} ($ :span title)))

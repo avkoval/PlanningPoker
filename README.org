@@ -290,6 +290,7 @@ bb run fastapi
    :END:
 ** WORKING Voting screen [9/13] [69%]
    :LOGBOOK:
+   CLOCK: [2024-09-20 Fri 07:00]--[2024-09-20 Fri 07:38] =>  0:38
    CLOCK: [2024-09-19 Thu 06:00]--[2024-09-19 Thu 08:00] =>  2:00
    CLOCK: [2024-09-08 Sun 16:35]--[2024-09-08 Sun 18:01] =>  1:26
    CLOCK: [2024-09-08 Sun 15:00]--[2024-09-08 Sun 15:40] =>  0:40
@@ -325,7 +326,7 @@ bb run fastapi
  - [ ] Set estimate via Jira API
  - [-] Rewrite widget to split voting into 3 categories: Frontend, Backend and QA
    - [X] Splitting into categories in voting box & backend
-   - [ ] Splitting into categories in results box
+   - [X] Splitting into categories in results box
    - [ ] Make it possible to choose: SP or Hours
  - [ ] Send results to Jira by adding formatted comment to ticket like (in hours):
    #+begin_example
