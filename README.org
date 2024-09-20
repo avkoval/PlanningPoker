@@ -271,6 +271,13 @@ bb run fastapi
    - State "DONE"       from "TODO"       [2024-09-15 Sun 15:30]
    - State "TODO"       from              [2024-09-08 Sun 12:55]
    :END:
+** DONE fix design=placement for estimate / results boxes
+   CLOSED: [2024-09-20 Fri 08:00]
+   :LOGBOOK:
+   CLOCK: [2024-09-20 Fri 07:38]--[2024-09-20 Fri 07:58] =>  0:20
+   - State "DONE"       from "TODO"       [2024-09-20 Fri 08:00]
+   - State "TODO"       from              [2024-09-20 Fri 07:40]
+   :END:
 ** DONE logging
    CLOSED: [2024-09-17 Tue 07:30]
    :LOGBOOK:

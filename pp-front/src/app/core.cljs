@@ -148,7 +148,7 @@
   (let [results-loading (hooks/use-subscribe [:app/results-loading])
         results (hooks/use-subscribe [:app/results])]
     ($ :div.box {:class "is-center"}
-       ($ :h2.title "Voting Results")
+       ($ :h4.title {:class "is-4"} "Voting Results")
        (if (and results-loading (empty? results)) 
          ($ :progress.progress {:class "is-small is-primary" :max "100"})
          (if (empty? results)
@@ -169,7 +169,8 @@
         previous-vote (get previous-votes category)
         results-loading (hooks/use-subscribe [:app/results-loading])
         ]
-    ($ :div.box ($ :h2.title {:class (if results-loading "has-text-grey-light" "")} "Your estimate (story points):")
+    ($ :div.box ($ :h4.title {:class (if results-loading "has-text-grey-light is-4" "is-4")} "Your estimate (story points): " 
+                   (when results-loading ($ :span.tag {:class "is-info"} "sent!") ))
        ($ :div.tabs 
           ($ :ul
              ($ tab {:class (if (= category :back) "is-active" "") :title "Back" :on-click (fn [^js _] (set-category! :back))})
@@ -222,16 +223,19 @@
                                      ))
 
                   )
-               ($ :div.column 
-                  ($ your-estimate)
-                  ($ results)
-                  )
-               
                )
             ($ :div.block
                      ($ :h2.subtitle "Description")
                      ($ :div.box #js {:dangerouslySetInnerHTML #js {:__html (:description info)}} ))
-            ))
+            )
+         ($ :div.container {:class "mt-4"}
+            ($ :div.columns 
+               ($ :div.column {:class "is-half"} ($ your-estimate))
+               ($ :div.column {:class "is-half"} ($ results))
+               )
+
+            )
+         )
       )
     ))
 
