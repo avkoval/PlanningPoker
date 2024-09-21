@@ -309,6 +309,21 @@ def vote(request: Request, vote: Vote) -> Vote | None:
     return vote
 
 
+class JiraEstimateComment(BaseModel):
+    key: str = ""
+    text: str = ""
+
+
+@app.post('/add-estimate-comment')
+def add_estimate_comment(request: Request, comment: JiraEstimateComment) -> JiraEstimateComment | None:
+    if not request.session.get('access_token'):
+        return None
+    username = get_username(request.session.get('access_token')['userinfo'])  # type: ignore
+    asyncio.run(push_to_connected_websockets(
+        f"log::{format_datetime(datetime.now())} Saved comment of {username} to ticket {comment.key}"))
+    return comment
+
+
 @app.post('/vote/finish')
 def vote_finish(request: Request) -> None:
     global app_data

@@ -41,7 +41,7 @@
         )
     ))
 
-(rf/reg-event-db 
+(rf/reg-event-db
  ::vote-for-ticket
   (fn [db [_ vote category]]
     (http/post (str app.util/api-url-base "/vote")
@@ -54,19 +54,19 @@
     (-> db (assoc-in [:vote category] vote))))
 
 
-(rf/reg-event-db 
+(rf/reg-event-db
  ::reset-my-vote
   (fn [db [_]]
     (-> db (assoc :my-vote ""))))
 
-(rf/reg-event-db 
+(rf/reg-event-db
  ::set-screen
  (fn [db [_ screen]]
    (-> db
        (assoc :current-screen screen))))
 
 
-(rf/reg-event-db 
+(rf/reg-event-db
  ::reveal-results
  (fn [db]
    (http/post (str app.util/api-url-base "/vote/finish")
@@ -76,7 +76,7 @@
    (-> db
        (assoc :voting-blocked true))))
 
-(rf/reg-event-db 
+(rf/reg-event-db
  ::set-log-message
  (fn [db [_ msg]]
    (js/console.log "got this message ok-2024-09-16-1726507078:" msg)
@@ -92,24 +92,30 @@
   [pos coll]
   (into (subvec coll 0 pos) (subvec coll (inc pos))))
 
-(rf/reg-event-db 
+(rf/reg-event-db
  ::clear-log-message
  (fn [db [_ n]]
    (-> db
        (assoc :log-messages (vec-remove n (:log-messages db))))))
 
-(rf/reg-event-db 
+(rf/reg-event-db
  ::clear-log
  (fn [db [_]]
    (-> db
        (assoc :log-messages []))))
 
-(rf/reg-event-db 
+(rf/reg-event-db
  ::set-results
  (fn [db [_ results]]
    (-> db
        ;; (assoc :voting-blocked false)
        (assoc :results results))))
+
+(rf/reg-event-db
+ ::toggle-add-comment-box
+ (fn [db [_]]
+   (-> db
+       (assoc :show-add-comment-box (not (:show-add-comment-box db))))))
 
 
 
@@ -125,4 +131,3 @@
         (js/console.log "No match: " argument))
       )
     ))
-

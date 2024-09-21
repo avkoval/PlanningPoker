@@ -145,17 +145,21 @@
                                         ))))))))
 
 (defui results []
-  (let [voting-blocked (hooks/use-subscribe [:app/voting-blocked])
-        results (hooks/use-subscribe [:app/results])]
+  (let [voting-blocked? (hooks/use-subscribe [:app/voting-blocked])
+        results (hooks/use-subscribe [:app/results])
+        voting-finished? (not (empty? results))]
     ($ :div.box {:class "is-center"}
        ($ :h4.title {:class "is-4"} "Voting Results")
-       (if (and voting-blocked (empty? results))
+       (if (and voting-blocked? (not voting-finished?))
          ($ :progress.progress {:class "is-small is-primary" :max "100"})
-         (if (empty? results)
+         (if (not voting-finished?)
            ($ :button.button {:on-click (fn [^js _] (rf/dispatch [::handlers/reveal-results]))} "Reveal results")
            ($ :table.table ($ :tbody
                               ($ :tr $ ($ :td "Developer") ($ :td "Back") ($ :td "Front") ($ :td "QA"))
-                              (for [[k v] results] ($ :tr {:key k} ($ :td k) ($ :td (get v "back")) ($ :td (get v "front")) ($ :td (get v "qa")))))))))))
+                              (for [[k v] results] ($ :tr {:key k} ($ :td k) ($ :td (get v "back")) ($ :td (get v "front")) ($ :td (get v "qa"))))))))
+       (when voting-finished?
+         ($ :a {:on-click (fn [^js _] (rf/dispatch [::handlers/toggle-add-comment-box]))} "Add/Replace Jira comment"))
+       )))
 
 (defui tab [{:keys [title class on-click]}]
   ($ :li {:class class} ($ :a {:on-click on-click} ($ :span title)))
@@ -172,7 +176,7 @@
         voting-blocked (hooks/use-subscribe [:app/voting-blocked])
         ]
     ($ :div.box ($ :h4.title {:class (if voting-blocked "has-text-grey-light is-4" "is-4")} "Your estimate: "
-                   (when voting-blocked ($ :span.tag {:class "is-success is-light"} "estimation process completed")))
+                   (when voting-blocked ($ :span.tag {:class "is-success is-light"} "(process completed)")))
        ($ :p.has-text-right
           "Measure in: "
           ($ :a {:on-click (fn [^js _] (set-measure! "sp")) :class (str "is-link" (when (= "sp" measure) " has-text-weight-bold")) } "sp") " / "
@@ -195,8 +199,47 @@
                                              ))
                                } est))))))
 
+(def INACTIVITY_SAVE_TIMEOUT 3000)
+
+(defui add-comment [{:keys [ticket]}]
+  (let [now (.now js/Date)
+        [last-saved set-last-saved!] (uix/use-state 0)
+        [last-modified set-last-modified!] (uix/use-state 0)
+        [last-refreshed set-last-refreshed!] (uix/use-state now)
+        [text set-text!] (uix/use-state "")
+        needs-save? (and (> last-modified 0) (> last-modified last-saved))
+        ]
+    (uix/use-effect
+       (fn []
+         (when (and needs-save? (> (- now last-modified) INACTIVITY_SAVE_TIMEOUT))
+           (http/post (str app.util/api-url-base "/add-estimate-comment")
+                      {:body (app.util/tojson {"key" ticket
+                                               "text" text})
+                       :content-type "application/json"
+                       :accept "application/json"})
+           (js/console.log "saved" (- now last-modified))
+           (set-last-saved! now)
+           )
+         (when (and needs-save? (<= last-refreshed last-modified))
+           (js/setTimeout #(set-last-refreshed! (.now js/Date)) INACTIVITY_SAVE_TIMEOUT)
+           )
+         js/undefined) [last-refreshed needs-save? last-modified now ticket text])
+
+
+    ($ :div.box ($ :h4.title {:class "is-4"} "Add estimate as task comment"
+                   (when (and (> last-modified 0) (not needs-save?)) ($ :span.tag {:class "is-success is-light"} "(saved)")))
+       ($ :form {:method "post"}
+          ($ :div.field ($ :label.label "Comment text")
+             ($ :div.control
+                ($ :textarea.textarea {:name "comment" :defaultValue "Back: \nFront: \nQA: "
+                                       :on-change (fn [^js e]
+                                                    (set-text! (.. e -target -value))
+                                                    (set-last-modified! (.now js/Date)))}))))))
+)
+
 (defui vote-screen []
   (let [estimate-ticket (hooks/use-subscribe [:app/estimate-ticket])
+        show-add-comment-box (hooks/use-subscribe [:app/show-add-comment-box])
         [info set-info!] (uix/use-state {})]
 
     (uix/use-effect
@@ -239,6 +282,11 @@
                ($ :div.column {:class "is-half"} ($ your-estimate))
                ($ :div.column {:class "is-half"} ($ results))
                )
+            (when show-add-comment-box
+              ($ :div.columns
+                 ($ :div.column {:class "is-half"})
+                 ($ :div.column {:class "is-half"} ($ add-comment {:ticket estimate-ticket}))
+                 ))
 
             )
          )

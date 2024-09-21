@@ -40,3 +40,7 @@
 (rf/reg-sub :app/results
   (fn [db _]
     (:results db)))
+
+(rf/reg-sub :app/show-add-comment-box
+  (fn [db _]
+    (:show-add-comment-box db)))
