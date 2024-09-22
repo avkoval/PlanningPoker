@@ -36,6 +36,7 @@
             (assoc :estimate-ticket jira-ticket)
             (assoc :voting-blocked false)
             (assoc :results [])
+            (assoc :show-add-comment-box false)
             (assoc :vote {:back "" :front "" :qa ""})
             (assoc :current-screen "estimate")
         )
@@ -79,7 +80,6 @@
 (rf/reg-event-db
  ::set-log-message
  (fn [db [_ msg]]
-   (js/console.log "got this message ok-2024-09-16-1726507078:" msg)
    (js/setTimeout
       (fn []
         (rf/dispatch [::clear-log-message 0]))
@@ -95,8 +95,9 @@
 (rf/reg-event-db
  ::clear-log-message
  (fn [db [_ n]]
-   (-> db
-       (assoc :log-messages (vec-remove n (:log-messages db))))))
+   (if (> (count (:log-messages db)) n)
+     (assoc db :log-messages (vec-remove n (:log-messages db)))
+     db)))
 
 (rf/reg-event-db
  ::clear-log

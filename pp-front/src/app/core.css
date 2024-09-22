@@ -15,3 +15,42 @@
     opacity: 0;
   }
 }
+
+@keyframes blink {
+    0% {
+           color: rgba(0,200,205,1)
+    }
+    50% {
+           color: rgba(0,200,205,0.5)
+    }
+    100% {
+           color: rgba(0,200,205,1)
+    }
+}
+@-webkit-keyframes blink {
+    0% {
+           color: rgba(0,200,205,1)
+    }
+    50% {
+           color: rgba(0,200,205,0.5)
+    }
+    100% {
+           color: rgba(0,200,205,1)
+    }
+}
+
+ .running-query {
+    -moz-transition:all 0.5s ease-in-out;
+    -webkit-transition:all 0.5s ease-in-out;
+    -o-transition:all 0.5s ease-in-out;
+    -ms-transition:all 0.5s ease-in-out;
+    transition:all 0.5s ease-in-out;
+    -moz-animation:blink normal 1.5s infinite ease-in-out;
+    /* Firefox */
+    -webkit-animation:blink normal 1.5s infinite ease-in-out;
+    /* Webkit */
+    -ms-animation:blink normal 1.5s infinite ease-in-out;
+    /* IE */
+    animation:blink normal 1.5s infinite ease-in-out;
+    /* Opera */
+}

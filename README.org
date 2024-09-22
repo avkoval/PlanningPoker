@@ -213,8 +213,9 @@ bb run fastapi
    CLOCK: [2024-09-17 Tue 14:32]--[2024-09-17 Tue 14:57] =>  0:25
    - State "TODO"       from              [2024-09-17 Tue 09:35]
    :END:
-** TODO Search for ticket (Estimate ticket screen) [13/17]             :verb:
+** TODO Search for ticket (Estimate ticket screen) [14/16]             :verb:
    :LOGBOOK:
+   CLOCK: [2024-09-22 Sun 11:26]--[2024-09-22 Sun 11:46] =>  0:20
    CLOCK: [2024-09-22 Sun 10:00]--[2024-09-22 Sun 10:22] =>  0:22
    - State "TODO"       from "DONE"       [2024-09-16 Mon 20:40]
    - State "DONE"       from "WORKING"    [2024-09-15 Sun 15:15]
@@ -261,10 +262,11 @@ bb run fastapi
  - [X] Logout button
  - [X] Switch to voting screen
  - [X] Async python function with results caching on FastAPI / (memoize | Redis)
- - [X] implement same structure (as for saving comment) for searching after delay only! user need to stop typing to see results!
- - [ ] indicate that query is running, also which query is running! with a color and sticker! and some effect!
- - [ ] avoid 2 staged query/re-render for search term 'payment`
+ - [X] avoid 2 staged query/re-render for search term 'payment`
+   - [X] solution: implement same structure (as for saving comment) for searching after delay only! user need to stop typing to see results!
+ - [X] indicate that query is running, also which query is running! with a color and sticker! and some effect!
  - [ ] (low pri) May be make a list of previous queries to be able to re-run them
+   - [ ] use python pickle!
  - [ ] (low pri) Provide a list of pre-defined queiries on app start or save them to a file and then restore
 
 ** DONE add jql: search support

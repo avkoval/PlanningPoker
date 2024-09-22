@@ -89,14 +89,18 @@
         [last-modified set-last-modified!] (uix/use-state 0)
         needs-exec? (and (> last-modified 0) (> last-modified last-executed-at))
         now (.now js/Date)
+        [query-is-running? set-query-is-running!] (uix/use-state false)
         [last-refreshed set-last-refreshed!] (uix/use-state now)]
     (uix/use-effect
      (fn []
        (when (and needs-exec? (> (- now last-modified) SEARCH_DELAY))
+         (set-query-is-running! true)
          (go (let [response (<! (http/get (str app.util/api-url-base "/jira/search")
                                           {:query-params {"q" q}}))
                    body (:body response)]
-               (set-tickets! body)))
+               (set-tickets! body)
+               (set-query-is-running! false)))
+         (rf/dispatch [::handlers/set-log-message (str (subs (str (js/Date)) 0 33) " Executing this query: \"" q "\"")])
          (set-last-query! q)
          (set-last-executed-at! now))
          (when (and needs-exec? (<= last-refreshed last-modified))
@@ -112,7 +116,9 @@
           ($ :div.column {:class "is-one-fifths"})
           ($ :div.column
              ($ :div.field
-                ($ :label.label "Jira Ticket Search:")
+                ($ :label.label {:class (if query-is-running? "running-query" "")} 
+                   (str "Jira Ticket Search" (when query-is-running? (str ": " last-query))))
+                
                 ($ :div.control
                    ($ :input.input {:type "text"
                                     :value q
