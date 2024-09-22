@@ -213,8 +213,9 @@ bb run fastapi
    CLOCK: [2024-09-17 Tue 14:32]--[2024-09-17 Tue 14:57] =>  0:25
    - State "TODO"       from              [2024-09-17 Tue 09:35]
    :END:
-** TODO Search for ticket (Estimate ticket screen) [12/14]             :verb:
+** TODO Search for ticket (Estimate ticket screen) [13/17]             :verb:
    :LOGBOOK:
+   CLOCK: [2024-09-22 Sun 10:00]--[2024-09-22 Sun 10:22] =>  0:22
    - State "TODO"       from "DONE"       [2024-09-16 Mon 20:40]
    - State "DONE"       from "WORKING"    [2024-09-15 Sun 15:15]
    CLOCK: [2024-09-15 Sun 15:08]--[2024-09-15 Sun 15:15] =>  0:07
@@ -260,11 +261,11 @@ bb run fastapi
  - [X] Logout button
  - [X] Switch to voting screen
  - [X] Async python function with results caching on FastAPI / (memoize | Redis)
+ - [X] implement same structure (as for saving comment) for searching after delay only! user need to stop typing to see results!
  - [ ] indicate that query is running, also which query is running! with a color and sticker! and some effect!
  - [ ] avoid 2 staged query/re-render for search term 'payment`
  - [ ] (low pri) May be make a list of previous queries to be able to re-run them
  - [ ] (low pri) Provide a list of pre-defined queiries on app start or save them to a file and then restore
- - [ ] implement same structure (as for saving comment) for searching after delay only! user need to stop typing to see results!
 
 ** DONE add jql: search support
    CLOSED: [2024-09-15 Sun 15:30]
@@ -357,8 +358,10 @@ bb run fastapi
 
  - [X] make 'sync' / 'status' query.
 
-** TODO Websocket coordination [9/10]
+** DONE Websocket coordination [9/10]
+   CLOSED: [2024-09-22 Sun 09:50]
    :LOGBOOK:
+   - State "DONE"       from "TODO"       [2024-09-22 Sun 09:50]
    CLOCK: [2024-09-15 Sun 10:05]--[2024-09-15 Sun 15:08] =>  5:03
    CLOCK: [2024-09-14 Sat 07:46]--[2024-09-14 Sat 15:48] =>  8:02
    CLOCK: [2024-09-12 Thu 07:54]--[2024-09-12 Thu 09:27] =>  1:33

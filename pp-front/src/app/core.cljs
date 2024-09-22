@@ -75,7 +75,7 @@
 )
 
 (def SEARCH_STARTS_AT 5)
-(def SEARCH_DELAY 1500)
+(def SEARCH_DELAY 1000)
 
 (defn img-for-type [type] (str "/static/img/jira-ticket/" (str/lower-case type) ".png"))
 
@@ -85,23 +85,23 @@
   (let [[q set-q!] (uix/use-state "")
         [tickets set-tickets!]  (uix/use-state [])
         [last-query set-last-query!]  (uix/use-state "")
-        [last-query-time set-last-query-time!] (uix/use-state 0)
-        timestamp (.now js/Date)]
-
+        [last-executed-at set-last-executed-at!] (uix/use-state 0)
+        [last-modified set-last-modified!] (uix/use-state 0)
+        needs-exec? (and (> last-modified 0) (> last-modified last-executed-at))
+        now (.now js/Date)
+        [last-refreshed set-last-refreshed!] (uix/use-state now)]
     (uix/use-effect
      (fn []
-       (when (and (> (count q) SEARCH_STARTS_AT) (not (= q last-query)) (or (= 0 last-query-time) (> (- timestamp last-query-time) SEARCH_DELAY)))
+       (when (and needs-exec? (> (- now last-modified) SEARCH_DELAY))
          (go (let [response (<! (http/get (str app.util/api-url-base "/jira/search")
                                           {:query-params {"q" q}}))
-                   body (:body response)
-                   ]
-               (set-tickets! body)
-               (set-last-query! q)
-               (set-last-query-time! timestamp))))
-       (when (< (- timestamp last-query-time) SEARCH_DELAY)
-         (js/setTimeout #(set-last-query-time! 0) SEARCH_DELAY)
-         )
-       js/undefined))
+                   body (:body response)]
+               (set-tickets! body)))
+         (set-last-query! q)
+         (set-last-executed-at! now))
+         (when (and needs-exec? (<= last-refreshed last-modified))
+           (js/setTimeout #(set-last-refreshed! (.now js/Date)) SEARCH_DELAY))
+       js/undefined) [q last-query last-executed-at last-modified last-refreshed needs-exec? now])
 
     ($ :div.ticket-search
        ($ :section.section
@@ -118,7 +118,9 @@
                                     :value q
                                     :placeholder "Enter ticket number or subject"
                                     :on-change (fn [^js e]
-                                                 (set-q! (.. e -target -value)))
+                                                 (set-q! (.. e -target -value))
+                                                 (set-last-modified! (.now js/Date))
+                                                 )
                                     }))
                 ($ :p.help {:class "is-info"} "You can also enter JQL by using prefix "
                          ($ :b "jql:")
