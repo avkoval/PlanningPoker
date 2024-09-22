@@ -9,6 +9,10 @@
          uix         {:doc  "start UIx Front dev"
                       :task (shell {:dir "pp-front"} "yarn dev")}
 
+         release     {:doc  "release"
+                      :task (do (shell {:dir "pp-front"}  "yarn release")
+                                (shell {:dir "pp-front"}  "yarn styles-release"))}
+
          docs        {:doc "make docs"
                       :task (do (shell {:dir "."}  "emacs --batch --eval '(load-file \".export.el\")'")
                                 (shell {:dir "."}  "mv -f README.html static/docs/"))}}}
