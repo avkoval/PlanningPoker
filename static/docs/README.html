@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2024-09-21 сб 17:47 -->
+<!-- 2024-09-21 сб 17:51 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Planning Poker</title>
@@ -23,47 +23,47 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org20e0cbc">What is this</a></li>
-<li><a href="#org090a353">Project structure</a></li>
-<li><a href="#orgb7b0269">Architecture &amp; UI ideas <code>[6/6]</code></a></li>
-<li><a href="#org06ebdb9">Install</a></li>
-<li><a href="#org925b877">Setup</a>
+<li><a href="#orgf0d95eb">What is this</a></li>
+<li><a href="#org75b9411">Project structure</a></li>
+<li><a href="#orgb503835">Architecture &amp; UI ideas <code>[6/6]</code></a></li>
+<li><a href="#org1bdac1b">Install</a></li>
+<li><a href="#org3404a6e">Setup</a>
 <ul>
-<li><a href="#org7dcd195">Available settings</a></li>
+<li><a href="#orgd24d27e">Available settings</a></li>
 </ul>
 </li>
-<li><a href="#org982da00">Run</a></li>
-<li><a href="#org9f288e3">WORKING Work Log: Planning poker for Fieldhub</a>
+<li><a href="#org64c779a">Run</a></li>
+<li><a href="#org3e68dfc">WORKING Work Log: Planning poker for Fieldhub</a>
 <ul>
-<li><a href="#org9bb29c7">Technical design &amp; architecture</a>
+<li><a href="#org20afbc5">Technical design &amp; architecture</a>
 <ul>
-<li><a href="#org17880a9"><span class="done DONE">DONE</span> View practically, Kit, Uix &amp; bootstrap the project</a></li>
-<li><a href="#orge45f661"><span class="done DONE">DONE</span> use FastAPI! use Google auth &amp; ready Jira integration I have!</a></li>
-<li><a href="#org86c6caf"><span class="done DONE">DONE</span> Use websocket for fast communication!</a></li>
+<li><a href="#orgd090d95"><span class="done DONE">DONE</span> View practically, Kit, Uix &amp; bootstrap the project</a></li>
+<li><a href="#org5dc4e07"><span class="done DONE">DONE</span> use FastAPI! use Google auth &amp; ready Jira integration I have!</a></li>
+<li><a href="#org817e4ba"><span class="done DONE">DONE</span> Use websocket for fast communication!</a></li>
 </ul>
 </li>
-<li><a href="#org5175caa">UI Plan on functional implementation <code>[0/6]</code></a></li>
-<li><a href="#org8600145"><span class="done DONE">DONE</span> Bootstrap: FastAPI + UIx^2 in one folder &amp; dev/prod start/deploy/+sentry/+logging</a></li>
-<li><a href="#orga56259e"><span class="done DONE">DONE</span> Google auth &amp; JWT token (or session cookie)</a></li>
-<li><a href="#orgdc6097f"><span class="done DONE">DONE</span> add running via bb.edn</a></li>
-<li><a href="#org8beaba8"><span class="done DONE">DONE</span> fix burger menu for mobile</a></li>
-<li><a href="#org3c050b7"><span class="done DONE">DONE</span> use iframe for docs part</a></li>
-<li><a href="#orga632ab3"><span class="todo TODO">TODO</span> Search for ticket (Estimate ticket screen) <code>[12/14]</code>&#xa0;&#xa0;&#xa0;<span class="tag"><span class="verb">verb</span></span></a></li>
-<li><a href="#org1214e6f"><span class="done DONE">DONE</span> add jql: search support</a></li>
-<li><a href="#org1875365"><span class="done DONE">DONE</span> fix design=placement for estimate / results boxes</a></li>
-<li><a href="#org9f2be66"><span class="done DONE">DONE</span> logging</a></li>
-<li><a href="#org247e567"><span class="todo TODO">TODO</span> Keep tickets list? refresh the same criterial? add (x) to the right?</a></li>
-<li><a href="#org59c7128">WORKING Voting screen <code>[13/15]</code> <code>[86%]</code></a></li>
-<li><a href="#org33cc193"><span class="done DONE">DONE</span> check logged in state (when in <code>/app</code>) and other statuses (because currenly it allows to see <code>/app/</code> <code>[1/2]</code></a></li>
-<li><a href="#org2540d37"><span class="todo TODO">TODO</span> Websocket coordination <code>[9/10]</code></a></li>
+<li><a href="#org6634ad7">UI Plan on functional implementation <code>[0/6]</code></a></li>
+<li><a href="#org4cda8c4"><span class="done DONE">DONE</span> Bootstrap: FastAPI + UIx^2 in one folder &amp; dev/prod start/deploy/+sentry/+logging</a></li>
+<li><a href="#orgf573e0e"><span class="done DONE">DONE</span> Google auth &amp; JWT token (or session cookie)</a></li>
+<li><a href="#org1624c73"><span class="done DONE">DONE</span> add running via bb.edn</a></li>
+<li><a href="#org0ca3981"><span class="done DONE">DONE</span> fix burger menu for mobile</a></li>
+<li><a href="#org61310f1"><span class="done DONE">DONE</span> use iframe for docs part</a></li>
+<li><a href="#org6153000"><span class="todo TODO">TODO</span> Search for ticket (Estimate ticket screen) <code>[12/14]</code>&#xa0;&#xa0;&#xa0;<span class="tag"><span class="verb">verb</span></span></a></li>
+<li><a href="#org7c34d7f"><span class="done DONE">DONE</span> add jql: search support</a></li>
+<li><a href="#org0b2917f"><span class="done DONE">DONE</span> fix design=placement for estimate / results boxes</a></li>
+<li><a href="#org9636b8a"><span class="done DONE">DONE</span> logging</a></li>
+<li><a href="#orgd35182f"><span class="todo TODO">TODO</span> Keep tickets list? refresh the same criterial? add (x) to the right?</a></li>
+<li><a href="#org07806bc">WORKING Voting screen <code>[13/15]</code> <code>[86%]</code></a></li>
+<li><a href="#orgae3f1ce"><span class="done DONE">DONE</span> check logged in state (when in <code>/app</code>) and other statuses (because currenly it allows to see <code>/app/</code> <code>[1/2]</code></a></li>
+<li><a href="#org885f4bc"><span class="todo TODO">TODO</span> Websocket coordination <code>[9/10]</code></a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org20e0cbc" class="outline-2">
-<h2 id="org20e0cbc">What is this</h2>
-<div class="outline-text-2" id="text-org20e0cbc">
+<div id="outline-container-orgf0d95eb" class="outline-2">
+<h2 id="orgf0d95eb">What is this</h2>
+<div class="outline-text-2" id="text-orgf0d95eb">
 <p>
 I am playing with technology and trying new things. Because JIRA does not provide
 such functionality out of the box, I would like to develop SPA to play it with my
@@ -73,10 +73,10 @@ development</span>.
 </p>
 </div>
 </div>
-<div id="outline-container-org090a353" class="outline-2">
-<h2 id="org090a353">Project structure</h2>
-<div class="outline-text-2" id="text-org090a353">
-<pre class="example" id="org50a89ec">
+<div id="outline-container-org75b9411" class="outline-2">
+<h2 id="org75b9411">Project structure</h2>
+<div class="outline-text-2" id="text-org75b9411">
+<pre class="example" id="org05cc51a">
 Directory tree
 ==============
 [-] PlanningPoker
@@ -119,9 +119,9 @@ Directory tree
 </pre>
 </div>
 </div>
-<div id="outline-container-orgb7b0269" class="outline-2">
-<h2 id="orgb7b0269">Architecture &amp; UI ideas <code>[6/6]</code></h2>
-<div class="outline-text-2" id="text-orgb7b0269">
+<div id="outline-container-orgb503835" class="outline-2">
+<h2 id="orgb503835">Architecture &amp; UI ideas <code>[6/6]</code></h2>
+<div class="outline-text-2" id="text-orgb503835">
 <ul class="org-ul">
 <li class="on"><code>[X]</code> FastAPI on Backend</li>
 <li class="on"><code>[X]</code> UIX^2 on Frontend</li>
@@ -136,9 +136,9 @@ Directory tree
 </ul>
 </div>
 </div>
-<div id="outline-container-org06ebdb9" class="outline-2">
-<h2 id="org06ebdb9">Install</h2>
-<div class="outline-text-2" id="text-org06ebdb9">
+<div id="outline-container-org1bdac1b" class="outline-2">
+<h2 id="org1bdac1b">Install</h2>
+<div class="outline-text-2" id="text-org1bdac1b">
 <p>
 Backend:
 </p>
@@ -148,14 +148,14 @@ Backend:
 </div>
 </div>
 </div>
-<div id="outline-container-org925b877" class="outline-2">
-<h2 id="org925b877">Setup</h2>
-<div class="outline-text-2" id="text-org925b877">
+<div id="outline-container-org3404a6e" class="outline-2">
+<h2 id="org3404a6e">Setup</h2>
+<div class="outline-text-2" id="text-org3404a6e">
 <p>
 Copy &amp; edit contents of .env file: setup variables
 </p>
 
-<pre class="example" id="org030b6f3">
+<pre class="example" id="orgb5b9b01">
 cp .env-example .env
 </pre>
 
@@ -163,9 +163,9 @@ cp .env-example .env
 To do this you will need to create Google Project and obtain Oauth authorization keys.
 </p>
 </div>
-<div id="outline-container-org7dcd195" class="outline-3">
-<h3 id="org7dcd195">Available settings</h3>
-<div class="outline-text-3" id="text-org7dcd195">
+<div id="outline-container-orgd24d27e" class="outline-3">
+<h3 id="orgd24d27e">Available settings</h3>
+<div class="outline-text-3" id="text-orgd24d27e">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -205,32 +205,32 @@ To do this you will need to create Google Project and obtain Oauth authorization
 </div>
 </div>
 </div>
-<div id="outline-container-org982da00" class="outline-2">
-<h2 id="org982da00">Run</h2>
-<div class="outline-text-2" id="text-org982da00">
-<pre class="example" id="orgfd54f04">
+<div id="outline-container-org64c779a" class="outline-2">
+<h2 id="org64c779a">Run</h2>
+<div class="outline-text-2" id="text-org64c779a">
+<pre class="example" id="org483887c">
 poetry run fastapi dev backend/main.py
 </pre>
 
 <p>
 (if you have babashka installed):
 </p>
-<pre class="example" id="org2a8e8c6">
+<pre class="example" id="orgde43f94">
 bb run fastapi
 </pre>
 </div>
 </div>
-<div id="outline-container-org9f288e3" class="outline-2">
-<h2 id="org9f288e3">WORKING Work Log: Planning poker for Fieldhub</h2>
-<div class="outline-text-2" id="text-org9f288e3">
+<div id="outline-container-org3e68dfc" class="outline-2">
+<h2 id="org3e68dfc">WORKING Work Log: Planning poker for Fieldhub</h2>
+<div class="outline-text-2" id="text-org3e68dfc">
 </div>
-<div id="outline-container-org9bb29c7" class="outline-3">
-<h3 id="org9bb29c7">Technical design &amp; architecture</h3>
-<div class="outline-text-3" id="text-org9bb29c7">
+<div id="outline-container-org20afbc5" class="outline-3">
+<h3 id="org20afbc5">Technical design &amp; architecture</h3>
+<div class="outline-text-3" id="text-org20afbc5">
 </div>
-<div id="outline-container-org17880a9" class="outline-4">
-<h4 id="org17880a9"><span class="done DONE">DONE</span> View practically, Kit, Uix &amp; bootstrap the project</h4>
-<div class="outline-text-4" id="text-org17880a9">
+<div id="outline-container-orgd090d95" class="outline-4">
+<h4 id="orgd090d95"><span class="done DONE">DONE</span> View practically, Kit, Uix &amp; bootstrap the project</h4>
+<div class="outline-text-4" id="text-orgd090d95">
 <ul class="org-ul">
 <li class="on"><code>[X]</code> Decided to use FastCGI instead of Kit in this round (<span class="timestamp-wrapper"><span class="timestamp">[2024-08-17 сб 11:20]</span></span>). Reasons:
 <ul class="org-ul">
@@ -240,7 +240,7 @@ bb run fastapi
 <li class="on"><code>[X]</code> <p>
 How to add ReFrame? 11:29.44 (00:08) Found, explained in: <a href="https://github.com/pitch-io/uix-starter">https://github.com/pitch-io/uix-starter</a>
 </p>
-<pre class="example" id="org17c85e3">
+<pre class="example" id="org36eac61">
 npx create-uix-app@latest my-app --re-frame # adds re-frame setup
 </pre></li>
 <li class="on"><code>[X]</code> View (again) <a href="https://www.youtube.com/watch?v=4vgrLHsD0-I&amp;t=3s">intro video from Roman Liutikov</a></li>
@@ -249,9 +249,9 @@ npx create-uix-app@latest my-app --re-frame # adds re-frame setup
 </ul>
 </div>
 </div>
-<div id="outline-container-orge45f661" class="outline-4">
-<h4 id="orge45f661"><span class="done DONE">DONE</span> use FastAPI! use Google auth &amp; ready Jira integration I have!</h4>
-<div class="outline-text-4" id="text-orge45f661">
+<div id="outline-container-org5dc4e07" class="outline-4">
+<h4 id="org5dc4e07"><span class="done DONE">DONE</span> use FastAPI! use Google auth &amp; ready Jira integration I have!</h4>
+<div class="outline-text-4" id="text-org5dc4e07">
 <ul class="org-ul">
 <li><a href="https://google-auth.readthedocs.io/en/master/">https://google-auth.readthedocs.io/en/master/</a></li>
 <li><a href="https://github.com/hanchon-live/tutorial-fastapi-oauth">https://github.com/hanchon-live/tutorial-fastapi-oauth</a></li>
@@ -260,18 +260,18 @@ npx create-uix-app@latest my-app --re-frame # adds re-frame setup
 </ul>
 </div>
 </div>
-<div id="outline-container-org86c6caf" class="outline-4">
-<h4 id="org86c6caf"><span class="done DONE">DONE</span> Use websocket for fast communication!</h4>
-<div class="outline-text-4" id="text-org86c6caf">
+<div id="outline-container-org817e4ba" class="outline-4">
+<h4 id="org817e4ba"><span class="done DONE">DONE</span> Use websocket for fast communication!</h4>
+<div class="outline-text-4" id="text-org817e4ba">
 <ul class="org-ul">
 <li>FastAPI provides support:</li>
 </ul>
 </div>
 </div>
 </div>
-<div id="outline-container-org5175caa" class="outline-3">
-<h3 id="org5175caa">UI Plan on functional implementation <code>[0/6]</code></h3>
-<div class="outline-text-3" id="text-org5175caa">
+<div id="outline-container-org6634ad7" class="outline-3">
+<h3 id="org6634ad7">UI Plan on functional implementation <code>[0/6]</code></h3>
+<div class="outline-text-3" id="text-org6634ad7">
 <ul class="org-ul">
 <li>SPA - one screen on UIx</li>
 <li class="off"><code>[&#xa0;]</code> List logged in users</li>
@@ -286,9 +286,9 @@ npx create-uix-app@latest my-app --re-frame # adds re-frame setup
 </ul>
 </div>
 </div>
-<div id="outline-container-org8600145" class="outline-3">
-<h3 id="org8600145"><span class="done DONE">DONE</span> Bootstrap: FastAPI + UIx^2 in one folder &amp; dev/prod start/deploy/+sentry/+logging</h3>
-<div class="outline-text-3" id="text-org8600145">
+<div id="outline-container-org4cda8c4" class="outline-3">
+<h3 id="org4cda8c4"><span class="done DONE">DONE</span> Bootstrap: FastAPI + UIx^2 in one folder &amp; dev/prod start/deploy/+sentry/+logging</h3>
+<div class="outline-text-3" id="text-org4cda8c4">
 <ul class="org-ul">
 <li class="on"><code>[X]</code> Install fastapi via poetry</li>
 <li class="on"><code>[X]</code> Bootstrap UIX^2 project</li>
@@ -297,32 +297,32 @@ npx create-uix-app@latest my-app --re-frame # adds re-frame setup
 </ul>
 </div>
 </div>
-<div id="outline-container-orga56259e" class="outline-3">
-<h3 id="orga56259e"><span class="done DONE">DONE</span> Google auth &amp; JWT token (or session cookie)</h3>
-<div class="outline-text-3" id="text-orga56259e">
+<div id="outline-container-orgf573e0e" class="outline-3">
+<h3 id="orgf573e0e"><span class="done DONE">DONE</span> Google auth &amp; JWT token (or session cookie)</h3>
+<div class="outline-text-3" id="text-orgf573e0e">
 </div>
 </div>
-<div id="outline-container-orgdc6097f" class="outline-3">
-<h3 id="orgdc6097f"><span class="done DONE">DONE</span> add running via bb.edn</h3>
-<div class="outline-text-3" id="text-orgdc6097f">
+<div id="outline-container-org1624c73" class="outline-3">
+<h3 id="org1624c73"><span class="done DONE">DONE</span> add running via bb.edn</h3>
+<div class="outline-text-3" id="text-org1624c73">
 <ul class="org-ul">
 <li>Finish watching <a href="https://www.youtube.com/watch?v=u5ECoR7KT1Y">Babashka tasks (by Michiel Borkent)</a> from <i>The London Clojurians are happy to present 3 years ago</i></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org8beaba8" class="outline-3">
-<h3 id="org8beaba8"><span class="done DONE">DONE</span> fix burger menu for mobile</h3>
-<div class="outline-text-3" id="text-org8beaba8">
+<div id="outline-container-org0ca3981" class="outline-3">
+<h3 id="org0ca3981"><span class="done DONE">DONE</span> fix burger menu for mobile</h3>
+<div class="outline-text-3" id="text-org0ca3981">
 </div>
 </div>
-<div id="outline-container-org3c050b7" class="outline-3">
-<h3 id="org3c050b7"><span class="done DONE">DONE</span> use iframe for docs part</h3>
-<div class="outline-text-3" id="text-org3c050b7">
+<div id="outline-container-org61310f1" class="outline-3">
+<h3 id="org61310f1"><span class="done DONE">DONE</span> use iframe for docs part</h3>
+<div class="outline-text-3" id="text-org61310f1">
 </div>
 </div>
-<div id="outline-container-orga632ab3" class="outline-3">
-<h3 id="orga632ab3"><span class="todo TODO">TODO</span> Search for ticket (Estimate ticket screen) <code>[12/14]</code>&#xa0;&#xa0;&#xa0;<span class="tag"><span class="verb">verb</span></span></h3>
-<div class="outline-text-3" id="text-orga632ab3">
+<div id="outline-container-org6153000" class="outline-3">
+<h3 id="org6153000"><span class="todo TODO">TODO</span> Search for ticket (Estimate ticket screen) <code>[12/14]</code>&#xa0;&#xa0;&#xa0;<span class="tag"><span class="verb">verb</span></span></h3>
+<div class="outline-text-3" id="text-org6153000">
 <ul class="org-ul">
 <li class="on"><code>[X]</code> Make a stub function on FastAPI side for now.</li>
 <li class="on"><code>[X]</code> <p>
@@ -371,19 +371,19 @@ C) some people suggest to use Axios directly from Clojurescript.
 </ul>
 </div>
 </div>
-<div id="outline-container-org1214e6f" class="outline-3">
-<h3 id="org1214e6f"><span class="done DONE">DONE</span> add jql: search support</h3>
-<div class="outline-text-3" id="text-org1214e6f">
+<div id="outline-container-org7c34d7f" class="outline-3">
+<h3 id="org7c34d7f"><span class="done DONE">DONE</span> add jql: search support</h3>
+<div class="outline-text-3" id="text-org7c34d7f">
 </div>
 </div>
-<div id="outline-container-org1875365" class="outline-3">
-<h3 id="org1875365"><span class="done DONE">DONE</span> fix design=placement for estimate / results boxes</h3>
-<div class="outline-text-3" id="text-org1875365">
+<div id="outline-container-org0b2917f" class="outline-3">
+<h3 id="org0b2917f"><span class="done DONE">DONE</span> fix design=placement for estimate / results boxes</h3>
+<div class="outline-text-3" id="text-org0b2917f">
 </div>
 </div>
-<div id="outline-container-org9f2be66" class="outline-3">
-<h3 id="org9f2be66"><span class="done DONE">DONE</span> logging</h3>
-<div class="outline-text-3" id="text-org9f2be66">
+<div id="outline-container-org9636b8a" class="outline-3">
+<h3 id="org9636b8a"><span class="done DONE">DONE</span> logging</h3>
+<div class="outline-text-3" id="text-org9636b8a">
 <ul class="org-ul">
 <li class="on"><code>[X]</code> Log display as is-info</li>
 <li class="on"><code>[X]</code> Or display N lines with timestamp and history scroll</li>
@@ -397,14 +397,14 @@ C) some people suggest to use Axios directly from Clojurescript.
 </ul>
 </div>
 </div>
-<div id="outline-container-org247e567" class="outline-3">
-<h3 id="org247e567"><span class="todo TODO">TODO</span> Keep tickets list? refresh the same criterial? add (x) to the right?</h3>
-<div class="outline-text-3" id="text-org247e567">
+<div id="outline-container-orgd35182f" class="outline-3">
+<h3 id="orgd35182f"><span class="todo TODO">TODO</span> Keep tickets list? refresh the same criterial? add (x) to the right?</h3>
+<div class="outline-text-3" id="text-orgd35182f">
 </div>
 </div>
-<div id="outline-container-org59c7128" class="outline-3">
-<h3 id="org59c7128">WORKING Voting screen <code>[13/15]</code> <code>[86%]</code></h3>
-<div class="outline-text-3" id="text-org59c7128">
+<div id="outline-container-org07806bc" class="outline-3">
+<h3 id="org07806bc">WORKING Voting screen <code>[13/15]</code> <code>[86%]</code></h3>
+<div class="outline-text-3" id="text-org07806bc">
 <ul class="org-ul">
 <li class="on"><code>[X]</code> Menu is-active</li>
 <li class="on"><code>[X]</code> Prepare FastAPI endpoint</li>
@@ -443,7 +443,7 @@ C) some people suggest to use Axios directly from Clojurescript.
 <li class="off"><code>[&#xa0;]</code> <p>
 Send results to Jira by adding formatted comment to ticket like (in hours):
 </p>
-<pre class="example" id="orgbdb6f49">
+<pre class="example" id="orgff08c07">
 Back: ...
 Front: ...
 QA: ...
@@ -452,17 +452,17 @@ QA: ...
 </ul>
 </div>
 </div>
-<div id="outline-container-org33cc193" class="outline-3">
-<h3 id="org33cc193"><span class="done DONE">DONE</span> check logged in state (when in <code>/app</code>) and other statuses (because currenly it allows to see <code>/app/</code> <code>[1/2]</code></h3>
-<div class="outline-text-3" id="text-org33cc193">
+<div id="outline-container-orgae3f1ce" class="outline-3">
+<h3 id="orgae3f1ce"><span class="done DONE">DONE</span> check logged in state (when in <code>/app</code>) and other statuses (because currenly it allows to see <code>/app/</code> <code>[1/2]</code></h3>
+<div class="outline-text-3" id="text-orgae3f1ce">
 <ul class="org-ul">
 <li class="on"><code>[X]</code> make 'sync' / 'status' query.</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org2540d37" class="outline-3">
-<h3 id="org2540d37"><span class="todo TODO">TODO</span> Websocket coordination <code>[9/10]</code></h3>
-<div class="outline-text-3" id="text-org2540d37">
+<div id="outline-container-org885f4bc" class="outline-3">
+<h3 id="org885f4bc"><span class="todo TODO">TODO</span> Websocket coordination <code>[9/10]</code></h3>
+<div class="outline-text-3" id="text-org885f4bc">
 <ul class="org-ul">
 <li class="on"><code>[X]</code> Add WS handler on backend, check it works with sample HTML code</li>
 <li class="on"><code>[X]</code> pub/sub pattern on FastAPI backend:
@@ -512,7 +512,7 @@ async user can do anything async</li>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: avkoval (ok)</p>
-<p class="date">Created: 2024-09-21 сб 17:47</p>
+<p class="date">Created: 2024-09-21 сб 17:51</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

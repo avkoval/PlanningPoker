@@ -1,6 +1,7 @@
 import asyncio
 import json
 import pprint
+import re
 from collections import defaultdict
 from datetime import datetime
 from typing import Any, List
@@ -314,11 +315,32 @@ class JiraEstimateComment(BaseModel):
     text: str = ""
 
 
+def find_matching_comment(comments):
+    """
+    try to find comment, containing forms:
+      Backend - .*
+      QA - .*
+      Back:
+      Front:
+      ... and qualify this comment as estimate, otherwise return None
+    """
+    for comment in comments:
+        for pattern in [r'Backend\s\-.*', r'QA\s\-.*', r'Front\s\-.*', r'^Back:.*', r'^Front:.*']:
+            if re.match(pattern, comment.body):
+                return comment
+
+
 @app.post('/add-estimate-comment')
 def add_estimate_comment(request: Request, comment: JiraEstimateComment) -> JiraEstimateComment | None:
     if not request.session.get('access_token'):
         return None
     username = get_username(request.session.get('access_token')['userinfo'])  # type: ignore
+    issue = jira.issue(comment.key)
+    estimate_comment = find_matching_comment(issue.fields.comment.comments)
+    if estimate_comment:
+        estimate_comment.update(body=comment.text)
+    else:
+        jira.add_comment(issue, comment.text)
     asyncio.run(push_to_connected_websockets(
         f"log::{format_datetime(datetime.now())} Saved comment of {username} to ticket {comment.key}"))
     return comment
