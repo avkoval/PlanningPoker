@@ -112,7 +112,11 @@ bb run fastapi
   - State "TODO"       from              [2024-08-17 Sat 07:55]
   :END:
 
-** Technical design & architecture
+** DONE Technical design & architecture
+   CLOSED: [2024-09-22 Sun 13:15]
+   :LOGBOOK:
+   - State "DONE"       from              [2024-09-22 Sun 13:15]
+   :END:
 *** DONE View practically, Kit, Uix & bootstrap the project
     CLOSED: [2024-08-17 Sat 20:05]
     :LOGBOOK:
@@ -157,8 +161,10 @@ bb run fastapi
     :END:
 
  - FastAPI provides support: 
-** UI Plan on functional implementation [0/6]
+** REJECTED UI Plan on functional implementation [0/6]
+   CLOSED: [2024-09-22 Sun 13:10]
    :LOGBOOK:
+   - State "REJECTED"   from              [2024-09-22 Sun 13:10]
    - State "TODO"       from              [2024-08-17 Sat 08:10]
    :END:
 
@@ -295,12 +301,10 @@ bb run fastapi
    - https://stackoverflow.com/questions/76258055/how-to-add-fade-in-animation-to-a-component-when-it-is-loaded-in-react
  - [X] delete individual message
  - +[ ] display not more then 3 messages+
-** TODO Keep tickets list? refresh the same criterial? add (x) to the right?
+** DONE Voting screen [15/15] [100%]
+   CLOSED: [2024-09-22 Sun 13:10]
    :LOGBOOK:
-   - State "TODO"       from              [2024-09-16 Mon 20:20]
-   :END:
-** WORKING Voting screen [14/15] [93%]
-   :LOGBOOK:
+   - State "DONE"       from "WORKING"    [2024-09-22 Sun 13:10]
    CLOCK: [2024-09-22 Sun 07:30]--[2024-09-22 Sun 08:57] =>  1:27
    CLOCK: [2024-09-20 Fri 07:58]--[2024-09-20 Fri 08:39] =>  0:41
    CLOCK: [2024-09-20 Fri 07:00]--[2024-09-20 Fri 07:38] =>  0:38
@@ -319,11 +323,12 @@ bb run fastapi
  - [X] Menu is-active
  - [X] Prepare FastAPI endpoint
  - [X] Cache ticket data
- - [-] Display data on screen
+ - [X] Display data on screen
    - [2024-09-06 Fri 09:25] data is displayed but ~markdown~ formatting is required...
    - [X] format markdown (on backend?)
-   - [ ] format URLs via custom fn
-   - [ ] (maybe) format images as external URLs via custom fn?
+   - [X] format URLs via custom fn
+   - [X] +(maybe) format images as external URLs via custom fn?+
+     - /got Permission denied!/
  - [X] Add 'vote' layout block
  - [X] Set voted ticket & bg color for button
  - [X] Send vote data to server
