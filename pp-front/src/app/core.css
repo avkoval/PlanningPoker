@@ -18,24 +18,24 @@
 
 @keyframes blink {
     0% {
-           color: rgba(0,200,205,1)
+           color: rgba(10,100,0,1)
     }
     50% {
-           color: rgba(0,200,205,0.5)
+           color: rgba(10,100,205,0.5)
     }
     100% {
-           color: rgba(0,200,205,1)
+           color: rgba(100,0,205,1)
     }
 }
 @-webkit-keyframes blink {
     0% {
-           color: rgba(0,200,205,1)
+           color: rgba(10,100,0,1)
     }
     50% {
-           color: rgba(0,200,205,0.5)
+           color: rgba(10,100,205,0.5)
     }
     100% {
-           color: rgba(0,200,205,1)
+           color: rgba(100,0,205,1)
     }
 }
 

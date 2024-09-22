@@ -116,9 +116,9 @@
           ($ :div.column {:class "is-one-fifths"})
           ($ :div.column
              ($ :div.field
-                ($ :label.label {:class (if query-is-running? "running-query" "")} 
+                ($ :label.label {:class (if query-is-running? "running-query" "")}
                    (str "Jira Ticket Search" (when query-is-running? (str ": " last-query))))
-                
+
                 ($ :div.control
                    ($ :input.input {:type "text"
                                     :value q
@@ -283,7 +283,8 @@
                )
             ($ :div.block
                      ($ :h2.subtitle "Description")
-                     ($ :div.box #js {:dangerouslySetInnerHTML #js {:__html (:description info)}} ))
+                     ($ :div.content
+                        ($ :div.box #js {:dangerouslySetInnerHTML #js {:__html (:description info)}} )))
             )
          ($ :div.container {:class "mt-4"}
             ($ :div.columns

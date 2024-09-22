@@ -250,16 +250,16 @@ class IssueDetail(BaseModel):
 @cached(cache=TTLCache(maxsize=1024, ttl=600))
 def get_issue_info(issue_key: str):
     issue_key = issue_key.strip()
-    search = f'key = "{issue_key}"'
-    if settings.limit_to_project:
-        search += f' and project={settings.limit_to_project}'
     try:
-        return jira.search_issues(search)[0]  # type: ignore
+        return jira.issue(issue_key, expand='renderedFields')
     except JIRAError as e:
         print(issue_key, ' => ', e.text)
         return None
-    except IndexError:
-        return None
+
+
+def remove_img_tags(data):
+    p = re.compile(r'<img.*?/>')
+    return p.sub('', data)
 
 
 @app.get('/jira/info')
@@ -279,7 +279,7 @@ def detail(request: Request, issue_key: str) -> IssueDetail | None:
     detail = IssueDetail(key=issue.key,
                          url=issue.permalink(),
                          summary=issue.fields.summary,
-                         description=markdown.markdown(issue.fields.description or ""),
+                         description=remove_img_tags(issue.raw['renderedFields']['description']),
                          updated=issue.fields.updated,
                          created=issue.fields.created,
                          issuetype=str(issue.fields.issuetype),
