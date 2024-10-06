@@ -112,6 +112,41 @@ bb run fastapi
   - State "TODO"       from              [2024-08-17 Sat 07:55]
   :END:
 
+** WORKING improve planning poker after first try
+   :LOGBOOK:
+   - State "WORKING"    from              [2024-10-06 Sun 08:20]
+   :END:
+
+After first real play the improvements are in the list below.
+
+*** DONE Make 'hours' estimate default
+    CLOSED: [2024-10-06 Sun 09:45]
+    :LOGBOOK:
+    - State "DONE"       from "TODO"       [2024-10-06 Sun 09:45]
+    CLOCK: [2024-10-06 Sun 09:43]--[2024-10-06 Sun 09:44] =>  0:01
+    :END:
+
+  - [[/home/oleksii/tmp/screenshots/ss_20240926122438_RSc3qSQN9YNV8wPEeV3i.png]]
+*** TODO Reverse log
+
+  - [[/home/oleksii/tmp/screenshots/ss_20240926124217_VIEMMApsf2CmDFWQsgqG.png]]
+
+*** WORKING when all estimates are the same - set auto hours if all votes are the same
+
+ [[/home/oleksii/tmp/screenshots/ss_20240926130413_yPlps4vlIvc6F5aj9iCb.png]]
+
+*** TODO Show voting reveived during voting
+    :LOGBOOK:
+    - State "TODO"       from              [2024-10-06 Sun 08:30]
+    :END:
+
+  - Show participant but do not show the vote
+  - [[/home/oleksii/tmp/screenshots/ss_20240926125135_JTrDRyQU5bWqbFlIrkBf.png]]
+
+*** TODO Add field to set estimate in ticket
+
+  - [[/home/oleksii/tmp/screenshots/ss_20240926122916_tdqEOwzDyCVSWxwVgAGW.png]]
+
 ** DONE Technical design & architecture
    CLOSED: [2024-09-22 Sun 13:15]
    :LOGBOOK:

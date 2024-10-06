@@ -176,7 +176,7 @@
 (defui your-estimate []
   (let [my-votes (hooks/use-subscribe [:app/my-votes])
         [category set-category!] (uix/use-state :back)
-        [measure set-measure!] (uix/use-state "sp")
+        [measure set-measure!] (uix/use-state "hours")
         estimate-values (if (= measure "sp") ["0.25sp" "0.5sp" "1sp" "2sp" "3sp" "5sp" "8sp" ">8sp"] ["0.5h" "1h" "2h" "4h" "8h" "16h" "40h"])
         vote (get my-votes category)
         [previous-votes set-previous-votes!] (uix/use-state {:back "" :front "" :qa ""})
