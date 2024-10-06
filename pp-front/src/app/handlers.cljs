@@ -77,13 +77,15 @@
    (-> db
        (assoc :voting-blocked true))))
 
+(def LOG_DISAPPEARS_AFTER 300)
+
 (rf/reg-event-db
  ::set-log-message
  (fn [db [_ msg]]
    (js/setTimeout
       (fn []
         (rf/dispatch [::clear-log-message 0]))
-      30000)
+      (* LOG_DISAPPEARS_AFTER 1000))
    (-> db
        (assoc :log-messages (conj (:log-messages db) msg)))))
 

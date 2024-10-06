@@ -4,7 +4,7 @@
 }
 
 .disappear {
-  animation: fade-out 50s;
+  animation: fade-out 240s;
 }
 
 @keyframes fade-out {
