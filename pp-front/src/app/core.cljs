@@ -155,16 +155,17 @@
 (defui results []
   (let [voting-blocked? (hooks/use-subscribe [:app/voting-blocked])
         results (hooks/use-subscribe [:app/results])
-        voting-finished? (not (empty? results))]
+        first-val (first (vals (first (vals results))))
+        voting-finished? (and (not= first-val "✓") (seq results))]
     ($ :div.box {:class "is-center"}
        ($ :h4.title {:class "is-4"} "Voting Results")
        (if (and voting-blocked? (not voting-finished?))
          ($ :progress.progress {:class "is-small is-primary" :max "100"})
-         (if (not voting-finished?)
-           ($ :button.button {:on-click (fn [^js _] (rf/dispatch [::handlers/reveal-results]))} "Reveal results")
-           ($ :table.table ($ :tbody
-                              ($ :tr $ ($ :td "Developer") ($ :td "Back") ($ :td "Front") ($ :td "QA"))
-                              (for [[k v] results] ($ :tr {:key k} ($ :td k) ($ :td (get v "back")) ($ :td (get v "front")) ($ :td (get v "qa"))))))))
+         ($ :div
+            ($ :table.table ($ :tbody
+                               ($ :tr $ ($ :td "Developer") ($ :td "Back") ($ :td "Front") ($ :td "QA"))
+                               (for [[k v] results] ($ :tr {:key k} ($ :td k) ($ :td (get v "back")) ($ :td (get v "front")) ($ :td (get v "qa"))))))
+            (when-not voting-finished? ($ :button.button {:on-click (fn [^js _] (rf/dispatch [::handlers/reveal-results]))} "Reveal results"))))
        (when voting-finished?
          ($ :a {:on-click (fn [^js _] (rf/dispatch [::handlers/toggle-add-comment-box]))} "Add/Replace Jira comment"))
        )))
@@ -182,9 +183,14 @@
         [previous-votes set-previous-votes!] (uix/use-state {:back "" :front "" :qa ""})
         previous-vote (get previous-votes category)
         voting-blocked (hooks/use-subscribe [:app/voting-blocked])
+        results (hooks/use-subscribe [:app/results])
+        first-val (first (vals (first (vals results))))
+        voting-finished? (and (not= first-val "✓") (seq results))
         ]
     ($ :div.box ($ :h4.title {:class (if voting-blocked "has-text-grey-light is-4" "is-4")} "Your estimate: "
                    (when voting-blocked ($ :span.tag {:class "is-success is-light"} "(process completed)")))
+       ($ :div.tag (when voting-finished? "voting process finished"))
+
        ($ :p.has-text-right
           "Measure in: "
           ($ :a {:on-click (fn [^js _] (set-measure! "sp")) :class (str "is-link" (when (= "sp" measure) " has-text-weight-bold")) } "sp") " / "
@@ -197,8 +203,8 @@
              ))
        ($ :div.buttons
           (for [est estimate-values]
-            ($ :button.button {:class (when (= est vote)
-                                        (case est "8sp" "is-warning" ">8sp" "is-danger" "16h" "is-warning" "40h" "is-danger" "is-success"))
+            ($ :button.button {:class (if voting-finished? "is-white" (when (= est vote)
+                                                                      (case est "8sp" "is-warning" ">8sp" "is-danger" "16h" "is-warning" "40h" "is-danger" "is-success")))
                                :key est
                                :on-click (fn [^js _]
                                            (when (and (false? voting-blocked) (not= est previous-vote))

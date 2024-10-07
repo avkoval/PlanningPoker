@@ -1,4 +1,5 @@
 import asyncio
+import copy
 import json
 import pprint
 import re
@@ -305,8 +306,22 @@ def vote(request: Request, vote: Vote) -> Vote | None:
         return None
     vote.stamp = datetime.now()
     username = get_username(request.session.get('access_token')['userinfo'])  # type: ignore
-    add_vote(username, vote)  # type: ignore
+    if is_finished():
+        votes = copy.deepcopy(app_data['votes'])
+        msg = f"Invalid vote attempt from {username} as voting process is already finished"
+        print(msg)
+        asyncio.run(push_to_connected_websockets(f"log::{format_datetime(vote.stamp)} {msg}"))
+        return None
+    else:
+        add_vote(username, vote)  # type: ignore
+        votes = copy.deepcopy(app_data['votes'])
+
     asyncio.run(push_to_connected_websockets(f"log::{format_datetime(vote.stamp)} Got Vote from {username}"))
+    for v in votes:
+        for category in votes[v]:
+            votes[v][category] = '✓'
+    print(votes)
+    asyncio.run(push_to_connected_websockets("results::" + json.dumps(votes)))
     return vote
 
 
@@ -356,6 +371,7 @@ def vote_finish(request: Request) -> None:
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+    global app_data
     await notifier.connect(websocket)
     try:
         while True:
@@ -366,8 +382,10 @@ async def websocket_endpoint(websocket: WebSocket):
                     current_ticket = get_estimate_ticket()
                     print('syncing new websocket client', )
                     if current_ticket:
-                        print('current ticket is' + current_ticket)
+                        print('current ticket is: ' + current_ticket)
                         await websocket.send_text(f"start voting:: {current_ticket}")
+                        if is_finished():
+                            await websocket.send_text("results::" + json.dumps(app_data['votes']))
     except WebSocketDisconnect:
         notifier.remove(websocket)
         print("WebSocketDisconnect detected")
