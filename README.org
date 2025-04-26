@@ -140,7 +140,11 @@ After first real play the improvements are in the list below.
   - [[/home/oleksii/tmp/screenshots/ss_20240926125135_JTrDRyQU5bWqbFlIrkBf.png]]
   - [X] make sure that reload does not allow to vote again!
 
-*** TODO Reverse log
+*** REJECTED Reverse log
+    CLOSED: [2024-10-07 Mon 21:55]
+    :LOGBOOK:
+    - State "REJECTED"   from "TODO"       [2024-10-07 Mon 21:55]
+    :END:
 
   - [[/home/oleksii/tmp/screenshots/ss_20240926124217_VIEMMApsf2CmDFWQsgqG.png]]
 
