@@ -25,7 +25,6 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "flake8>=7.2.0",
     "mypy>=1.11.2,<2",
     "ruff>=0.11.7",
     "types-cachetools>=5.5.0.20240820,<6",

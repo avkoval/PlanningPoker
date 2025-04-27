@@ -124,10 +124,19 @@ jira = JIRA(
 templates = Jinja2Templates(directory="templates")
 
 
+def logged_in(request):
+    return False
+    if "access_token" in request.session:
+        return True  # google oauth
+    if "jira_access_token" in request.session:
+        return True  # google oauth
+    return False
+
+
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     notifications: List = []
-    if "access_token" in request.session:
+    if logged_in(request):
         domain = request.session["access_token"]["userinfo"]["email"].split("@")[1]
         allowed_domains = [d for d in settings.allowed_email_domains.split(",") if d != ""]
         if len(allowed_domains) and domain not in allowed_domains:
@@ -179,37 +188,26 @@ async def get_jira_user_info(access_token):
 
 @app.get("/userInfo")
 async def user_info(request: Request) -> UserInfo:
-    if request.session.get("access_token"):
-        userinfo = request.session["access_token"]["userinfo"]
-        return UserInfo(
-            email=userinfo["email"],
-            family_name=userinfo["family_name"],
-            given_name=userinfo["given_name"],
-            name=userinfo["name"],
-            picture=userinfo["picture"],
-        )
-    elif request.session.get("jira_access_token"):
-        user_info = request.session["jira_user_info"]
-        user_names = user_info["name"].split()
-        first_name = next(iter(user_names), "")
-        last_name = user_names[1] if len(user_names) == 2 else ""
-        return UserInfo(
-            email=user_info["email"],
-            family_name=last_name,
-            given_name=first_name,
-            name=user_info["nickname"],
-            picture=user_info["picture"],
-        )
-    return UserInfo()
+    userinfo = request.session.get("user_info", {})
+    return UserInfo(
+        logged_in=True,
+        email=userinfo.get("email"),
+        family_name=userinfo.get("family_name"),
+        given_name=userinfo.get("given_name"),
+        name=userinfo.get("name"),
+        picture=userinfo.get("picture"),
+    )
 
 
 @app.route("/auth")
 async def auth(request: Request):
     try:
-        access_token = await oauth.google.authorize_access_token(request)
+        data = await oauth.google.authorize_access_token(request)
     except OAuthError as e:
         return templates.TemplateResponse(name="index.html", context={"request": request, "error": e})
-    request.session["access_token"] = access_token
+    request.session.clear()
+    request.session["access_token"] = data["access_token"]
+    request.session["user_info"] = data["userinfo"]
     return RedirectResponse("/app/")
 
 
@@ -251,8 +249,19 @@ async def auth_jira(request: Request):
     token_json = await asyncio.to_thread(
         jira_oauth.fetch_token, token_url, client_secret=JIRA_CLIENT_SECRET, code=code, state=state
     )
+    request.session.clear()
     request.session["jira_access_token"] = token_json["access_token"]
-    request.session["jira_user_info"] = await get_jira_user_info(token_json["access_token"])
+    jira_user_info = await get_jira_user_info(token_json["access_token"])
+    user_names = jira_user_info["name"].split()
+    first_name = next(iter(user_names), "")
+    last_name = user_names[1] if len(user_names) == 2 else ""
+    request.session["user_info"] = dict(
+        email=jira_user_info["email"],
+        family_name=last_name,
+        given_name=first_name,
+        name=jira_user_info["nickname"],
+        picture=jira_user_info["picture"],
+    )
     return RedirectResponse("/app/")
 
 
