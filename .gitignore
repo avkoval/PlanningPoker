@@ -1,3 +1,5 @@
 *.pyc
 .export.env
 .env
+.aider*
+/.mypy_cache/

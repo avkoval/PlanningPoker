@@ -19,12 +19,15 @@ dependencies = [
     "websockets>=13.0.1,<14",
     "cachetools>=5.5.0,<6",
     "types-cachetools>=5.5.0.20240820,<6",
+    "atlassian-python-api>=4.0.3",
 ]
 
 [dependency-groups]
 dev = [
     "mypy>=1.11.2,<2",
+    "ruff>=0.11.7",
     "types-cachetools>=5.5.0.20240820,<6",
+    "types-requests-oauthlib>=2.0.0.20250306",
 ]
 
 [build-system]

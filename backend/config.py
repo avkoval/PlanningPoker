@@ -11,4 +11,7 @@ class Settings(BaseSettings):
     jira_server: str = ""
     limit_to_project: str = ""
 
+    jira_client_id: str = ""
+    jira_client_secret: str = ""
+
     model_config = SettingsConfigDict(env_file=".env")

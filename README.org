@@ -101,7 +101,7 @@ poetry run fastapi dev backend/main.py
 bb run fastapi
 #+end_example
 
-* WORKING Work Log: Planning poker for Fieldhub
+* COMMENT Work Log: Planning poker for FH
   SCHEDULED: <2024-08-17 Sat>
   :LOGBOOK:
   CLOCK: [2024-09-09 Mon 07:08]--[2024-09-09 Mon 07:45] =>  0:37
@@ -111,6 +111,31 @@ bb run fastapi
   - State "IDEA"       from "TODO"       [2024-08-17 Sat 08:05]
   - State "TODO"       from              [2024-08-17 Sat 07:55]
   :END:
+
+** WORKING Round [2025-04-26 Sat] improvements
+   :LOGBOOK:
+   CLOCK: [2025-04-26 Sat 19:38]--[2025-04-26 Sat 20:51] =>  1:13
+   - State "WORKING"    from              [2025-04-26 Sat 19:30]
+   :END:
+
+*** WORKING add code check / isort / flake8 replacement
+    :LOGBOOK:
+    - State "WORKING"    from              [2025-04-26 Sat 19:30]
+    :END:
+
+ - https://gist.github.com/abo-abo/277d1fe1e86f0e46d3161345f26e8f3a
+ - https://github.com/v4n6/flycheck-python-ruff
+ - 
+
+*** TODO add aider & use Claude
+    :LOGBOOK:
+    - State "TODO"       from              [2025-04-26 Sat 19:30]
+    :END:
+
+*** WORKING add Jira auth
+    :LOGBOOK:
+    - State "WORKING"    from              [2025-04-26 Sat 19:30]
+    :END:
 
 ** WORKING improve planning poker after first try
    :LOGBOOK:
