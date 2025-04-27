@@ -1,6 +1,7 @@
 import asyncio
 import copy
 import json
+import logging
 import pprint
 import re
 from collections import defaultdict
@@ -33,6 +34,14 @@ from .config import Settings
 from .websocket import notifier
 
 settings = Settings()
+
+# Configure logging
+logging.basicConfig(
+    level=getattr(logging, settings.log_level),
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
+logger.debug(f"Logging initialized at level: {settings.log_level}")
 
 # OAuth settings
 GOOGLE_CLIENT_ID = settings.google_client_id
@@ -183,7 +192,9 @@ async def get_jira_user_info(access_token):
             },
         )
         req.raise_for_status()
-        return req.json()
+        response_data = req.json()
+        logger.debug(f"Jira user info API response: {response_data}")
+        return response_data
 
 
 @app.get("/userInfo")
@@ -203,7 +214,9 @@ async def user_info(request: Request) -> UserInfo:
 async def auth(request: Request):
     try:
         data = await oauth.google.authorize_access_token(request)
+        logger.debug(f"Google OAuth response: {data}")
     except OAuthError as e:
+        logger.error(f"Google OAuth error: {e}")
         return templates.TemplateResponse(name="index.html", context={"request": request, "error": e})
     request.session.clear()
     request.session["access_token"] = data["access_token"]
@@ -242,6 +255,8 @@ async def auth_jira(request: Request):
 
     code = request.query_params.get("code")
     state = request.query_params.get("state")
+    logger.debug(f"Jira auth callback received - code: {code}, state: {state}")
+
     assert code and state
     assert state == request.session.pop("jira_oauth_state")
 
@@ -249,6 +264,8 @@ async def auth_jira(request: Request):
     token_json = await asyncio.to_thread(
         jira_oauth.fetch_token, token_url, client_secret=JIRA_CLIENT_SECRET, code=code, state=state
     )
+    logger.debug(f"Jira OAuth token response: {token_json}")
+
     request.session.clear()
     request.session["jira_access_token"] = token_json["access_token"]
     jira_user_info = await get_jira_user_info(token_json["access_token"])
@@ -276,9 +293,11 @@ class FoundIssue(BaseModel):
 @cached(cache=TTLCache(maxsize=1024, ttl=600))
 def search_jira_issues(search):
     try:
-        return jira.search_issues(search)
+        results = jira.search_issues(search)
+        logger.debug(f"JIRA search API response for '{search}': {results}")
+        return results
     except JIRAError as e:
-        print(search, " => ", e.text)
+        logger.error(f"JIRA search error for '{search}': {e.text}")
     return []
 
 
@@ -331,9 +350,11 @@ class IssueDetail(BaseModel):
 def get_issue_info(issue_key: str):
     issue_key = issue_key.strip()
     try:
-        return jira.issue(issue_key, expand="renderedFields")
+        issue = jira.issue(issue_key, expand="renderedFields")
+        logger.debug(f"JIRA issue API response for '{issue_key}': {issue}")
+        return issue
     except JIRAError as e:
-        print(issue_key, " => ", e.text)
+        logger.error(f"JIRA issue error for '{issue_key}': {e.text}")
         return None
 
 
@@ -347,11 +368,11 @@ def detail(request: Request, issue_key: str) -> IssueDetail | None:
     if not request.session.get("access_token"):
         return None
     issue = get_issue_info(issue_key)
-    user = get_username(request.session.get("access_token")["userinfo"])  # type: ignore
+    user = get_username(request.session.get("user_info"))  # type: ignore
     now = format_datetime(datetime.now())
     if get_estimate_ticket() != issue.key:
         log_msg = f"{now} Voting started by {user} for Jira ticket № {issue.key}"
-        print(log_msg)
+        logger.info(log_msg)
         asyncio.run(push_to_connected_websockets(f"start voting:: {issue.key}"))
         asyncio.run(push_to_connected_websockets(f"log:: {log_msg}"))
         store_reset(issue.key)
@@ -385,11 +406,11 @@ def vote(request: Request, vote: Vote) -> Vote | None:
     if not request.session.get("access_token"):
         return None
     vote.stamp = datetime.now()
-    username = get_username(request.session.get("access_token")["userinfo"])  # type: ignore
+    username = get_username(request.session.get("user_info"))  # type: ignore
     if is_finished():
         votes = copy.deepcopy(app_data["votes"])
         msg = f"Invalid vote attempt from {username} as voting process is already finished"
-        print(msg)
+        logger.warning(msg)
         asyncio.run(push_to_connected_websockets(f"log::{format_datetime(vote.stamp)} {msg}"))
         return None
     else:
@@ -400,7 +421,7 @@ def vote(request: Request, vote: Vote) -> Vote | None:
     for v in votes:
         for category in votes[v]:
             votes[v][category] = "✓"
-    print(votes)
+    logger.debug(f"Current votes: {votes}")
     asyncio.run(push_to_connected_websockets("results::" + json.dumps(votes)))
     return vote
 
@@ -435,13 +456,17 @@ def find_matching_comment(comments):
 def add_estimate_comment(request: Request, comment: JiraEstimateComment) -> JiraEstimateComment | None:
     if not request.session.get("access_token"):
         return None
-    username = get_username(request.session.get("access_token")["userinfo"])  # type: ignore
+    username = get_username(request.session.get("user_info"))  # type: ignore
     issue = jira.issue(comment.key)
+    logger.debug(f"JIRA issue API response for comment on '{comment.key}': {issue}")
+
     estimate_comment = find_matching_comment(issue.fields.comment.comments)
     if estimate_comment:
-        estimate_comment.update(body=comment.text)
+        response = estimate_comment.update(body=comment.text)
+        logger.debug(f"JIRA update comment response: {response}")
     else:
-        jira.add_comment(issue, comment.text)
+        response = jira.add_comment(issue, comment.text)
+        logger.debug(f"JIRA add comment response: {response}")
     asyncio.run(
         push_to_connected_websockets(
             f"log::{format_datetime(datetime.now())} Saved comment of {username} to ticket {comment.key}"
@@ -465,21 +490,19 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_text()
-            print("got some data over websocket:", data)
+            logger.debug(f"WebSocket received: {data}")
             match data:
                 case "sync":
                     current_ticket = get_estimate_ticket()
-                    print(
-                        "syncing new websocket client",
-                    )
+                    logger.debug("Syncing new websocket client")
                     if current_ticket:
-                        print("current ticket is: " + current_ticket)
+                        logger.debug(f"Current ticket is: {current_ticket}")
                         await websocket.send_text(f"start voting:: {current_ticket}")
                         if is_finished():
                             await websocket.send_text("results::" + json.dumps(app_data["votes"]))
     except WebSocketDisconnect:
         notifier.remove(websocket)
-        print("WebSocketDisconnect detected")
+        logger.debug("WebSocketDisconnect detected")
 
 
 @app.on_event("startup")

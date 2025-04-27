@@ -1,7 +1,9 @@
+import logging
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    log_level: str = "INFO"
     allowed_email_domains: str = ""
     google_client_id: str = ""
     google_client_secret: str = ""
