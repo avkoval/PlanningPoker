@@ -7,6 +7,7 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Any, List
 
+import httpx
 import starlette.status as status
 from authlib.integrations.starlette_client import (  # type: ignore[import]
     OAuth,
@@ -37,11 +38,9 @@ settings = Settings()
 GOOGLE_CLIENT_ID = settings.google_client_id
 GOOGLE_CLIENT_SECRET = settings.google_client_secret
 JIRA_CLIENT_ID = settings.jira_client_id
-JIRA_CLIENT_SECRET = settings.google_client_secret
+JIRA_CLIENT_SECRET = settings.jira_client_secret
 
-if not all(
-    [GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, JIRA_CLIENT_ID, JIRA_CLIENT_SECRET]
-):
+if not all([GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, JIRA_CLIENT_ID, JIRA_CLIENT_SECRET]):
     raise BaseException("Missing env variables")
 
 
@@ -101,9 +100,7 @@ def add_vote(username: str, vote: Vote):
         votes.update({vote.category: vote.vote})
         app_data["votes"][username] = votes
     else:
-        print(
-            f"Error: vote ticket {vote.key} is not the same as global estimate ticket {app_data['estimate-ticket']}"
-        )
+        print(f"Error: vote ticket {vote.key} is not the same as global estimate ticket {app_data['estimate-ticket']}")
     pprint.pprint(app_data)
 
 
@@ -114,9 +111,7 @@ app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 
 app.mount("/app/", StaticFiles(directory="pp-front/public", html=True), name="app")
 app.mount("/static/", StaticFiles(directory="static", html=True), name="static")
-app.mount(
-    "/js/", StaticFiles(directory="pp-front/public/js/", html=True), name="static"
-)
+app.mount("/js/", StaticFiles(directory="pp-front/public/js/", html=True), name="static")
 
 favicon_path = "static/favicon.ico"
 
@@ -134,17 +129,13 @@ async def home(request: Request):
     notifications: List = []
     if "access_token" in request.session:
         domain = request.session["access_token"]["userinfo"]["email"].split("@")[1]
-        allowed_domains = [
-            d for d in settings.allowed_email_domains.split(",") if d != ""
-        ]
+        allowed_domains = [d for d in settings.allowed_email_domains.split(",") if d != ""]
         if len(allowed_domains) and domain not in allowed_domains:
             msg = f"Domain not allowed: {domain} for user {request.session['access_token']['userinfo']['email']}"
             notifications.append({"type": "danger", "text": msg})
         else:
             return RedirectResponse("/app/")
-    return templates.TemplateResponse(
-        name="index.html", context={"request": request, "notifications": notifications}
-    )
+    return templates.TemplateResponse(name="index.html", context={"request": request, "notifications": notifications})
 
 
 @app.get("/favicon.ico", include_in_schema=False)
@@ -158,25 +149,9 @@ async def login(request: Request):
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
 
-@app.route("/login-via-jira")
-async def login_via_jira(request: Request):
-    redirect_uri = request.url_for("auth_jira")
-    scope = ["read:me", "read:jira-user", "read:jira-work"]
-    audience = "api.atlassian.com"
-    authorization_base_url = "https://auth.atlassian.com/authorize"
-    jira_oauth = OAuth2Session(JIRA_CLIENT_ID, scope=scope, redirect_uri=redirect_uri)
-    authorization_url, state = jira_oauth.authorization_url(
-        authorization_base_url,
-        audience=audience,
-    )
-    request.session["jira_oauth_state"] = state
-    return RedirectResponse(authorization_url, status_code=status.HTTP_302_FOUND)
-
-
 @app.post("/logout")
 async def logout(request: Request):
-    if "access_token" in request.session:
-        del request.session["access_token"]
+    request.session.clear()
     return RedirectResponse("/", status_code=status.HTTP_302_FOUND)
 
 
@@ -189,18 +164,43 @@ class UserInfo(BaseModel):
     picture: str | None = None
 
 
+async def get_jira_user_info(access_token):
+    async with httpx.AsyncClient() as client:
+        req = await client.get(
+            "https://api.atlassian.com/me",
+            headers={
+                "Authorization": f"Bearer {access_token}",
+                "Accept": "application/json",
+            },
+        )
+        req.raise_for_status()
+        return req.json()
+
+
 @app.get("/userInfo")
 async def user_info(request: Request) -> UserInfo:
-    if not request.session.get("access_token"):
-        return UserInfo()
-    userinfo = request.session["access_token"]["userinfo"]
-    return UserInfo(
-        email=userinfo["email"],
-        family_name=userinfo["family_name"],
-        given_name=userinfo["given_name"],
-        name=userinfo["name"],
-        picture=userinfo["picture"],
-    )
+    if request.session.get("access_token"):
+        userinfo = request.session["access_token"]["userinfo"]
+        return UserInfo(
+            email=userinfo["email"],
+            family_name=userinfo["family_name"],
+            given_name=userinfo["given_name"],
+            name=userinfo["name"],
+            picture=userinfo["picture"],
+        )
+    elif request.session.get("jira_access_token"):
+        user_info = request.session["jira_user_info"]
+        user_names = user_info["name"].split()
+        first_name = next(iter(user_names), "")
+        last_name = user_names[1] if len(user_names) == 2 else ""
+        return UserInfo(
+            email=user_info["email"],
+            family_name=last_name,
+            given_name=first_name,
+            name=user_info["nickname"],
+            picture=user_info["picture"],
+        )
+    return UserInfo()
 
 
 @app.route("/auth")
@@ -208,11 +208,33 @@ async def auth(request: Request):
     try:
         access_token = await oauth.google.authorize_access_token(request)
     except OAuthError as e:
-        return templates.TemplateResponse(
-            name="index.html", context={"request": request, "error": e}
-        )
+        return templates.TemplateResponse(name="index.html", context={"request": request, "error": e})
     request.session["access_token"] = access_token
     return RedirectResponse("/app/")
+
+
+@app.route("/login-via-jira")
+async def login_via_jira(request: Request):
+    redirect_uri = request.url_for("auth_jira")
+    scope = [
+        "read:me",
+        "read:jira-user",
+        "read:jira-work",
+        "read:project:jira",
+        "write:jira-work",
+        "write:issue:jira",
+        "write:comment:jira",
+        "redact:issue:jira",
+    ]
+    audience = "api.atlassian.com"
+    authorization_base_url = "https://auth.atlassian.com/authorize"
+    jira_oauth = OAuth2Session(JIRA_CLIENT_ID, scope=scope, redirect_uri=redirect_uri)
+    authorization_url, state = jira_oauth.authorization_url(
+        authorization_base_url,
+        audience=audience,
+    )
+    request.session["jira_oauth_state"] = state
+    return RedirectResponse(authorization_url, status_code=status.HTTP_302_FOUND)
 
 
 @app.route("/auth-jira")
@@ -223,14 +245,14 @@ async def auth_jira(request: Request):
     code = request.query_params.get("code")
     state = request.query_params.get("state")
     assert code and state
-    assert state == request.session.get("jira_oauth_state")
+    assert state == request.session.pop("jira_oauth_state")
 
     jira_oauth = OAuth2Session(JIRA_CLIENT_ID, state=state, redirect_uri=redirect_uri)
-    token_json = jira_oauth.fetch_token(
-        token_url, client_secret=JIRA_CLIENT_SECRET, code=code, state=state
+    token_json = await asyncio.to_thread(
+        jira_oauth.fetch_token, token_url, client_secret=JIRA_CLIENT_SECRET, code=code, state=state
     )
-    print(f"Token: {token_json}")
-
+    request.session["jira_access_token"] = token_json["access_token"]
+    request.session["jira_user_info"] = await get_jira_user_info(token_json["access_token"])
     return RedirectResponse("/app/")
 
 
@@ -359,19 +381,13 @@ def vote(request: Request, vote: Vote) -> Vote | None:
         votes = copy.deepcopy(app_data["votes"])
         msg = f"Invalid vote attempt from {username} as voting process is already finished"
         print(msg)
-        asyncio.run(
-            push_to_connected_websockets(f"log::{format_datetime(vote.stamp)} {msg}")
-        )
+        asyncio.run(push_to_connected_websockets(f"log::{format_datetime(vote.stamp)} {msg}"))
         return None
     else:
         add_vote(username, vote)  # type: ignore
         votes = copy.deepcopy(app_data["votes"])
 
-    asyncio.run(
-        push_to_connected_websockets(
-            f"log::{format_datetime(vote.stamp)} Got Vote from {username}"
-        )
-    )
+    asyncio.run(push_to_connected_websockets(f"log::{format_datetime(vote.stamp)} Got Vote from {username}"))
     for v in votes:
         for category in votes[v]:
             votes[v][category] = "✓"
@@ -407,9 +423,7 @@ def find_matching_comment(comments):
 
 
 @app.post("/add-estimate-comment")
-def add_estimate_comment(
-    request: Request, comment: JiraEstimateComment
-) -> JiraEstimateComment | None:
+def add_estimate_comment(request: Request, comment: JiraEstimateComment) -> JiraEstimateComment | None:
     if not request.session.get("access_token"):
         return None
     username = get_username(request.session.get("access_token")["userinfo"])  # type: ignore
@@ -432,9 +446,7 @@ def vote_finish(request: Request) -> None:
     global app_data
     if request.session.get("access_token"):
         app_data["finished"] = True
-        asyncio.run(
-            push_to_connected_websockets("results::" + json.dumps(app_data["votes"]))
-        )
+        asyncio.run(push_to_connected_websockets("results::" + json.dumps(app_data["votes"])))
 
 
 @app.websocket("/ws")
@@ -455,9 +467,7 @@ async def websocket_endpoint(websocket: WebSocket):
                         print("current ticket is: " + current_ticket)
                         await websocket.send_text(f"start voting:: {current_ticket}")
                         if is_finished():
-                            await websocket.send_text(
-                                "results::" + json.dumps(app_data["votes"])
-                            )
+                            await websocket.send_text("results::" + json.dumps(app_data["votes"]))
     except WebSocketDisconnect:
         notifier.remove(websocket)
         print("WebSocketDisconnect detected")

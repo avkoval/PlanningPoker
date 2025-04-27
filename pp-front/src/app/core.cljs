@@ -61,7 +61,7 @@
      ($ logger)
      ($ :footer.footer {:class "is-flex-align-items-flex-end mt-auto"}
         ($ :div.content {:class "has-text-centered"}
-           ($ :p "(C) 2024 "
+           ($ :p "(C) 2024, 2025 "
               ($ :a {:href "http://alex.koval.kharkov.ua" :target "_blank"} "Oleksii Koval")
               " as part of Daily Learning Excercise "
               )
