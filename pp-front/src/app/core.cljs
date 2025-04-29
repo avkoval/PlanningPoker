@@ -138,7 +138,7 @@
        (when (> (count tickets) 0)
          ($ :table.table
             ($ :thead ($ :tr
-                         ($ :th "Key")
+                         ($ :th "Key (opens new window)")
                          ($ :th "Summary")
                          ($ :th "Type")
                          ($ :th "Original Estimate")
@@ -147,7 +147,7 @@
             ($ :tbody
                (for [ticket tickets] ($ :tr {:key (str "tr-" (:key ticket))}
                                         ($ :td {:key (str "key-" (:key ticket))}
-                                           ($ :a.button {:href (:url ticket) :target "_blank" :class "is-light"} (:key ticket)))
+                                           ($ :a.button {:href (:url ticket) :target "_blank" :class "is-light is-link"} (str (:key ticket) " ↗")))
                                         ($ :td {:key (str "su-" (:key ticket))} (:summary ticket))
                                         ($ :td ($ :img {:width 15 :src (img-for-type (:type ticket))}) " " (:type ticket))
                                         ($ :td (:original_estimate ticket))

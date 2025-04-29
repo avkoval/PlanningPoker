@@ -15,5 +15,6 @@ class Settings(BaseSettings):
 
     jira_client_id: str = ""
     jira_client_secret: str = ""
+    jira_cloud_id: str = ""  # Required for Jira OAuth API calls
 
     model_config = SettingsConfigDict(env_file=".env")

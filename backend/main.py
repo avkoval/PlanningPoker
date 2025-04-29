@@ -27,7 +27,6 @@ from starlette.config import Config
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import RedirectResponse
 
-# from .channels import get_next_message, publish
 from .config import Settings
 from .websocket import notifier
 
@@ -46,6 +45,14 @@ GOOGLE_CLIENT_ID = settings.google_client_id
 GOOGLE_CLIENT_SECRET = settings.google_client_secret
 JIRA_CLIENT_ID = settings.jira_client_id
 JIRA_CLIENT_SECRET = settings.jira_client_secret
+
+if not all([GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, JIRA_CLIENT_ID, JIRA_CLIENT_SECRET]):
+    raise BaseException("Missing env variables")
+
+# Ensure Jira Cloud ID is set for Jira API v3
+if not settings.jira_cloud_id:
+    logger.warning("JIRA_CLOUD_ID is not set. This is required for Jira OAuth API calls.")
+
 
 if not all([GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, JIRA_CLIENT_ID, JIRA_CLIENT_SECRET]):
     raise BaseException("Missing env variables")
@@ -127,26 +134,41 @@ jira = JIRA(
     basic_auth=(settings.jira_user_email, settings.jira_token),
 )
 
+def get_jira_client_for_user(access_token=None):
+    """
+    Returns a JIRA client - either the default one or one authenticated with user's access token
+    """
+    if access_token:
+        return JIRA(
+            options={"server": "https://api.atlassian.com/ex/jira/" + settings.jira_cloud_id},
+            token_auth=access_token
+        )
+    return jira
+
 
 templates = Jinja2Templates(directory="templates")
-
 
 def logged_in(request):
     if "access_token" in request.session:
         return True  # google oauth
     if "jira_access_token" in request.session:
-        return True  # google oauth
+        return True  # jira oauth
     return False
+
+def is_jira_authenticated(request):
+    """Check if the user is authenticated via Jira OAuth"""
+    return "jira_access_token" in request.session
 
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     notifications: List = []
     if logged_in(request):
-        domain = request.session["access_token"]["userinfo"]["email"].split("@")[1]
+        email = request.session["user_info"]["email"]
+        domain = email.split("@")[1]
         allowed_domains = [d for d in settings.allowed_email_domains.split(",") if d != ""]
         if len(allowed_domains) and domain not in allowed_domains:
-            msg = f"Domain not allowed: {domain} for user {request.session['access_token']['userinfo']['email']}"
+            msg = f"Domain not allowed: {domain} for user {email}"
             notifications.append({"type": "danger", "text": msg})
         else:
             return RedirectResponse("/app/")
@@ -195,6 +217,28 @@ async def get_jira_user_info(access_token):
         return response_data
 
 
+async def get_jira_cloud_id(access_token):
+    """
+    Retrieve the Jira Cloud ID using the access token.
+    This can be used to set up the JIRA_CLOUD_ID environment variable.
+    """
+    async with httpx.AsyncClient() as client:
+        req = await client.get(
+            "https://api.atlassian.com/oauth/token/accessible-resources",
+            headers={
+                "Authorization": f"Bearer {access_token}",
+                "Accept": "application/json",
+            },
+        )
+        req.raise_for_status()
+        resources = req.json()
+        logger.info(f"Available Jira Cloud resources: {resources}")
+        if resources and len(resources) > 0:
+            # Return the ID of the first resource (usually there's only one)
+            return resources[0]["id"]
+        return None
+
+
 @app.get("/userInfo")
 async def user_info(request: Request) -> UserInfo:
     userinfo = request.session.get("user_info", {})
@@ -212,6 +256,19 @@ async def user_info(request: Request) -> UserInfo:
         picture=userinfo.get("picture"),
         auth_provider=auth_provider
     )
+
+@app.get("/jira-cloud-id")
+async def jira_cloud_id(request: Request):
+    """Get the Jira Cloud ID for the authenticated user"""
+    if not is_jira_authenticated(request):
+        return {"error": "Not authenticated with Jira"}
+
+    access_token = request.session.get("jira_access_token")
+    cloud_id = await get_jira_cloud_id(access_token)
+
+    if cloud_id:
+        return {"cloud_id": cloud_id, "message": "Add this to your .env file as JIRA_CLOUD_ID"}
+    return {"error": "Could not retrieve Jira Cloud ID"}
 
 
 @app.route("/auth")
@@ -273,6 +330,13 @@ async def auth_jira(request: Request):
     request.session.clear()
     request.session["jira_access_token"] = token_json["access_token"]
     jira_user_info = await get_jira_user_info(token_json["access_token"])
+
+    # Get and log the Jira Cloud ID
+    cloud_id = await get_jira_cloud_id(token_json["access_token"])
+    if cloud_id:
+        logger.info(f"Jira Cloud ID: {cloud_id}")
+        # You can set this in your .env file
+
     user_names = jira_user_info["name"].split()
     first_name = next(iter(user_names), "")
     last_name = user_names[1] if len(user_names) == 2 else ""
@@ -324,7 +388,7 @@ def search(request: Request, q: str) -> List[FoundIssue]:
             search += f" and project={settings.limit_to_project}"
 
     issues = search_jira_issues(search)
-    print(issues)
+    logger.debug("Search Results: %s", issues)
     return [
         FoundIssue(  # FIXME return type of `jira.search_issues` has some problem
             key=issue.key,  # type: ignore
@@ -371,7 +435,7 @@ def remove_img_tags(data):
 
 @app.get("/jira/info")
 def detail(request: Request, issue_key: str) -> IssueDetail | None:
-    if not request.session.get("access_token"):
+    if not logged_in(request):
         return None
     issue = get_issue_info(issue_key)
     user = get_username(request.session.get("user_info"))  # type: ignore
@@ -409,7 +473,7 @@ def format_datetime(dt):
 
 @app.post("/vote")
 def vote(request: Request, vote: Vote) -> Vote | None:
-    if not request.session.get("access_token"):
+    if not logged_in(request):
         return None
     vote.stamp = datetime.now()
     username = get_username(request.session.get("user_info"))  # type: ignore
@@ -460,10 +524,21 @@ def find_matching_comment(comments):
 
 @app.post("/add-estimate-comment")
 def add_estimate_comment(request: Request, comment: JiraEstimateComment) -> JiraEstimateComment | None:
-    if not request.session.get("access_token"):
+    if not logged_in(request):
         return None
+
+    # Only allow Jira authenticated users to modify tickets
+    if not is_jira_authenticated(request):
+        logger.warning("Attempt to modify Jira ticket without Jira authentication")
+        return None
+
     username = get_username(request.session.get("user_info"))  # type: ignore
-    issue = jira.issue(comment.key)
+    jira_access_token = request.session.get("jira_access_token")
+
+    # Use the user's Jira access token for API calls
+    user_jira = get_jira_client_for_user(jira_access_token)
+
+    issue = user_jira.issue(comment.key)
     logger.debug(f"JIRA issue API response for comment on '{comment.key}': {issue}")
 
     estimate_comment = find_matching_comment(issue.fields.comment.comments)
@@ -471,8 +546,9 @@ def add_estimate_comment(request: Request, comment: JiraEstimateComment) -> Jira
         response = estimate_comment.update(body=comment.text)
         logger.debug(f"JIRA update comment response: {response}")
     else:
-        response = jira.add_comment(issue, comment.text)
+        response = user_jira.add_comment(issue, comment.text)
         logger.debug(f"JIRA add comment response: {response}")
+
     asyncio.run(
         push_to_connected_websockets(
             f"log::{format_datetime(datetime.now())} Saved comment of {username} to ticket {comment.key}"
@@ -484,7 +560,7 @@ def add_estimate_comment(request: Request, comment: JiraEstimateComment) -> Jira
 @app.post("/vote/finish")
 def vote_finish(request: Request) -> None:
     global app_data
-    if request.session.get("access_token"):
+    if logged_in(request):
         app_data["finished"] = True
         asyncio.run(push_to_connected_websockets("results::" + json.dumps(app_data["votes"])))
 
