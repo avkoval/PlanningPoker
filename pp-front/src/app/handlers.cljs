@@ -1,4 +1,5 @@
 (ns app.handlers
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [re-frame.core :as rf]
             ;; [day8.re-frame.tracing :refer-macros [fn-traced]]
             [app.db :as db]
@@ -6,6 +7,7 @@
             [app.util]
             [app.websockets]
             [cljs-http.client :as http]
+            [cljs.core.async :refer [<!]]
             [clojure.string :as str]
             ))
 
@@ -54,6 +56,46 @@
                 :accept "application/json"})
     (-> db (assoc-in [:vote category] vote))))
 
+;; (rf/reg-event-fx
+;;  ::fetch-user-info
+;;  (fn [{:keys [db]} _]
+;;    {:http-xhrio {:method          :get
+;;                  :uri             (str app.util/api-url-base "/userInfo")
+;;                  :response-format (http/json-response-format {:keywords? true})
+;;                  :on-success      [::user-info-success]
+;;                  :on-failure      [::user-info-failure]}}))
+
+;; (rf/reg-event-db
+;;  ::user-info-success
+;;  (fn [db [_ response]]
+;;    (js/console.log "User info retrieved successfully:" response)
+;;    (assoc db :user-info response)))
+
+;; (rf/reg-event-db
+;;  ::user-info-failure
+;;  (fn [db [_ error]]
+;;    (js/console.log "Failed to retrieve user info:" error)
+;;    db))
+
+(rf/reg-event-fx
+ ::fetch-user-info
+ (fn [_]
+   (go (let [response (<! (http/get (str app.util/api-url-base "/userInfo")
+                                 {:with-credentials? false}))]
+      (js/console.log )
+      (when (= (:status response) 200)
+        (rf/dispatch [::save-userinfo (:body response)]))
+      (js/console.log (clj->js (:body response)))))
+   {}
+   ))
+
+(rf/reg-event-db
+ ::save-userinfo
+  (fn [db [_ user-info]]
+    (-> db 
+        (assoc :user-info-loaded true)
+        (assoc :user-info user-info)
+        )))
 
 (rf/reg-event-db
  ::reset-my-vote

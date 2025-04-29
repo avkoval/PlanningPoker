@@ -11,9 +11,7 @@ from typing import Any, List
 import httpx
 import starlette.status as status
 from authlib.integrations.starlette_client import (  # type: ignore[import]
-    OAuth,
-    OAuthError,
-)
+    OAuth, OAuthError)
 from cachetools import TTLCache, cached
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse, HTMLResponse
@@ -134,7 +132,6 @@ templates = Jinja2Templates(directory="templates")
 
 
 def logged_in(request):
-    return False
     if "access_token" in request.session:
         return True  # google oauth
     if "jira_access_token" in request.session:
@@ -180,6 +177,7 @@ class UserInfo(BaseModel):
     given_name: str | None = None
     name: str | None = None
     picture: str | None = None
+    auth_provider: str | None = None
 
 
 async def get_jira_user_info(access_token):
@@ -200,6 +198,11 @@ async def get_jira_user_info(access_token):
 @app.get("/userInfo")
 async def user_info(request: Request) -> UserInfo:
     userinfo = request.session.get("user_info", {})
+    auth_provider = ""
+    if request.session.get("jira_access_token"):
+        auth_provider = "Jira"
+    elif request.session.get("access_token"):
+        auth_provider = "Google"
     return UserInfo(
         logged_in=True,
         email=userinfo.get("email"),
@@ -207,6 +210,7 @@ async def user_info(request: Request) -> UserInfo:
         given_name=userinfo.get("given_name"),
         name=userinfo.get("name"),
         picture=userinfo.get("picture"),
+        auth_provider=auth_provider
     )
 
 
@@ -303,7 +307,8 @@ def search_jira_issues(search):
 
 @app.get("/jira/search")
 def search(request: Request, q: str) -> List[FoundIssue]:
-    if not request.session.get("access_token"):
+    if not logged_in(request):
+        logger.warn(f"Not logged in, returning an empty array for request {q}")
         return []
     # user = username(request.session.get('access_token')['userinfo'])  # type: ignore
 
@@ -319,6 +324,7 @@ def search(request: Request, q: str) -> List[FoundIssue]:
             search += f" and project={settings.limit_to_project}"
 
     issues = search_jira_issues(search)
+    print(issues)
     return [
         FoundIssue(  # FIXME return type of `jira.search_issues` has some problem
             key=issue.key,  # type: ignore

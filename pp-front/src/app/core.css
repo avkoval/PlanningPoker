@@ -54,3 +54,8 @@
     animation:blink normal 1.5s infinite ease-in-out;
     /* Opera */
 }
+
+ .avatar-size {
+   height: 50px; /* Specify desired height */
+   object-fit: cover; /* Maintains aspect ratio */
+ }

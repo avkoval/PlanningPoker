@@ -17,6 +17,7 @@
 
 (defui navbar []
   (let [current-screen (hooks/use-subscribe [:app/current-screen])
+        user-info (hooks/use-subscribe [:app/user-info])
         [navbar-is-active set-navbar-is-active!] (uix/use-state false)]
     ($ :nav.navbar {:role "navigation" :aria-label "main navigation"}
        ($ :a.navbar-burger {:role "button" :aria-label "menu" :aria-expanded "false" :data-target "navbarBasicExample"
@@ -36,6 +37,7 @@
              ($ :a.navbar-item {:on-click (fn [^js _] (rf/dispatch [::handlers/set-screen "browse-tickets"]))
                                 :class (if (= "browse-tickets" current-screen) "is-active" "")} "Browse tickets"))
           ($ :div.navbar-end
+             ($ :img.avatar-size  {:src (:picture user-info)})
              ($ :div.navbar-item
                 ($ :div.buttons
                    ;; ($ :button.button {:class "is-danger1"} "💡")
@@ -338,6 +340,7 @@
 (defn render []
   (rf/dispatch-sync [::handlers/initialize-db])
   (app.websockets/connect! (str app.util/api-url-base "/ws") handlers/handle-response! websocket-onopen)
+  (rf/dispatch [::handlers/fetch-user-info])
   (uix.dom/render-root ($ app) root))
 
 (defn ^:export init []

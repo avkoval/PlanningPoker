@@ -134,6 +134,34 @@ bb run fastapi
     - State "TODO"       from              [2025-04-26 Sat 19:30]
     :END:
 
+*** TODO fix error of websocket over https/http on pp.ngrok.dev
+    :LOGBOOK:
+    - State "TODO"       from              [2025-04-29 Tue 08:00]
+    :END:
+
+*** TODO auto reconnect for web socket
+    :LOGBOOK:
+    - State "TODO"       from              [2025-04-28 Mon 07:05]
+    :END:
+*** TODO logged in state must be tested on JS side and user redirected to login page
+    :LOGBOOK:
+    - State "TODO"       from              [2025-04-28 Mon 07:05]
+    :END:
+
+*** TODO comment as jira user
+    :LOGBOOK:
+    - State "TODO"       from              [2025-04-27 Sun 21:10]
+    :END:
+
+*** TODO display avatars of logged in users
+    :LOGBOOK:
+    - State "TODO"       from              [2025-04-27 Sun 21:10]
+    :END:
+
+*** TODO display current user info
+    :LOGBOOK:
+    - State "TODO"       from              [2025-04-27 Sun 21:10]
+    :END:
 *** WORKING add Jira auth
     :LOGBOOK:
     - State "WORKING"    from "DONE"       [2025-04-27 Sun 20:05]

@@ -44,3 +44,12 @@
 (rf/reg-sub :app/show-add-comment-box
   (fn [db _]
     (:show-add-comment-box db)))
+
+(rf/reg-sub :app/user-info-loaded
+  (fn [db _]
+    (:user-info-loaded db)))
+
+(rf/reg-sub :app/user-info
+  (fn [db _]
+    (:user-info db)))
+
