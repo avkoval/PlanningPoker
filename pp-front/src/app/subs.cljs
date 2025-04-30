@@ -53,3 +53,7 @@
   (fn [db _]
     (:user-info db)))
 
+(rf/reg-sub :app/show-user-info-modal
+  (fn [db _]
+    (:show-user-info-modal db)))
+

@@ -163,6 +163,18 @@
        (assoc :show-add-comment-box (not (:show-add-comment-box db))))))
 
 
+(rf/reg-event-db
+ ::close-user-info-modal
+ (fn [db [_]]
+   (-> db
+       (assoc :show-user-info-modal ""))))
+
+(rf/reg-event-db
+ ::open-user-info-modal
+ (fn [db [_]]
+   (-> db
+       (assoc :show-user-info-modal "is-active"))))
+
 
 (defn handle-response! [response]
   (if-let [errors (:errors response)]

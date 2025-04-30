@@ -15,11 +15,30 @@
             [clojure.string :as str]
             ))
 
+
+(defui userInfoModal [{:keys [email family_name given_name name picture auth_provider]}]
+  (let [show-user-info-modal (hooks/use-subscribe [:app/show-user-info-modal])]
+    ($ :div.modal {:class show-user-info-modal}
+       ($ :div.modal-background)
+       ($ :div.modal-card
+          ($ :header.modal-card-head 
+             ($ :p.modal-card-title name)
+             ($ :button.delete {:arial-label "close" :on-click (fn [^js _] (rf/dispatch [::handlers/close-user-info-modal]))}))
+          ($ :section.modal-card-body
+             ($ :img  {:src picture})
+             ($ :p ($ :strong "Auth-Provider:") (str " " auth_provider))
+             ($ :p ($ :strong "Email:") (str " " email)))
+          ($ :footer.modal-card-foot
+             ($ :div.buttons
+                ($ :button.button {:on-click (fn [^js _] (rf/dispatch [::handlers/close-user-info-modal]))} "Close")))))))
+
+
 (defui navbar []
   (let [current-screen (hooks/use-subscribe [:app/current-screen])
         user-info (hooks/use-subscribe [:app/user-info])
         [navbar-is-active set-navbar-is-active!] (uix/use-state false)]
     ($ :nav.navbar {:role "navigation" :aria-label "main navigation"}
+       ($ userInfoModal (dissoc user-info :logged_in))
        ($ :a.navbar-burger {:role "button" :aria-label "menu" :aria-expanded "false" :data-target "navbarBasicExample"
                             :class (if navbar-is-active "is-active" "")
                             :on-click (fn [^js _] (set-navbar-is-active! (not navbar-is-active)))}
@@ -37,7 +56,7 @@
              ($ :a.navbar-item {:on-click (fn [^js _] (rf/dispatch [::handlers/set-screen "browse-tickets"]))
                                 :class (if (= "browse-tickets" current-screen) "is-active" "")} "Browse tickets"))
           ($ :div.navbar-end
-             ($ :img.avatar-size  {:src (:picture user-info)})
+             ($ :img.avatar-size  {:src (:picture user-info) :on-click (fn [^js _] (rf/dispatch [::handlers/open-user-info-modal]))})
              ($ :div.navbar-item
                 ($ :div.buttons
                    ;; ($ :button.button {:class "is-danger1"} "💡")

@@ -12,4 +12,5 @@
    :voting-results []
    :members-online []
    :show-add-comment-box false
+   :show-user-info-modal ""
    })
