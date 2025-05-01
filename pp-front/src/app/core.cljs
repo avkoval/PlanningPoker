@@ -23,7 +23,7 @@
        ($ :div.modal-card
           ($ :header.modal-card-head 
              ($ :p.modal-card-title name)
-             ($ :button.delete {:arial-label "close" :on-click (fn [^js _] (rf/dispatch [::handlers/close-user-info-modal]))}))
+             ($ :button.delete {:aria-label "close" :on-click (fn [^js _] (rf/dispatch [::handlers/close-user-info-modal]))}))
           ($ :section.modal-card-body
              ($ :img  {:src picture})
              ($ :p ($ :strong "Auth-Provider:") (str " " auth_provider))

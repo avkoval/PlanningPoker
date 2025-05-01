@@ -220,8 +220,10 @@ skills development_.
     - State "IDEA"       from "TODO"       [2025-04-29 Tue 17:20]
     - State "TODO"       from              [2025-04-29 Tue 17:20]
     :END:
-*** TODO update docs for planner poker rules
+*** DONE update docs for planner poker rules
+    CLOSED: [2025-05-01 Thu 10:15]
     :LOGBOOK:
+    - State "DONE"       from "TODO"       [2025-05-01 Thu 10:15]
     - State "TODO"       from              [2025-04-30 Wed 21:40]
     :END:
 *** TODO fix error of websocket over https/http on pp.ngrok.dev
