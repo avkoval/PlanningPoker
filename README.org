@@ -22,14 +22,7 @@ etc.).
 
 Here’s a Sequence Diagram in PlantUML showing your Scrum Planning Game flow:
 
-#+begin_src plantuml :file static/img/process1.png
-@startuml
-actor Facilitator
-actor "Business Analyst" as BA
-participant Developers
-participant System
-participant Jira
-
+#+begin_src plantuml :file static/img/process1.png :exports results
 Facilitator -> Developers : Brief on task ①
 BA           -> Developers : Brief on task
 
@@ -226,36 +219,24 @@ skills development_.
     - State "DONE"       from "TODO"       [2025-05-01 Thu 10:15]
     - State "TODO"       from              [2025-04-30 Wed 21:40]
     :END:
-*** TODO fix error of websocket over https/http on pp.ngrok.dev
+*** REJECTED fix error of websocket over https/http on pp.ngrok.dev
+    CLOSED: [2025-05-01 Thu 12:35]
     :LOGBOOK:
+    - State "REJECTED"   from "DONE"       [2025-05-01 Thu 12:35]
+    - State "DONE"       from "TODO"       [2025-05-01 Thu 12:35]
     - State "TODO"       from              [2025-04-29 Tue 08:00]
     :END:
 
-*** TODO auto reconnect for web socket
+*** DONE auto reconnect for web socket
+    CLOSED: [2025-05-01 Thu 12:35]
     :LOGBOOK:
+    - State "DONE"       from "TODO"       [2025-05-01 Thu 12:35]
     - State "TODO"       from              [2025-04-28 Mon 07:05]
     :END:
-*** TODO logged in state must be tested on JS side and user redirected to login page
+*** DONE add Jira auth
+    CLOSED: [2025-05-01 Thu 12:35]
     :LOGBOOK:
-    - State "TODO"       from              [2025-04-28 Mon 07:05]
-    :END:
-
-*** TODO comment as jira user
-    :LOGBOOK:
-    - State "TODO"       from              [2025-04-27 Sun 21:10]
-    :END:
-
-*** TODO display avatars of logged in users
-    :LOGBOOK:
-    - State "TODO"       from              [2025-04-27 Sun 21:10]
-    :END:
-
-*** TODO display current user info
-    :LOGBOOK:
-    - State "TODO"       from              [2025-04-27 Sun 21:10]
-    :END:
-*** WORKING add Jira auth
-    :LOGBOOK:
+    - State "DONE"       from "WORKING"    [2025-05-01 Thu 12:35]
     - State "WORKING"    from "DONE"       [2025-04-27 Sun 20:05]
     - State "DONE"       from "WORKING"    [2025-04-27 Sun 20:05]
     - State "WORKING"    from              [2025-04-26 Sat 19:30]
@@ -264,14 +245,41 @@ skills development_.
  - [X] Add oauth connector
  - [ ] make sure to change issue / post comment as Jira user, when available
 
+*** DONE comment as jira user
+    CLOSED: [2025-05-01 Thu 12:35]
+    :LOGBOOK:
+    - State "DONE"       from "TODO"       [2025-05-01 Thu 12:35]
+    - State "TODO"       from              [2025-04-27 Sun 21:10]
+    :END:
+
+*** DONE display current user info
+    CLOSED: [2025-05-01 Thu 12:35]
+    :LOGBOOK:
+    - State "DONE"       from "TODO"       [2025-05-01 Thu 12:35]
+    - State "TODO"       from              [2025-04-27 Sun 21:10]
+    :END:
+*** REJECTED Show icons of online users dynamically and with Jira/Google auth icon
+    CLOSED: [2025-05-01 Thu 12:35]
+    :LOGBOOK:
+    - State "REJECTED"   from "DONE"       [2025-05-01 Thu 12:35]
+    - State "DONE"       from "TODO"       [2025-05-01 Thu 12:35]
+    - State "TODO"       from              [2025-04-27 Sun 20:05]
+    :END:
+
+*** TODO logged in state must be tested on JS side and user redirected to login page
+    :LOGBOOK:
+    - State "TODO"       from              [2025-04-28 Mon 07:05]
+    :END:
+
+*** IDEA display avatars of logged in users
+    :LOGBOOK:
+    - State "IDEA"       from "TODO"       [2025-05-01 Thu 12:35]
+    - State "TODO"       from              [2025-04-27 Sun 21:10]
+    :END:
+
 *** TODO show task icons dynamically from jira types
     :LOGBOOK:
     - State "TODO"       from              [2025-04-29 Tue 19:10]
-    :END:
-
-*** TODO Show icons of online users dynamically and with Jira/Google auth icon
-    :LOGBOOK:
-    - State "TODO"       from              [2025-04-27 Sun 20:05]
     :END:
 
 ** WORKING improve planning poker after first try

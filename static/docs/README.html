@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2025-05-01 Thu 10:12 -->
+<!-- 2025-05-01 Thu 12:48 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Planning Poker</title>
@@ -26,22 +26,22 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org679d5af">About Planning Poker game</a></li>
-<li><a href="#orgfb76ace">Project structure</a></li>
-<li><a href="#orgb7d882c">Install</a></li>
-<li><a href="#org5e56f9e">Setup</a>
+<li><a href="#org5ee7b2a">About Planning Poker game</a></li>
+<li><a href="#org65baf47">Project structure</a></li>
+<li><a href="#org7acd0ae">Install</a></li>
+<li><a href="#org508fa05">Setup</a>
 <ul>
-<li><a href="#org25d53e5">Available settings</a></li>
+<li><a href="#org748a039">Available settings</a></li>
 </ul>
 </li>
-<li><a href="#org2733d90">Run</a></li>
-<li><a href="#org4ece0b9">Why I wrote this program</a></li>
+<li><a href="#orgbb00ca7">Run</a></li>
+<li><a href="#orgcb53825">Why I wrote this program</a></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org679d5af" class="outline-2">
-<h2 id="org679d5af">About Planning Poker game</h2>
-<div class="outline-text-2" id="text-org679d5af">
+<div id="outline-container-org5ee7b2a" class="outline-2">
+<h2 id="org5ee7b2a">About Planning Poker game</h2>
+<div class="outline-text-2" id="text-org5ee7b2a">
 <p>
 <b>Planning Poker</b> is a consensus-based estimation technique used in Scrum to size user stories or backlog items. Each
 participant is given a set of cards showing a sequence of numbers (often the Fibonacci sequence: 1, 2, 3, 5, 8, 13,
@@ -68,42 +68,8 @@ messages (PM) to our Project Manager  (PM-&gt;PM) so s(he) can collect and revea
 Here’s a Sequence Diagram in PlantUML showing your Scrum Planning Game flow:
 </p>
 
-<div class="org-src-container">
-<pre class="src src-plantuml">@startuml
-actor Facilitator
-actor "Business Analyst" as BA
-participant Developers
-participant System
-participant Jira
 
-Facilitator -&gt; Developers : Brief on task ①
-BA           -&gt; Developers : Brief on task
-
-loop Q&amp;A
-  Developers -&gt; Facilitator : Ask question ②
-  Facilitator -&gt; Developers : Answer
-  Developers -&gt; BA          : Ask question
-  BA          -&gt; Developers : Answer
-end
-
-Facilitator -&gt; System : Start voting
-
-loop Voting
-  Developers -&gt; System : Submit vote ③
-  System     -&gt; Developers : Update count (votes cast)
-end
-
-Facilitator -&gt; System : End voting
-System -&gt; Developers : Reveal all votes ④
-
-System -&gt; Jira : Post/update estimate comment
-
-@enduml
-</pre>
-</div>
-
-
-<div id="orgdf0d97b" class="figure">
+<div id="orgb5981c5" class="figure">
 <p><img src="static/img/process1.png" alt="process1.png" />
 </p>
 </div>
@@ -124,10 +90,10 @@ higher likelihood of delivering value within the sprint.
 </p>
 </div>
 </div>
-<div id="outline-container-orgfb76ace" class="outline-2">
-<h2 id="orgfb76ace">Project structure</h2>
-<div class="outline-text-2" id="text-orgfb76ace">
-<pre class="example" id="orgfdcb71b">
+<div id="outline-container-org65baf47" class="outline-2">
+<h2 id="org65baf47">Project structure</h2>
+<div class="outline-text-2" id="text-org65baf47">
+<pre class="example" id="org589cdf6">
 Directory tree
 ==============
 [-] PlanningPoker
@@ -168,9 +134,9 @@ Directory tree
 </pre>
 </div>
 </div>
-<div id="outline-container-orgb7d882c" class="outline-2">
-<h2 id="orgb7d882c">Install</h2>
-<div class="outline-text-2" id="text-orgb7d882c">
+<div id="outline-container-org7acd0ae" class="outline-2">
+<h2 id="org7acd0ae">Install</h2>
+<div class="outline-text-2" id="text-org7acd0ae">
 <p>
 Backend:
 </p>
@@ -189,14 +155,14 @@ yarn install
 </div>
 </div>
 </div>
-<div id="outline-container-org5e56f9e" class="outline-2">
-<h2 id="org5e56f9e">Setup</h2>
-<div class="outline-text-2" id="text-org5e56f9e">
+<div id="outline-container-org508fa05" class="outline-2">
+<h2 id="org508fa05">Setup</h2>
+<div class="outline-text-2" id="text-org508fa05">
 <p>
 Copy &amp; edit contents of .env file: setup variables
 </p>
 
-<pre class="example" id="org524e692">
+<pre class="example" id="orgc6445b4">
 cp .env-example .env
 </pre>
 
@@ -210,9 +176,9 @@ To avoid being spammed by all team member emails later I had to develop Jira Oau
 once, and when your login process is performed, please copy your JIRA_CLOUD_ID into .env, this is <a href="https://github.com/avkoval/PlanningPoker/blob/master/backend/main.py#L337">printed here</a>.
 </p>
 </div>
-<div id="outline-container-org25d53e5" class="outline-3">
-<h3 id="org25d53e5">Available settings</h3>
-<div class="outline-text-3" id="text-org25d53e5">
+<div id="outline-container-org748a039" class="outline-3">
+<h3 id="org748a039">Available settings</h3>
+<div class="outline-text-3" id="text-org748a039">
 <p>
 Here’s a filled-out reference for each env var:
 </p>
@@ -311,24 +277,24 @@ Here’s a filled-out reference for each env var:
 </div>
 </div>
 </div>
-<div id="outline-container-org2733d90" class="outline-2">
-<h2 id="org2733d90">Run</h2>
-<div class="outline-text-2" id="text-org2733d90">
-<pre class="example" id="orgb4e09e9">
+<div id="outline-container-orgbb00ca7" class="outline-2">
+<h2 id="orgbb00ca7">Run</h2>
+<div class="outline-text-2" id="text-orgbb00ca7">
+<pre class="example" id="org885c638">
 uv run fastapi dev backend/main.py
 </pre>
 
 <p>
 (if you have babashka installed):
 </p>
-<pre class="example" id="org3d8b209">
+<pre class="example" id="org6d794e2">
 bb run fastapi
 </pre>
 </div>
 </div>
-<div id="outline-container-org4ece0b9" class="outline-2">
-<h2 id="org4ece0b9">Why I wrote this program</h2>
-<div class="outline-text-2" id="text-org4ece0b9">
+<div id="outline-container-orgcb53825" class="outline-2">
+<h2 id="orgcb53825">Why I wrote this program</h2>
+<div class="outline-text-2" id="text-orgcb53825">
 <p>
 Because JIRA does not provide such functionality out of the box, I
 would like to develop SPA to play it with my team. 
@@ -348,7 +314,7 @@ skills development</span>.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: avkoval (ok)</p>
-<p class="date">Created: 2025-05-01 Thu 10:12</p>
+<p class="date">Created: 2025-05-01 Thu 12:48</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

@@ -479,7 +479,7 @@ def vote(request: Request, vote: Vote) -> Vote | None:
     username = get_username(request.session.get("user_info"))  # type: ignore
     if is_finished():
         votes = copy.deepcopy(app_data["votes"])
-        msg = f"Invalid vote attempt from {username} as voting process is already finished"
+        msg = f"{username} - you are late! Voting process is already finished, your vote is not recorded."
         logger.warning(msg)
         asyncio.run(push_to_connected_websockets(f"log::{format_datetime(vote.stamp)} {msg}"))
         return None
