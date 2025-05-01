@@ -2,14 +2,71 @@
 #+TITLE: Planning Poker
 #+SETUPFILE: https://raw.githubusercontent.com/fniessen/org-html-themes/master/org/theme-readtheorg.setup
 #+OPTIONS: num:nil toc:t ^:nil
+{{{disable-search}}}
 
-* What is this
+* About Planning Poker game
 
-I am playing with technology and trying new things. Because JIRA does not provide
-such functionality out of the box, I would like to develop SPA to play it with my
-team. I am aware about tons of /similar/ products existing in this area (all are paid!), 
-never seen any of them, and actually the work I do here is mostly for _my personal skills 
-development_.
+*Planning Poker* is a consensus-based estimation technique used in Scrum to size user stories or backlog items. Each
+participant is given a set of cards showing a sequence of numbers (often the Fibonacci sequence: 1, 2, 3, 5, 8, 13,
+etc.). 
+
+ 1) For each item under discussion, the product owner briefly describes the story ①
+ 2) ... and team members ask clarifying questions ②.
+ 3) When everyone feels ready, each estimator _privately selects_ the card that best represents their effort or complexity estimate ③. 
+ 4) All cards are then revealed *simultaneously*, _preventing early anchoring on a particular number_ ④. 
+
+    #+begin_quote
+    This is the main idea behind this software so it can *organize the process around voting*. Of course, we can have used Slack to send private
+    messages (PM) to our Project Manager  (PM->PM) so s(he) can collect and reveal it, but using tool is better.
+    #+end_quote
+
+Here’s a Sequence Diagram in PlantUML showing your Scrum Planning Game flow:
+
+#+begin_src plantuml :file static/img/process1.png
+@startuml
+actor Facilitator
+actor "Business Analyst" as BA
+participant Developers
+participant System
+participant Jira
+
+Facilitator -> Developers : Brief on task ①
+BA           -> Developers : Brief on task
+
+loop Q&A
+  Developers -> Facilitator : Ask question ②
+  Facilitator -> Developers : Answer
+  Developers -> BA          : Ask question
+  BA          -> Developers : Answer
+end
+
+Facilitator -> System : Start voting
+
+loop Voting
+  Developers -> System : Submit vote ③
+  System     -> Developers : Update count (votes cast)
+end
+
+Facilitator -> System : End voting
+System -> Developers : Reveal all votes ④
+
+System -> Jira : Post/update estimate comment
+
+@enduml
+#+end_src
+
+[[file:static/img/process1.png]]
+
+
+
+If estimates vary widely, the high and low estimators explain their reasoning, and the group discusses assumptions and
+hidden complexities. After this discussion, the team votes again, repeating the process until a consensus emerges. This
+method encourages active participation, surface-level ambiguity reduction, and shared understanding of requirements.
+
+Planning Poker is important because it leverages collective wisdom, balances influence among senior and junior team
+members, and reduces cognitive biases like anchoring. By forcing discussion of differing viewpoints, it uncovers hidden
+risks and dependencies early. Ultimately, it leads to more accurate, realistic estimates, stronger team alignment, and a
+higher likelihood of delivering value within the sprint.
 
 * Project structure
 
@@ -23,7 +80,6 @@ Directory tree
  |   |----- __init__.py
  |   |----- config.py
  |   `----- main.py                <---------------- main.py
- |--[+] planningpoker
  |--[-] pp-front                   <-- UIx project, created with:
  |   |--[+] dev                        npx create-uix-app@latest pp-front --re-frame`
  |   |--[+] node_modules
@@ -52,43 +108,54 @@ Directory tree
  |----- bb.edn                     <----- for commands
  |----- uv.lock
  `----- pyproject.toml
-
 #+end_example
 
-* Architecture & UI ideas [6/6]
-
- - [X] FastAPI on Backend
- - [X] UIX^2 on Frontend
- - [X] .env configuration
- - [X] Local memory caching for retrieved Jira data
- - [X] Websocket for group actions
- - [X] Logging screen on frontend (from websocket log)
-   - [X] "Vote accepted from ..."
-   - [X] "User ... logged in"
-
 * Install
+
   Backend:
   #+begin_src tmux
   uv install
   #+end_src
+
+  Frontend:
+  #+begin_src 
+  cd pp-front
+  yarn install
+  #+end_src
+
 * Setup
 
   Copy & edit contents of .env file: setup variables
 
-#+begin_example
-cp .env-example .env
-#+end_example
+  #+begin_example
+  cp .env-example .env
+  #+end_example
   
   To do this you will need to create Google Project and obtain Oauth authorization keys.
 
+  I also found it quite unconvinient when all comments are made from my account (because I was originally using my personal Jira token to post/modify the comment). 
+  To avoid being spammed by all team member emails later I had to develop Jira Oauth2 access as well. To set it up, you need to run authroization
+  once, and when your login process is performed, please copy your JIRA_CLOUD_ID into .env, this is [[https://github.com/avkoval/PlanningPoker/blob/master/backend/main.py#L337][printed here]].
+
 ** Available settings
 
-| Variable name         | Documentation                                                                                               |
-|-----------------------+-------------------------------------------------------------------------------------------------------------|
-| GOOGLE_CLIENT_ID      | Google Oauth credentials                                                                                    |
-| GOOGLE_CLIENT_SECRET  |                                                                                                             |
-| SECRET_KEY            | Secret key, must be specified                                                                               |
-| ALLOWED_EMAIL_DOMAINS | Restrict domains list (for example list here only organization domains). If empty - all domains are allowed |
+
+Here’s a filled-out reference for each env var:
+
+| Name                  | Description                                                                                     | Example                                                         |
+|-----------------------|-------------------------------------------------------------------------------------------------|-----------------------------------------------------------------|
+| GOOGLE_CLIENT_ID      | Your Google OAuth 2.0 “Client ID” (for Google Sign-In)                                          | 1234567890-apps.googleusercontent.com                           |
+| GOOGLE_CLIENT_SECRET  | Your Google OAuth 2.0 “Client Secret”                                                          | XyZabCDefGhIjKlMnOpQrStUvWxYz                                    |
+| SECRET_KEY            | A random secret string for session signing/CSRF protection (generate via =secrets.token_hex=)  | =python -c "import secrets; print(secrets.token_hex(32))"=      |
+| ALLOWED_EMAIL_DOMAINS | Comma-separated list of domains allowed to register/login                                       | example.com,myorg.org                                           |
+| JIRA_SERVER           | Base URL of your Jira instance (Cloud or on-premise)                                            | https://yourcompany.atlassian.net                               |
+| JIRA_TOKEN            | Your Jira API token or personal access token                                                    | AbCdEfGhIjKlMnOpQrStUvWxYz                                       |
+| JIRA_USER_EMAIL       | Email address tied to the Jira API token                                                        | jira-bot@yourcompany.com                                        |
+| LIMIT_TO_PROJECT      | (Optional) A single Jira project key to which all operations should be scoped                   | PROJ                                                             |
+| JIRA_CLIENT_ID        | OAuth client ID for a Jira app (if you’re using OAuth instead of basic/API-token auth)         | 0123456789abcdef                                                |
+| JIRA_CLIENT_SECRET    | OAuth client secret for your Jira app                                                           | ghIjKlMnOpQrStUvWxYzABCdEf                                      |
+| LOG_LEVEL             | Application logging level: DEBUG, INFO, WARNING, ERROR                                         | DEBUG                                                           |
+| JIRA_CLOUD_ID         | (Cloud only) Atlassian “cloudId” used by newer Jira REST endpoints                               | 1234abcd-56ef-78gh-90ij-klmnopqrst                             |
 
 * Run
 
@@ -100,6 +167,17 @@ uv run fastapi dev backend/main.py
 #+begin_example
 bb run fastapi
 #+end_example
+
+* Why I wrote this program
+
+Because JIRA does not provide such functionality out of the box, I
+would like to develop SPA to play it with my team. 
+
+I am playing with technology and trying new things. This time it was a survey of [[https://github.com/pitch-io/uix/tree/master][UiX^2]] and [[https://fastapi.tiangolo.com][FastAPI]] as a backend.
+
+I am aware about *tons of similar products existing in this area*
+(BTW all are paid!). I have never seen or used any of them, and actually the work I do here is mostly for _my personal
+skills development_.
 
 * COMMENT Work Log: Planning poker for FH
   SCHEDULED: <2024-08-17 Sat>
@@ -141,6 +219,10 @@ bb run fastapi
     CLOCK: [2025-04-30 Wed 07:12]--[2025-04-30 Wed 09:50] =>  2:38
     - State "IDEA"       from "TODO"       [2025-04-29 Tue 17:20]
     - State "TODO"       from              [2025-04-29 Tue 17:20]
+    :END:
+*** TODO update docs for planner poker rules
+    :LOGBOOK:
+    - State "TODO"       from              [2025-04-30 Wed 21:40]
     :END:
 *** TODO fix error of websocket over https/http on pp.ngrok.dev
     :LOGBOOK:

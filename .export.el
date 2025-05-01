@@ -1,3 +1,5 @@
 (setq org-safe-remote-resources '("https://raw.githubusercontent.com/fniessen/org-html-themes/master/org/theme-readtheorg.setup"))
+(add-to-list 'load-path "~/.emacs.d/elpa/htmlize-20240915.1657")
+(require 'htmlize)
 (find-file "README.org")
 (org-html-export-to-html)

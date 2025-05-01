@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2024-09-22 Sun 14:13 -->
+<!-- 2025-05-01 Thu 10:12 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Planning Poker</title>
@@ -11,10 +11,13 @@
 <meta name="generator" content="Org Mode" />
 <link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/htmlize.css"/>
 <link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/readtheorg.css"/>
+<link rel="stylesheet" type="text/css" href="src/readtheorg_theme/css/search.css"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/js/search.js"></script>
 <script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/js/readtheorg.js"></script>
+<script type="text/javascript">disableSearch();</script>
 </head>
 <body>
 <div id="content" class="content">
@@ -23,59 +26,108 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org9a13bc1">What is this</a></li>
-<li><a href="#orge968852">Project structure</a></li>
-<li><a href="#org46d1c70">Architecture &amp; UI ideas <code>[6/6]</code></a></li>
-<li><a href="#org3fa80bf">Install</a></li>
-<li><a href="#org7f3bed2">Setup</a>
+<li><a href="#org679d5af">About Planning Poker game</a></li>
+<li><a href="#orgfb76ace">Project structure</a></li>
+<li><a href="#orgb7d882c">Install</a></li>
+<li><a href="#org5e56f9e">Setup</a>
 <ul>
-<li><a href="#orgc060bfa">Available settings</a></li>
+<li><a href="#org25d53e5">Available settings</a></li>
 </ul>
 </li>
-<li><a href="#org58abe44">Run</a></li>
-<li><a href="#org57c6824"><span class="todo WORKING">WORKING</span> Work Log: Planning poker for Fieldhub</a>
-<ul>
-<li><a href="#org7b8d852"><span class="done DONE">DONE</span> Technical design &amp; architecture</a>
-<ul>
-<li><a href="#org5bd8b0a"><span class="done DONE">DONE</span> View practically, Kit, Uix &amp; bootstrap the project</a></li>
-<li><a href="#org6581361"><span class="done DONE">DONE</span> use FastAPI! use Google auth &amp; ready Jira integration I have!</a></li>
-<li><a href="#org05baac1"><span class="done DONE">DONE</span> Use websocket for fast communication!</a></li>
-</ul>
-</li>
-<li><a href="#orgf0d03a7"><span class="done REJECTED">REJECTED</span> UI Plan on functional implementation <code>[0/6]</code></a></li>
-<li><a href="#orga7672fc"><span class="done DONE">DONE</span> Bootstrap: FastAPI + UIx^2 in one folder &amp; dev/prod start/deploy/+sentry/+logging</a></li>
-<li><a href="#org597f9db"><span class="done DONE">DONE</span> Google auth &amp; JWT token (or session cookie)</a></li>
-<li><a href="#org2f78966"><span class="done DONE">DONE</span> add running via bb.edn</a></li>
-<li><a href="#org767ab4d"><span class="done DONE">DONE</span> fix burger menu for mobile</a></li>
-<li><a href="#orgacebabe"><span class="done DONE">DONE</span> use iframe for docs part</a></li>
-<li><a href="#org2a65066"><span class="todo TODO">TODO</span> Search for ticket (Estimate ticket screen) <code>[14/16]</code>&#xa0;&#xa0;&#xa0;<span class="tag"><span class="verb">verb</span></span></a></li>
-<li><a href="#org2262466"><span class="done DONE">DONE</span> add jql: search support</a></li>
-<li><a href="#org94d83cc"><span class="done DONE">DONE</span> fix design=placement for estimate / results boxes</a></li>
-<li><a href="#org0b2c3ca"><span class="done DONE">DONE</span> logging</a></li>
-<li><a href="#org42ffee8"><span class="done DONE">DONE</span> Voting screen <code>[15/15]</code> <code>[100%]</code></a></li>
-<li><a href="#org2afde18"><span class="done DONE">DONE</span> check logged in state (when in <code>/app</code>) and other statuses (because currenly it allows to see <code>/app/</code> <code>[1/2]</code></a></li>
-<li><a href="#org55cbf3e"><span class="done DONE">DONE</span> Websocket coordination <code>[9/10]</code></a></li>
-</ul>
-</li>
+<li><a href="#org2733d90">Run</a></li>
+<li><a href="#org4ece0b9">Why I wrote this program</a></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org9a13bc1" class="outline-2">
-<h2 id="org9a13bc1">What is this</h2>
-<div class="outline-text-2" id="text-org9a13bc1">
+<div id="outline-container-org679d5af" class="outline-2">
+<h2 id="org679d5af">About Planning Poker game</h2>
+<div class="outline-text-2" id="text-org679d5af">
 <p>
-I am playing with technology and trying new things. Because JIRA does not provide
-such functionality out of the box, I would like to develop SPA to play it with my
-team. I am aware about tons of <i>similar</i> products existing in this area (all are paid!), 
-never seen any of them, and actually the work I do here is mostly for <span class="underline">my personal skills 
-development</span>.
+<b>Planning Poker</b> is a consensus-based estimation technique used in Scrum to size user stories or backlog items. Each
+participant is given a set of cards showing a sequence of numbers (often the Fibonacci sequence: 1, 2, 3, 5, 8, 13,
+etc.). 
+</p>
+
+<ol class="org-ol">
+<li>For each item under discussion, the product owner briefly describes the story ①</li>
+<li>&#x2026; and team members ask clarifying questions ②.</li>
+<li>When everyone feels ready, each estimator <span class="underline">privately selects</span> the card that best represents their effort or complexity estimate ③.</li>
+<li><p>
+All cards are then revealed <b>simultaneously</b>, <span class="underline">preventing early anchoring on a particular number</span> ④. 
+</p>
+
+<blockquote>
+<p>
+This is the main idea behind this software so it can <b>organize the process around voting</b>. Of course, we can have used Slack to send private
+messages (PM) to our Project Manager  (PM-&gt;PM) so s(he) can collect and reveal it, but using tool is better.
+</p>
+</blockquote></li>
+</ol>
+
+<p>
+Here’s a Sequence Diagram in PlantUML showing your Scrum Planning Game flow:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-plantuml">@startuml
+actor Facilitator
+actor "Business Analyst" as BA
+participant Developers
+participant System
+participant Jira
+
+Facilitator -&gt; Developers : Brief on task ①
+BA           -&gt; Developers : Brief on task
+
+loop Q&amp;A
+  Developers -&gt; Facilitator : Ask question ②
+  Facilitator -&gt; Developers : Answer
+  Developers -&gt; BA          : Ask question
+  BA          -&gt; Developers : Answer
+end
+
+Facilitator -&gt; System : Start voting
+
+loop Voting
+  Developers -&gt; System : Submit vote ③
+  System     -&gt; Developers : Update count (votes cast)
+end
+
+Facilitator -&gt; System : End voting
+System -&gt; Developers : Reveal all votes ④
+
+System -&gt; Jira : Post/update estimate comment
+
+@enduml
+</pre>
+</div>
+
+
+<div id="orgdf0d97b" class="figure">
+<p><img src="static/img/process1.png" alt="process1.png" />
+</p>
+</div>
+
+
+
+<p>
+If estimates vary widely, the high and low estimators explain their reasoning, and the group discusses assumptions and
+hidden complexities. After this discussion, the team votes again, repeating the process until a consensus emerges. This
+method encourages active participation, surface-level ambiguity reduction, and shared understanding of requirements.
+</p>
+
+<p>
+Planning Poker is important because it leverages collective wisdom, balances influence among senior and junior team
+members, and reduces cognitive biases like anchoring. By forcing discussion of differing viewpoints, it uncovers hidden
+risks and dependencies early. Ultimately, it leads to more accurate, realistic estimates, stronger team alignment, and a
+higher likelihood of delivering value within the sprint.
 </p>
 </div>
 </div>
-<div id="outline-container-orge968852" class="outline-2">
-<h2 id="orge968852">Project structure</h2>
-<div class="outline-text-2" id="text-orge968852">
-<pre class="example" id="org99a29a1">
+<div id="outline-container-orgfb76ace" class="outline-2">
+<h2 id="orgfb76ace">Project structure</h2>
+<div class="outline-text-2" id="text-orgfb76ace">
+<pre class="example" id="orgfdcb71b">
 Directory tree
 ==============
 [-] PlanningPoker
@@ -85,7 +137,6 @@ Directory tree
  |   |----- __init__.py
  |   |----- config.py
  |   `----- main.py                &lt;---------------- main.py
- |--[+] planningpoker
  |--[-] pp-front                   &lt;-- UIx project, created with:
  |   |--[+] dev                        npx create-uix-app@latest pp-front --re-frame`
  |   |--[+] node_modules
@@ -112,59 +163,60 @@ Directory tree
  |----- README.org                 &lt;----- mode Source of this README.html
  |----- __init__.py
  |----- bb.edn                     &lt;----- for commands
- |----- poetry.lock
+ |----- uv.lock
  `----- pyproject.toml
-
 </pre>
 </div>
 </div>
-<div id="outline-container-org46d1c70" class="outline-2">
-<h2 id="org46d1c70">Architecture &amp; UI ideas <code>[6/6]</code></h2>
-<div class="outline-text-2" id="text-org46d1c70">
-<ul class="org-ul">
-<li class="on"><code>[X]</code> FastAPI on Backend</li>
-<li class="on"><code>[X]</code> UIX^2 on Frontend</li>
-<li class="on"><code>[X]</code> .env configuration</li>
-<li class="on"><code>[X]</code> Local memory caching for retrieved Jira data</li>
-<li class="on"><code>[X]</code> Websocket for group actions</li>
-<li class="on"><code>[X]</code> Logging screen on frontend (from websocket log)
-<ul class="org-ul">
-<li class="on"><code>[X]</code> "Vote accepted from &#x2026;"</li>
-<li class="on"><code>[X]</code> "User &#x2026; logged in"</li>
-</ul></li>
-</ul>
-</div>
-</div>
-<div id="outline-container-org3fa80bf" class="outline-2">
-<h2 id="org3fa80bf">Install</h2>
-<div class="outline-text-2" id="text-org3fa80bf">
+<div id="outline-container-orgb7d882c" class="outline-2">
+<h2 id="orgb7d882c">Install</h2>
+<div class="outline-text-2" id="text-orgb7d882c">
 <p>
 Backend:
 </p>
 <div class="org-src-container">
-<pre class="src src-tmux">poetry install
+<pre class="src src-tmux">uv install
+</pre>
+</div>
+
+<p>
+Frontend:
+</p>
+<div class="org-src-container">
+<pre class="src src-nil">cd pp-front
+yarn install
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-org7f3bed2" class="outline-2">
-<h2 id="org7f3bed2">Setup</h2>
-<div class="outline-text-2" id="text-org7f3bed2">
+<div id="outline-container-org5e56f9e" class="outline-2">
+<h2 id="org5e56f9e">Setup</h2>
+<div class="outline-text-2" id="text-org5e56f9e">
 <p>
 Copy &amp; edit contents of .env file: setup variables
 </p>
 
-<pre class="example" id="org87f4a88">
+<pre class="example" id="org524e692">
 cp .env-example .env
 </pre>
 
 <p>
 To do this you will need to create Google Project and obtain Oauth authorization keys.
 </p>
+
+<p>
+I also found it quite unconvinient when all comments are made from my account (because I was originally using my personal Jira token to post/modify the comment). 
+To avoid being spammed by all team member emails later I had to develop Jira Oauth2 access as well. To set it up, you need to run authroization
+once, and when your login process is performed, please copy your JIRA_CLOUD_ID into .env, this is <a href="https://github.com/avkoval/PlanningPoker/blob/master/backend/main.py#L337">printed here</a>.
+</p>
 </div>
-<div id="outline-container-orgc060bfa" class="outline-3">
-<h3 id="orgc060bfa">Available settings</h3>
-<div class="outline-text-3" id="text-orgc060bfa">
+<div id="outline-container-org25d53e5" class="outline-3">
+<h3 id="org25d53e5">Available settings</h3>
+<div class="outline-text-3" id="text-org25d53e5">
+<p>
+Here’s a filled-out reference for each env var:
+</p>
+
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -172,350 +224,132 @@ To do this you will need to create Google Project and obtain Oauth authorization
 <col  class="org-left" />
 
 <col  class="org-left" />
+
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="org-left">Variable name</th>
-<th scope="col" class="org-left">Documentation</th>
+<th scope="col" class="org-left">Name</th>
+<th scope="col" class="org-left">Description</th>
+<th scope="col" class="org-left">Example</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="org-left">GOOGLE_CLIENT_ID</td>
-<td class="org-left">Google Oauth credentials</td>
+<td class="org-left">Your Google OAuth 2.0 “Client ID” (for Google Sign-In)</td>
+<td class="org-left">1234567890-apps.googleusercontent.com</td>
 </tr>
 
 <tr>
 <td class="org-left">GOOGLE_CLIENT_SECRET</td>
-<td class="org-left">&#xa0;</td>
+<td class="org-left">Your Google OAuth 2.0 “Client Secret”</td>
+<td class="org-left">XyZabCDefGhIjKlMnOpQrStUvWxYz</td>
 </tr>
 
 <tr>
 <td class="org-left">SECRET_KEY</td>
-<td class="org-left">Secret key, must be specified</td>
+<td class="org-left">A random secret string for session signing/CSRF protection (generate via <code>secrets.token_hex</code>)</td>
+<td class="org-left"><code>python -c "import secrets; print(secrets.token_hex(32))"</code></td>
 </tr>
 
 <tr>
 <td class="org-left">ALLOWED_EMAIL_DOMAINS</td>
-<td class="org-left">Restrict domains list (for example list here only organization domains). If empty - all domains are allowed</td>
+<td class="org-left">Comma-separated list of domains allowed to register/login</td>
+<td class="org-left">example.com,myorg.org</td>
+</tr>
+
+<tr>
+<td class="org-left">JIRA_SERVER</td>
+<td class="org-left">Base URL of your Jira instance (Cloud or on-premise)</td>
+<td class="org-left"><a href="https://yourcompany.atlassian.net">https://yourcompany.atlassian.net</a></td>
+</tr>
+
+<tr>
+<td class="org-left">JIRA_TOKEN</td>
+<td class="org-left">Your Jira API token or personal access token</td>
+<td class="org-left">AbCdEfGhIjKlMnOpQrStUvWxYz</td>
+</tr>
+
+<tr>
+<td class="org-left">JIRA_USER_EMAIL</td>
+<td class="org-left">Email address tied to the Jira API token</td>
+<td class="org-left">jira-bot@yourcompany.com</td>
+</tr>
+
+<tr>
+<td class="org-left">LIMIT_TO_PROJECT</td>
+<td class="org-left">(Optional) A single Jira project key to which all operations should be scoped</td>
+<td class="org-left">PROJ</td>
+</tr>
+
+<tr>
+<td class="org-left">JIRA_CLIENT_ID</td>
+<td class="org-left">OAuth client ID for a Jira app (if you’re using OAuth instead of basic/API-token auth)</td>
+<td class="org-left">0123456789abcdef</td>
+</tr>
+
+<tr>
+<td class="org-left">JIRA_CLIENT_SECRET</td>
+<td class="org-left">OAuth client secret for your Jira app</td>
+<td class="org-left">ghIjKlMnOpQrStUvWxYzABCdEf</td>
+</tr>
+
+<tr>
+<td class="org-left">LOG_LEVEL</td>
+<td class="org-left">Application logging level: DEBUG, INFO, WARNING, ERROR</td>
+<td class="org-left">DEBUG</td>
+</tr>
+
+<tr>
+<td class="org-left">JIRA_CLOUD_ID</td>
+<td class="org-left">(Cloud only) Atlassian “cloudId” used by newer Jira REST endpoints</td>
+<td class="org-left">1234abcd-56ef-78gh-90ij-klmnopqrst</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 </div>
-<div id="outline-container-org58abe44" class="outline-2">
-<h2 id="org58abe44">Run</h2>
-<div class="outline-text-2" id="text-org58abe44">
-<pre class="example" id="orge2632c2">
-poetry run fastapi dev backend/main.py
+<div id="outline-container-org2733d90" class="outline-2">
+<h2 id="org2733d90">Run</h2>
+<div class="outline-text-2" id="text-org2733d90">
+<pre class="example" id="orgb4e09e9">
+uv run fastapi dev backend/main.py
 </pre>
 
 <p>
 (if you have babashka installed):
 </p>
-<pre class="example" id="orgd61cb27">
+<pre class="example" id="org3d8b209">
 bb run fastapi
 </pre>
 </div>
 </div>
-<div id="outline-container-org57c6824" class="outline-2">
-<h2 id="org57c6824"><span class="todo WORKING">WORKING</span> Work Log: Planning poker for Fieldhub</h2>
-<div class="outline-text-2" id="text-org57c6824">
-</div>
-<div id="outline-container-org7b8d852" class="outline-3">
-<h3 id="org7b8d852"><span class="done DONE">DONE</span> Technical design &amp; architecture</h3>
-<div class="outline-text-3" id="text-org7b8d852">
-</div>
-<div id="outline-container-org5bd8b0a" class="outline-4">
-<h4 id="org5bd8b0a"><span class="done DONE">DONE</span> View practically, Kit, Uix &amp; bootstrap the project</h4>
-<div class="outline-text-4" id="text-org5bd8b0a">
-<ul class="org-ul">
-<li class="on"><code>[X]</code> Decided to use FastCGI instead of Kit in this round (<span class="timestamp-wrapper"><span class="timestamp">[2024-08-17 Sat 11:20]</span></span>). Reasons:
-<ul class="org-ul">
-<li>I already know how to use Jira integtration with Python</li>
-<li>I want to gain some FastAPI experience</li>
-</ul></li>
-<li class="on"><code>[X]</code> <p>
-How to add ReFrame? 11:29.44 (00:08) Found, explained in: <a href="https://github.com/pitch-io/uix-starter">https://github.com/pitch-io/uix-starter</a>
+<div id="outline-container-org4ece0b9" class="outline-2">
+<h2 id="org4ece0b9">Why I wrote this program</h2>
+<div class="outline-text-2" id="text-org4ece0b9">
+<p>
+Because JIRA does not provide such functionality out of the box, I
+would like to develop SPA to play it with my team. 
 </p>
-<pre class="example" id="org3b5790c">
-npx create-uix-app@latest my-app --re-frame # adds re-frame setup
-</pre></li>
-<li class="on"><code>[X]</code> View (again) <a href="https://www.youtube.com/watch?v=4vgrLHsD0-I&amp;t=3s">intro video from Roman Liutikov</a></li>
-<li class="on"><code>[X]</code> Re-try modern React tutorial</li>
-<li class="on"><code>[X]</code> Start learning Udemy React course, take some first lessons</li>
-</ul>
-</div>
-</div>
-<div id="outline-container-org6581361" class="outline-4">
-<h4 id="org6581361"><span class="done DONE">DONE</span> use FastAPI! use Google auth &amp; ready Jira integration I have!</h4>
-<div class="outline-text-4" id="text-org6581361">
-<ul class="org-ul">
-<li><a href="https://google-auth.readthedocs.io/en/master/">https://google-auth.readthedocs.io/en/master/</a></li>
-<li><a href="https://github.com/hanchon-live/tutorial-fastapi-oauth">https://github.com/hanchon-live/tutorial-fastapi-oauth</a></li>
-<li><a href="https://blog.hanchon.live/guides/google-login-with-fastapi/">https://blog.hanchon.live/guides/google-login-with-fastapi/</a> (following)</li>
-<li><a href="https://docs.authlib.org/en/latest/client/starlette.html">https://docs.authlib.org/en/latest/client/starlette.html</a> (works)</li>
-</ul>
-</div>
-</div>
-<div id="outline-container-org05baac1" class="outline-4">
-<h4 id="org05baac1"><span class="done DONE">DONE</span> Use websocket for fast communication!</h4>
-<div class="outline-text-4" id="text-org05baac1">
-<ul class="org-ul">
-<li>FastAPI provides support:</li>
-</ul>
-</div>
-</div>
-</div>
-<div id="outline-container-orgf0d03a7" class="outline-3">
-<h3 id="orgf0d03a7"><span class="done REJECTED">REJECTED</span> UI Plan on functional implementation <code>[0/6]</code></h3>
-<div class="outline-text-3" id="text-orgf0d03a7">
-<ul class="org-ul">
-<li>SPA - one screen on UIx</li>
-<li class="off"><code>[&#xa0;]</code> List logged in users</li>
-<li class="off"><code>[&#xa0;]</code> Set color for facilitator?
-<ul class="org-ul">
-<li>how to agree who is facilitator? may be anyone can? probably yes, but then warn on top who started it</li>
-</ul></li>
-<li class="off"><code>[&#xa0;]</code> Countdown timer (configuration for length) starts</li>
-<li class="off"><code>[&#xa0;]</code> List of SPs (configuration)</li>
-<li class="off"><code>[&#xa0;]</code> Strike for users who voted</li>
-<li class="off"><code>[&#xa0;]</code> Reveal cards with some visual effect</li>
-</ul>
-</div>
-</div>
-<div id="outline-container-orga7672fc" class="outline-3">
-<h3 id="orga7672fc"><span class="done DONE">DONE</span> Bootstrap: FastAPI + UIx^2 in one folder &amp; dev/prod start/deploy/+sentry/+logging</h3>
-<div class="outline-text-3" id="text-orga7672fc">
-<ul class="org-ul">
-<li class="on"><code>[X]</code> Install fastapi via poetry</li>
-<li class="on"><code>[X]</code> Bootstrap UIX^2 project</li>
-<li class="on"><code>[X]</code> Add/commit to git</li>
-<li class="off"><code>[&#xa0;]</code> Publish on github</li>
-</ul>
-</div>
-</div>
-<div id="outline-container-org597f9db" class="outline-3">
-<h3 id="org597f9db"><span class="done DONE">DONE</span> Google auth &amp; JWT token (or session cookie)</h3>
-<div class="outline-text-3" id="text-org597f9db">
-</div>
-</div>
-<div id="outline-container-org2f78966" class="outline-3">
-<h3 id="org2f78966"><span class="done DONE">DONE</span> add running via bb.edn</h3>
-<div class="outline-text-3" id="text-org2f78966">
-<ul class="org-ul">
-<li>Finish watching <a href="https://www.youtube.com/watch?v=u5ECoR7KT1Y">Babashka tasks (by Michiel Borkent)</a> from <i>The London Clojurians are happy to present 3 years ago</i></li>
-</ul>
-</div>
-</div>
-<div id="outline-container-org767ab4d" class="outline-3">
-<h3 id="org767ab4d"><span class="done DONE">DONE</span> fix burger menu for mobile</h3>
-<div class="outline-text-3" id="text-org767ab4d">
-</div>
-</div>
-<div id="outline-container-orgacebabe" class="outline-3">
-<h3 id="orgacebabe"><span class="done DONE">DONE</span> use iframe for docs part</h3>
-<div class="outline-text-3" id="text-orgacebabe">
-</div>
-</div>
-<div id="outline-container-org2a65066" class="outline-3">
-<h3 id="org2a65066"><span class="todo TODO">TODO</span> Search for ticket (Estimate ticket screen) <code>[14/16]</code>&#xa0;&#xa0;&#xa0;<span class="tag"><span class="verb">verb</span></span></h3>
-<div class="outline-text-3" id="text-org2a65066">
-<ul class="org-ul">
-<li class="on"><code>[X]</code> Make a stub function on FastAPI side for now.</li>
-<li class="on"><code>[X]</code> Select library to make HTTP calls.
-<ol class="org-ol">
-<li>Trying <a href="https://github.com/lambdaisland/fetch">https://github.com/lambdaisland/fetch</a></li>
-<li class="on"><code>[X]</code> <p>
-(this is an alternative to try) <a href="https://github.com/r0man/cljs-http?tab=readme-ov-file">https://github.com/r0man/cljs-http?tab=readme-ov-file</a>
-</p>
-<div class="org-src-container">
-<pre class="src src-verb"><span style="color: #0000b0; font-weight: bold;">GET</span> https://api.github.com/users?since=135
-<span style="color: #0000b0;">User-agent:</span> emacs
-</pre>
-</div>
-<ul class="org-ul">
-<li><span class="timestamp-wrapper"><span class="timestamp">[2024-08-27 Tue 09:25] </span></span> I am having difficulties to connect async nature of core-async channels (same as promises?)
-to the actual useEffect or anything. Reading&#x2026;
-<ul class="org-ul">
-<li><a href="https://stackoverflow.com/questions/71174509/proper-async-await-syntax-for-fetching-data-using-useeffect-hook-in-react">async in useEffect</a></li>
-<li><a href="https://pitch-io.github.io/uix/docs/hooks.html">Uix on hooks</a></li>
-<li><a href="https://react.dev/learn/adding-interactivity">React event handlers</a></li>
-<li><a href="https://clojure.org/guides/async_walkthrough">core.async Walkthrough</a></li>
-<li><a href="https://stackoverflow.com/questions/56028913/usememo-vs-useeffect-usestate">useMemo vs. useEffect + useState</a></li>
-<li><a href="https://www.freecodecamp.org/news/how-to-work-with-usememo-in-react/">https://www.freecodecamp.org/news/how-to-work-with-usememo-in-react/</a></li>
-</ul></li>
-</ul></li>
 
-<li>some people suggest to use Axios directly from Clojurescript.</li>
-</ol></li>
-<li class="on"><code>[X]</code> Display nice formatted results
-<ul class="org-ul">
-<li><a href="https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-type-properties/#api-rest-api-3-issuetype-issuetypeid-properties-get">https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-type-properties/#api-rest-api-3-issuetype-issuetypeid-properties-get</a></li>
-</ul></li>
-<li class="on"><code>[X]</code> Do a call via function</li>
-<li class="on"><code>[X]</code> Connect results it via <code>use-effect</code> or somehow else? Read docs and do!</li>
-<li class="on"><code>[X]</code> Fine tune the display results</li>
-<li class="on"><code>[X]</code> Show estimates column</li>
-<li class="on"><code>[X]</code> Limit to a project via settings</li>
-<li class="on"><code>[X]</code> Add button to ticket details &amp; estimation process</li>
-<li class="on"><code>[X]</code> Logout button</li>
-<li class="on"><code>[X]</code> Switch to voting screen</li>
-<li class="on"><code>[X]</code> Async python function with results caching on FastAPI / (memoize | Redis)</li>
-<li class="on"><code>[X]</code> avoid 2 staged query/re-render for search term 'payment`
-<ul class="org-ul">
-<li class="on"><code>[X]</code> solution: implement same structure (as for saving comment) for searching after delay only! user need to stop typing to see results!</li>
-</ul></li>
-<li class="on"><code>[X]</code> indicate that query is running, also which query is running! with a color and sticker! and some effect!</li>
-<li class="off"><code>[&#xa0;]</code> (low pri) May be make a list of previous queries to be able to re-run them
-<ul class="org-ul">
-<li class="off"><code>[&#xa0;]</code> use python pickle!</li>
-</ul></li>
-<li class="off"><code>[&#xa0;]</code> (low pri) Provide a list of pre-defined queiries on app start or save them to a file and then restore</li>
-</ul>
-</div>
-</div>
-<div id="outline-container-org2262466" class="outline-3">
-<h3 id="org2262466"><span class="done DONE">DONE</span> add jql: search support</h3>
-<div class="outline-text-3" id="text-org2262466">
-</div>
-</div>
-<div id="outline-container-org94d83cc" class="outline-3">
-<h3 id="org94d83cc"><span class="done DONE">DONE</span> fix design=placement for estimate / results boxes</h3>
-<div class="outline-text-3" id="text-org94d83cc">
-</div>
-</div>
-<div id="outline-container-org0b2c3ca" class="outline-3">
-<h3 id="org0b2c3ca"><span class="done DONE">DONE</span> logging</h3>
-<div class="outline-text-3" id="text-org0b2c3ca">
-<ul class="org-ul">
-<li class="on"><code>[X]</code> Log display as is-info</li>
-<li class="on"><code>[X]</code> Or display N lines with timestamp and history scroll</li>
-<li class="on"><code>[X]</code> disappear after 1-3 seconds with fade out effect!
-<ul class="org-ul">
-<li><a href="https://ericnormand.me/guide/timeout-effect-in-re-frame">https://ericnormand.me/guide/timeout-effect-in-re-frame</a></li>
-<li><a href="https://stackoverflow.com/questions/76258055/how-to-add-fade-in-animation-to-a-component-when-it-is-loaded-in-react">https://stackoverflow.com/questions/76258055/how-to-add-fade-in-animation-to-a-component-when-it-is-loaded-in-react</a></li>
-</ul></li>
-<li class="on"><code>[X]</code> delete individual message</li>
-<li><del>[ ] display not more then 3 messages</del></li>
-</ul>
-</div>
-</div>
-<div id="outline-container-org42ffee8" class="outline-3">
-<h3 id="org42ffee8"><span class="done DONE">DONE</span> Voting screen <code>[15/15]</code> <code>[100%]</code></h3>
-<div class="outline-text-3" id="text-org42ffee8">
-<ul class="org-ul">
-<li class="on"><code>[X]</code> Menu is-active</li>
-<li class="on"><code>[X]</code> Prepare FastAPI endpoint</li>
-<li class="on"><code>[X]</code> Cache ticket data</li>
-<li class="on"><code>[X]</code> Display data on screen
-<ul class="org-ul">
-<li><span class="timestamp-wrapper"><span class="timestamp">[2024-09-06 Fri 09:25] </span></span> data is displayed but <code>markdown</code> formatting is required&#x2026;</li>
-<li class="on"><code>[X]</code> format markdown (on backend?)</li>
-<li class="on"><code>[X]</code> format URLs via custom fn</li>
-<li class="on"><code>[X]</code> <del>(maybe) format images as external URLs via custom fn?</del>
-<ul class="org-ul">
-<li><i>got Permission denied!</i></li>
-</ul></li>
-</ul></li>
-<li class="on"><code>[X]</code> Add 'vote' layout block</li>
-<li class="on"><code>[X]</code> Set voted ticket &amp; bg color for button</li>
-<li class="on"><code>[X]</code> Send vote data to server
-<ul class="org-ul">
-<li class="on"><code>[X]</code> add backend endpoint
-<ul class="org-ul">
-<li class="on"><code>[X]</code> store data in dict. <a href="https://stackoverflow.com/questions/19201290/how-to-save-a-dictionary-to-a-file">use pickle?</a></li>
-</ul></li>
-<li class="on"><code>[X]</code> add fx handler event</li>
-<li><del>[ ] we also need to send POST on estimation start!</del> we already have info</li>
-<li class="on"><code>[X]</code> send data only if value has changed!</li>
-</ul></li>
-<li><del>[ ] Countdown timer for voting (configure the length via .env)</del> no need, can be replaced by 'finish'</li>
-<li class="on"><code>[X]</code> Indication who has started voting.</li>
-<li class="on"><code>[X]</code> Indication of people which finished voting - <del>list.</del> log</li>
-<li class="on"><code>[X]</code> Reveal results</li>
-<li class="on"><code>[X]</code> Fix red/yellow colors for big estimates, add for hours too</li>
-<li class="on"><code>[X]</code> Fix estimate restart</li>
-<li class="on"><code>[X]</code> Rewrite widget to split voting into 3 categories: Frontend, Backend and QA
-<ul class="org-ul">
-<li class="on"><code>[X]</code> Splitting into categories in voting box &amp; backend</li>
-<li class="on"><code>[X]</code> Splitting into categories in results box</li>
-<li class="on"><code>[X]</code> Make it possible to choose: SP or Hours</li>
-</ul></li>
-<li class="on"><code>[X]</code> <p>
-Send results to Jira by adding formatted comment to ticket like (in hours):
+<p>
+I am playing with technology and trying new things. This time it was a survey of <a href="https://github.com/pitch-io/uix/tree/master">UiX^2</a> and <a href="https://fastapi.tiangolo.com">FastAPI</a> as a backend.
 </p>
-<pre class="example" id="org71162b9">
-Back: ...
-Front: ...
-QA: ...
-</pre></li>
-<li class="on"><code>[X]</code> How to reset use-state data when voting restarts?</li>
-</ul>
-</div>
-</div>
-<div id="outline-container-org2afde18" class="outline-3">
-<h3 id="org2afde18"><span class="done DONE">DONE</span> check logged in state (when in <code>/app</code>) and other statuses (because currenly it allows to see <code>/app/</code> <code>[1/2]</code></h3>
-<div class="outline-text-3" id="text-org2afde18">
-<ul class="org-ul">
-<li class="on"><code>[X]</code> make 'sync' / 'status' query.</li>
-</ul>
-</div>
-</div>
-<div id="outline-container-org55cbf3e" class="outline-3">
-<h3 id="org55cbf3e"><span class="done DONE">DONE</span> Websocket coordination <code>[9/10]</code></h3>
-<div class="outline-text-3" id="text-org55cbf3e">
-<ul class="org-ul">
-<li class="on"><code>[X]</code> Add WS handler on backend, check it works with sample HTML code</li>
-<li class="on"><code>[X]</code> pub/sub pattern on FastAPI backend:
-<ul class="org-ul">
-<li><a href="https://pypi.org/project/fastapi-websocket-pubsub/">https://pypi.org/project/fastapi-websocket-pubsub/</a></li>
-<li><a href="https://gist.github.com/appeltel/fd3ddeeed6c330c7208502462639d2c9">https://gist.github.com/appeltel/fd3ddeeed6c330c7208502462639d2c9</a></li>
-<li><a href="https://github.com/6ixOnline/fastapi-pubsub">https://github.com/6ixOnline/fastapi-pubsub</a></li>
-<li>tired from non-working examples. switching to a well known path with 
-aioredis <a href="https://aioredis.readthedocs.io/en/latest/#installation">https://aioredis.readthedocs.io/en/latest/#installation</a></li>
-<li><a href="https://gist.github.com/charsyam/1efc7f38860225c63b05379fffe73256">https://gist.github.com/charsyam/1efc7f38860225c63b05379fffe73256</a></li>
-<li><a href="https://medium.com/@nandagopal05/scaling-websockets-with-pub-sub-using-python-redis-fastapi-b16392ffe291">https://medium.com/@nandagopal05/scaling-websockets-with-pub-sub-using-python-redis-fastapi-b16392ffe291</a></li>
-<li class="on"><code>[X]</code> <a href="https://github.com/Thierry46/pubsub">https://github.com/Thierry46/pubsub</a> (Looks good, embedding it!) <span class="timestamp-wrapper"><span class="timestamp">[2024-09-11 Wed 07:55]</span></span></li>
-<li><a href="https://github.com/fastapi/fastapi/issues/258">https://github.com/fastapi/fastapi/issues/258</a></li>
-</ul></li>
-<li class="on"><code>[X]</code> Add WS support on cljs side
-<ul class="org-ul">
-<li><a href="https://github.com/weavejester/haslett">https://github.com/weavejester/haslett</a></li>
-<li><a href="https://github.com/RutledgePaulV/websocket-fx?tab=readme-ov-file">https://github.com/RutledgePaulV/websocket-fx?tab=readme-ov-file</a></li>
-<li><a href="https://github.com/ftravers/reframe-websocket">https://github.com/ftravers/reframe-websocket</a></li>
-<li><a href="https://heykieran.github.io/post/using-sse-and-websockets/">https://heykieran.github.io/post/using-sse-and-websockets/</a></li>
-<li><a href="https://dev.to/bitecode/turn-sync-function-to-async-python-tips-58nn">https://dev.to/bitecode/turn-sync-function-to-async-python-tips-58nn</a></li>
-</ul></li>
-<li><span class="timestamp-wrapper"><span class="timestamp">[2024-09-14 Sat 15:35] </span></span> got tired by implementing websocket coordination but it finally works</li>
-<li class="off"><code>[&#xa0;]</code> auto reconnect web socket?!!</li>
-<li class="on"><code>[X]</code> send current screen info after auto reconnect/connect!</li>
-<li class="on"><code>[X]</code> <del>'sync' button to reconnect websocket (red/green/auto reconnect)</del> can use Home!</li>
-<li class="on"><code>[X]</code> Synhronize current screen
-<ul class="org-ul">
-<li>add 'app-state' endpoint - we will check this after login/on app load because
-async user can do anything async</li>
-<li>react to ws messages online - e.g. commands:
-<ul class="org-ul">
-<li><del>[ ] Goto screen &lt;name&gt;</del></li>
-<li class="on"><code>[X]</code> Vote for ticket &lt;jira id&gt;</li>
-<li class="on"><code>[X]</code> Voting finished (works for manual finish too)</li>
-<li class="on"><code>[X]</code> User logged in: (&lt;username&gt;)</li>
-<li class="on"><code>[X]</code> Online members (16): A, B, C</li>
-</ul></li>
-</ul></li>
-<li class="on"><code>[X]</code> Display voting results when 'voting finished' received</li>
-<li class="on"><code>[X]</code> Listen &amp; display online members (log)</li>
-<li class="on"><code>[X]</code> websocket for logging updates!</li>
-</ul>
-</div>
+
+<p>
+I am aware about <b>tons of similar products existing in this area</b>
+(BTW all are paid!). I have never seen or used any of them, and actually the work I do here is mostly for <span class="underline">my personal
+skills development</span>.
+</p>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: avkoval (ok)</p>
-<p class="date">Created: 2024-09-22 Sun 14:13</p>
+<p class="date">Created: 2025-05-01 Thu 10:12</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

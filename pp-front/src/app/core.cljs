@@ -37,7 +37,7 @@
   (let [current-screen (hooks/use-subscribe [:app/current-screen])
         user-info (hooks/use-subscribe [:app/user-info])
         [navbar-is-active set-navbar-is-active!] (uix/use-state false)]
-    ($ :nav.navbar {:role "navigation" :aria-label "main navigation"}
+    ($ :nav.navbar {:role "navigation" :aria-label "main navigation" :class "mb-2"}
        ($ userInfoModal (dissoc user-info :logged_in))
        ($ :a.navbar-burger {:role "button" :aria-label "menu" :aria-expanded "false" :data-target "navbarBasicExample"
                             :class (if navbar-is-active "is-active" "")
@@ -332,7 +332,7 @@
 (defui header [])
 
 (defui docs-screen []
-  ($ :iframe {:src "/static/docs/README.html" :width "100%" :height "1000px"})
+  ($ :iframe {:src "/static/docs/README.html?t=1" :width "90%" :height "1000px"})
 )
 
 (defui app []
